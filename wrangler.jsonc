@@ -1,0 +1,12 @@
+{
+  // Config de déploiement Cloudflare Workers (static assets) pour roadmapped.work.
+  // Sans ce fichier, `npx wrangler deploy` refuse d'écraser le Worker existant
+  // « roadmapped-site » (garde anti-clobber). Le nommer explicitement lève la garde.
+  // Site 100% statique : aucun build, tout le contenu est servi depuis la racine.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "roadmapped-site",
+  "compatibility_date": "2026-07-08",
+  "observability": { "enabled": true },
+  "assets": { "directory": "." },
+  "compatibility_flags": ["nodejs_compat"]
+}
