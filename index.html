@@ -58,117 +58,50 @@
       </div>
     </section>
 
-    <!-- ============ Mini dashboard — the backlog that built this page ============ -->
-    <section class="demo" aria-label="Interactive demo — the dashboard showing this page's own backlog">
-      <div class="container">
-        <div class="mini-window" id="mini-window">
+    <!-- ============ Live demo — two windows: the terminal, and the real app ============ -->
+    <section class="demo" aria-label="Live demo — a terminal driving the real Roadmapped dashboard, side by side">
+      <div class="demo-stage">
+        <div class="duo">
 
-          <!-- Agent pane (left) -->
-          <div class="mini-pane mini-agent">
-            <div class="demo-tab"><span class="demo-dot"></span>claude — the terminal next door</div>
-            <div class="mini-chat" id="mini-chat">
+          <!-- Window 1: the terminal (scripted replay, separate app) -->
+          <div class="window window-terminal">
+            <div class="window-bar">
+              <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="window-name">claude &mdash; your terminal</span>
+            </div>
+            <div class="term" id="term">
               <div class="cl" data-kind="you"><span class="cl-p">you &rsaquo;</span> <span class="cl-t">take the next task</span></div>
-              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #6 Agent pane, left &rarr; <span class="cl-progress">in_progress</span></div>
-              <div class="cl" data-kind="cmd">$ node scripts/task.mjs start 6</div>
-              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> Building the pane. From inside the pane.</div>
-              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #6 done &middot; record written</div>
-              <div class="cl" data-kind="you"><span class="cl-p">you &rsaquo;</span> <span class="cl-t">next</span></div>
-              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #7 Deploy to Cloudflare Pages &rarr; <span class="cl-progress">in_progress</span></div>
+              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #14 Deploy to Cloudflare Pages &rarr; <span class="cl-progress">in_progress</span></div>
               <div class="cl" data-kind="cmd">$ npx wrangler deploy</div>
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> Live at roadmapped.work. You&rsquo;re on it.</div>
-              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #7 done &middot; backlog empty. Suspiciously.</div>
+              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #14 done &middot; record written</div>
+              <div class="cl" data-kind="you"><span class="cl-p">you &rsaquo;</span> <span class="cl-t">next</span></div>
+              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #10 Embed the real dashboard in the homepage &rarr; <span class="cl-progress">in_progress</span></div>
+              <div class="cl" data-kind="cmd">$ node scripts/task.mjs start 10</div>
+              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> The window on the right? That&rsquo;s it. Not a replica &mdash; the app.</div>
+              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #10 stays in_progress until you stop looking.</div>
             </div>
           </div>
 
-          <!-- Dashboard pane (right) -->
-          <div class="mini-pane mini-main">
-            <div class="mini-toolbar">
-              <span class="mini-path">docs/tasks/<span class="mini-path-strong">05-site/</span></span>
-              <div class="mini-toggle" role="group" aria-label="Board view">
-                <button type="button" class="mini-tab" id="tab-columns" aria-pressed="true">Columns</button>
-                <button type="button" class="mini-tab" id="tab-graph" aria-pressed="false">Graph</button>
-              </div>
+          <!-- Window 2: the actual dashboard (the React app, read-only build) -->
+          <div class="window window-app">
+            <div class="window-bar">
+              <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="window-name window-name-mono">localhost:5173 &mdash; Roadmapped</span>
             </div>
-
-            <div class="mini-views">
-
-              <!-- Columns view (final state pre-rendered: everything shipped) -->
-              <div class="mini-board" id="view-columns">
-                <div class="mini-col" data-status="todo">
-                  <p class="mini-col-head">todo</p>
-                  <ul class="mini-col-list" role="list"></ul>
-                </div>
-                <div class="mini-col" data-status="in_progress">
-                  <p class="mini-col-head">in progress</p>
-                  <ul class="mini-col-list" role="list"></ul>
-                </div>
-                <div class="mini-col" data-status="done">
-                  <p class="mini-col-head">done</p>
-                  <ul class="mini-col-list" role="list">
-                    <li><button type="button" class="mini-card" data-task="1" data-status="done"><span class="glyph" aria-hidden="true"></span><span class="mini-card-id">#1</span><span class="mini-card-title">Spec the homepage demo</span></button></li>
-                    <li><button type="button" class="mini-card" data-task="2" data-status="done"><span class="glyph" aria-hidden="true"></span><span class="mini-card-id">#2</span><span class="mini-card-title">Copy that survives the tone-of-voice doc</span></button></li>
-                    <li><button type="button" class="mini-card" data-task="3" data-status="done"><span class="glyph" aria-hidden="true"></span><span class="mini-card-id">#3</span><span class="mini-card-title">Columns view</span></button></li>
-                    <li><button type="button" class="mini-card" data-task="4" data-status="done"><span class="glyph" aria-hidden="true"></span><span class="mini-card-id">#4</span><span class="mini-card-title">Dependency graph view</span></button></li>
-                    <li><button type="button" class="mini-card" data-task="5" data-status="done"><span class="glyph" aria-hidden="true"></span><span class="mini-card-id">#5</span><span class="mini-card-title">Task panel on click</span></button></li>
-                    <li><button type="button" class="mini-card" data-task="6" data-status="done"><span class="glyph" aria-hidden="true"></span><span class="mini-card-id">#6</span><span class="mini-card-title">Agent pane, left</span></button></li>
-                    <li><button type="button" class="mini-card" data-task="7" data-status="done"><span class="glyph" aria-hidden="true"></span><span class="mini-card-id">#7</span><span class="mini-card-title">Deploy to Cloudflare Pages</span></button></li>
-                  </ul>
-                </div>
-              </div>
-
-              <!-- Graph view (hand-drawn DAG, no library) -->
-              <div class="mini-graph" id="view-graph" hidden>
-                <div class="mini-graph-canvas">
-                  <svg class="mini-graph-edges" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-                    <line x1="100" y1="260" x2="320" y2="90"/>
-                    <line x1="100" y1="260" x2="320" y2="330"/>
-                    <line x1="320" y1="330" x2="540" y2="180"/>
-                    <line x1="320" y1="330" x2="540" y2="420"/>
-                    <line x1="320" y1="330" x2="740" y2="330"/>
-                    <line x1="540" y1="420" x2="740" y2="330"/>
-                    <line x1="320" y1="90"  x2="900" y2="180"/>
-                    <line x1="540" y1="180" x2="900" y2="180"/>
-                    <line x1="740" y1="330" x2="900" y2="180"/>
-                  </svg>
-                  <button type="button" class="mini-node" data-task="1" data-status="done" style="left:10%;top:50%"><span class="glyph" aria-hidden="true"></span><span class="mini-node-id">#1</span><span class="mini-node-title">Spec the demo</span></button>
-                  <button type="button" class="mini-node" data-task="2" data-status="done" style="left:32%;top:17.3%"><span class="glyph" aria-hidden="true"></span><span class="mini-node-id">#2</span><span class="mini-node-title">Copy</span></button>
-                  <button type="button" class="mini-node" data-task="3" data-status="done" style="left:32%;top:63.5%"><span class="glyph" aria-hidden="true"></span><span class="mini-node-id">#3</span><span class="mini-node-title">Columns view</span></button>
-                  <button type="button" class="mini-node" data-task="4" data-status="done" style="left:54%;top:34.6%"><span class="glyph" aria-hidden="true"></span><span class="mini-node-id">#4</span><span class="mini-node-title">Graph view</span></button>
-                  <button type="button" class="mini-node" data-task="5" data-status="done" style="left:54%;top:80.8%"><span class="glyph" aria-hidden="true"></span><span class="mini-node-id">#5</span><span class="mini-node-title">Task panel</span></button>
-                  <button type="button" class="mini-node" data-task="6" data-status="done" style="left:74%;top:63.5%"><span class="glyph" aria-hidden="true"></span><span class="mini-node-id">#6</span><span class="mini-node-title">Agent pane</span></button>
-                  <button type="button" class="mini-node" data-task="7" data-status="done" style="left:90%;top:34.6%"><span class="glyph" aria-hidden="true"></span><span class="mini-node-id">#7</span><span class="mini-node-title">Deploy</span></button>
-                </div>
-              </div>
-
-              <!-- Task panel (filled by JS on click) -->
-              <aside class="mini-panel" id="mini-panel" role="dialog" aria-labelledby="panel-title" tabindex="-1" hidden>
-                <div class="mini-panel-head">
-                  <span class="mini-panel-id" id="panel-id">#1</span>
-                  <button type="button" class="mini-panel-close" id="panel-close" aria-label="Close task panel">&times;</button>
-                </div>
-                <h3 class="mini-panel-title" id="panel-title">Task</h3>
-                <dl class="mini-panel-fields">
-                  <div class="mini-field"><dt>status</dt><dd id="panel-status">done</dd></div>
-                  <div class="mini-field"><dt>section</dt><dd>05-site</dd></div>
-                  <div class="mini-field"><dt>depends_on</dt><dd id="panel-deps">&mdash;</dd></div>
-                </dl>
-                <div class="mini-panel-record" id="panel-record">
-                  <p class="mini-panel-label">record</p>
-                  <p class="mini-panel-outcome" id="panel-outcome"></p>
-                  <p class="mini-panel-verif" id="panel-verification"></p>
-                  <p class="mini-panel-commit" id="panel-commit"></p>
-                </div>
-              </aside>
-
-            </div>
+            <iframe class="app-frame" src="demo/" title="Roadmapped dashboard — read-only live demo showing this page's own backlog" loading="lazy"></iframe>
           </div>
+
         </div>
 
         <p class="demo-caption">
-          This demo is its own backlog. Every ticket above is a real step in building
-          this page — #3 is the columns view you&rsquo;re looking at, #7 is the deploy that
-          served it to you. Click one; that&rsquo;s #5 doing its job. We could have invented
-          demo data. The real thing was already lying around.
+          Two windows. On the left, the loop your agent runs: take, work, record.
+          On the right &mdash; not a screenshot, not a replica &mdash; the actual dashboard,
+          the same React app <code>npm install</code> gives you, with this page&rsquo;s own
+          backlog baked in. Click around: the graph is the real graph, the panel is
+          the real panel, and every edit is politely declined. Ticket&nbsp;#10 is
+          &ldquo;Embed the real dashboard in the homepage&rdquo;. It&rsquo;s marked in&nbsp;progress.
+          Look at it deciding whether it&rsquo;s done.
         </p>
       </div>
     </section>
@@ -282,6 +215,6 @@ node scripts/task.mjs --help <span class="code-comment"># the CLI your agent (or
     </div>
   </footer>
 
-  <script src="dashboard.js"></script>
+  <script src="terminal.js"></script>
 </body>
 </html>

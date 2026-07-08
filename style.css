@@ -211,57 +211,95 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   color: var(--muted);
 }
 
-/* ---------- Mini dashboard (hero demo) ---------- */
+/* ---------- Live demo: two windows (terminal + the real app) ---------- */
 
 .demo { padding-block: 0 clamp(3rem, 7vw, 5rem); }
 
-.mini-window {
-  display: grid;
-  grid-template-columns: minmax(15rem, 18rem) 1fr;
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
+/* The stage is deliberately wider than the text container: the demo is the
+   hero, not an illustration inside it. */
+.demo-stage {
+  max-width: 105rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 2.5vw, 2rem);
 }
 
-.mini-pane {
-  background: var(--card);
-  min-width: 0;
+/* Two distinct windows with a visible gap: the terminal is one app, the
+   dashboard is another. The page background between them is the proof. */
+.duo {
+  display: grid;
+  grid-template-columns: minmax(19rem, 24rem) minmax(0, 1fr);
+  gap: clamp(1rem, 2.2vw, 1.75rem);
+  align-items: stretch;
+}
+
+.window {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--edge);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.demo-tab {
+.window-bar {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--muted);
-  padding: 0.6rem 1rem;
+  gap: 0.75rem;
+  padding: 0.55rem 0.9rem;
   border-bottom: 1px solid var(--rule);
+  background: var(--page);
+  flex: none;
+  min-width: 0;
+}
+
+.window-dots {
+  display: inline-flex;
+  gap: 6px;
+  flex: none;
+}
+.window-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--rule);
+  border: 1px solid var(--edge);
+}
+
+.window-name {
+  font-size: 0.8125rem;
+  color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: none;
 }
-
-.demo-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-  flex: none;
-}
-
-/* --- Agent pane --- */
-
-.mini-chat {
+.window-name-mono {
   font-family: var(--mono);
   font-size: 0.75rem;
-  line-height: 2;
-  padding: 0.875rem 1rem;
+}
+
+/* The app window sets the height of the row; the terminal stretches to match. */
+.window-app { height: clamp(34rem, 78vh, 52rem); }
+
+.app-frame {
+  display: block;
+  width: 100%;
   flex: 1;
-  overflow-x: auto;
+  min-height: 0;
+  border: 0;
+  /* The app is light-only for now; its own background, not the site's. */
+  background: #fafafa;
+}
+
+/* --- Terminal --- */
+
+.term {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 2.05;
+  padding: 1rem 1.1rem;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 }
 
 .cl   { white-space: pre-wrap; color: var(--soft); }
@@ -270,10 +308,10 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .cl[data-kind="cmd"] { color: var(--muted); padding-left: 1.1rem; }
 .cl-progress { color: var(--accent); font-weight: 600; }
 
-/* animation states: keep layout, hide content (no layout shift) */
-.mini-anim .cl:not(.on) { visibility: hidden; }
+/* replay states: keep layout, hide content (no layout shift) */
+.term-anim .cl:not(.on) { visibility: hidden; }
 
-.mini-cursor {
+.term-cursor {
   display: inline-block;
   width: 0.55em;
   height: 1.1em;
@@ -281,322 +319,9 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   background: var(--ink);
 }
 
-/* --- Toolbar: path + view toggle --- */
-
-.mini-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  min-height: 3rem;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--rule);
-  flex: none;
-}
-
-.mini-path {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.mini-path-strong { color: var(--ink); }
-
-.mini-toggle {
-  display: flex;
-  flex: none;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.mini-tab {
-  appearance: none;
-  border: 0;
-  background: var(--card);
-  color: var(--muted);
-  font: inherit;
-  font-size: 0.8125rem;
-  font-weight: 550;
-  line-height: 1;
-  padding: 0.5rem 0.8rem;
-  cursor: pointer;
-}
-.mini-tab + .mini-tab { border-left: 1px solid var(--rule); }
-.mini-tab:hover { color: var(--ink); background: var(--hover); }
-.mini-tab[aria-pressed="true"] {
-  background: var(--tint);
-  color: var(--accent);
-}
-.mini-tab:focus-visible { outline-offset: -2px; }
-
-/* --- Views container --- */
-
-.mini-views {
-  position: relative;
-  flex: 1;
-  min-height: 24rem;
-}
-
-.mini-views > [hidden] { display: none !important; }
-
-/* --- Columns view --- */
-
-.mini-board {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--rule);
-  overflow: auto;
-}
-
-.mini-col {
-  background: var(--page);
-  padding: 0.75rem;
-  min-width: 0;
-}
-
-.mini-col-head {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  color: var(--muted);
-  margin-bottom: 0.625rem;
-}
-
-.mini-col-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
-
-.mini-card {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  min-width: 0;
-  text-align: left;
-  appearance: none;
-  font: inherit;
-  font-size: 0.8125rem;
-  line-height: 1.35;
-  font-weight: 500;
-  background: var(--card);
-  color: var(--ink);
-  border: 1px solid var(--rule);
-  padding: 0.5rem 0.625rem;
-  cursor: pointer;
-}
-.mini-card:hover { background: var(--hover); }
-.mini-card.is-selected {
-  background: var(--tint);
-  box-shadow: inset 2px 0 0 var(--accent);
-}
-
-.mini-card-id {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--muted);
-  flex: none;
-}
-
-.mini-card-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* status glyph: ○ todo · ◐ in progress · ● done */
-.glyph {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex: none;
-  border: 1.5px solid var(--muted);
-  background: transparent;
-}
-[data-status="in_progress"] .glyph {
-  border-color: var(--accent);
-  background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
-}
-[data-status="done"] .glyph {
-  border-color: var(--ink);
-  background: var(--ink);
-}
-
-/* --- Graph view --- */
-
-.mini-graph {
-  position: absolute;
-  inset: 0;
-  background: var(--page);
-  overflow: auto;
-}
-
-.mini-graph-canvas {
-  position: relative;
-  min-width: 44rem;
-  height: 100%;
-  min-height: 22rem;
-}
-
-.mini-graph-edges {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.mini-graph-edges line {
-  stroke: var(--edge);
-  stroke-width: 1.5;
-  vector-effect: non-scaling-stroke;
-}
-
-.mini-node {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  appearance: none;
-  font: inherit;
-  font-size: 0.75rem;
-  line-height: 1.2;
-  font-weight: 500;
-  background: var(--card);
-  color: var(--ink);
-  border: 1px solid var(--rule);
-  padding: 0.45rem 0.65rem;
-  white-space: nowrap;
-  cursor: pointer;
-}
-.mini-node:hover { background: var(--hover); }
-.mini-node.is-selected {
-  background: var(--tint);
-  box-shadow: inset 2px 0 0 var(--accent);
-}
-
-.mini-node-id {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--muted);
-}
-
-/* --- Task panel --- */
-
-.mini-panel {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(19.5rem, 100%);
-  background: var(--card);
-  border-left: 1px solid var(--rule);
-  box-shadow: var(--panel-shadow);
-  padding: 0.875rem 1.125rem 1.125rem;
-  overflow-y: auto;
-  z-index: 2;
-}
-
-.mini-panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.25rem;
-}
-
-.mini-panel-id {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--muted);
-}
-
-.mini-panel-close {
-  appearance: none;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  font-size: 1.125rem;
-  line-height: 1;
-  padding: 0.25rem 0.45rem;
-  margin-right: -0.45rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.mini-panel-close:hover { background: var(--hover); color: var(--ink); }
-
-.mini-panel-title {
-  font-size: 0.9375rem;
-  font-weight: 650;
-  letter-spacing: -0.01em;
-  line-height: 1.35;
-  margin-bottom: 1rem;
-}
-
-.mini-panel-fields { margin: 0; }
-
-.mini-field {
-  display: flex;
-  gap: 0.75rem;
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  padding-block: 0.15rem;
-}
-.mini-field dt {
-  flex: none;
-  width: 5.75rem;
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--muted);
-  padding-top: 0.15em;
-}
-.mini-field dd { margin: 0; min-width: 0; }
-
-#panel-status.is-progress { color: var(--accent); font-weight: 600; }
-#panel-status.is-done     { font-weight: 600; }
-
-.mini-panel-record {
-  margin-top: 1rem;
-  border-top: 1px solid var(--rule);
-  padding-top: 0.875rem;
-  font-size: 0.8125rem;
-  line-height: 1.6;
-}
-
-.mini-panel-label {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--muted);
-  margin-bottom: 0.375rem;
-}
-
-.mini-panel-outcome { color: var(--soft); }
-
-.mini-panel-verif {
-  color: var(--soft);
-  margin-top: 0.5rem;
-}
-
-.mini-panel-commit {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--muted);
-  margin-top: 0.625rem;
-}
-
 .demo-caption {
-  max-width: 62ch;
-  margin-top: 1.5rem;
+  max-width: 68ch;
+  margin-top: 1.75rem;
   font-size: 0.9375rem;
   color: var(--soft);
 }
@@ -758,34 +483,37 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- Responsive ---------- */
 
+/* The two windows stack below ~1000px: terminal first, then the app.
+   The app window keeps a fixed height and scrolls internally — the page
+   itself never scrolls sideways. */
+@media (max-width: 62.5rem) {
+  .duo { grid-template-columns: 1fr; }
+
+  .term {
+    flex: none;
+    max-height: 18rem;
+  }
+
+  .window-app { height: min(80vh, 38rem); }
+
+  /* The app is a desktop app. Rather than squeeze it into a phone column,
+     render it at 2× width and scale it down: the real layout, zoomed out,
+     still fully interactive. */
+  .window-app { overflow: hidden; }
+  .app-frame {
+    width: 200%;
+    height: 200%;
+    flex: none;
+    transform: scale(0.5);
+    transform-origin: top left;
+  }
+}
+
 @media (max-width: 760px) {
-  .mini-window,
   .feature-grid,
   .pair-grid { grid-template-columns: 1fr; }
 
   .how-grid { grid-template-columns: 1fr; }
-
-  /* Board first, agent transcript below it */
-  .mini-agent { order: 2; }
-  .mini-chat { flex: none; }
-
-  .mini-views { min-height: 0; }
-
-  /* views flow in the document instead of filling a fixed frame */
-  .mini-board {
-    position: static;
-    grid-template-columns: 1fr;
-    overflow: visible;
-  }
-
-  .mini-col-list { min-height: 1.25rem; }
-
-  .mini-graph {
-    position: static;
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  .mini-graph-canvas { height: 22rem; }
 
   .feature-card { padding: 1.375rem; }
 }
