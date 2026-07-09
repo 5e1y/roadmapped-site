@@ -130,10 +130,6 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   letter-spacing: -0.01em;
 }
 
-.mark-bg     { fill: var(--ink); }
-.mark-line   { fill: var(--page); }
-.mark-accent { fill: var(--accent); }
-
 .header-link {
   font-size: 0.9375rem;
   font-weight: 500;

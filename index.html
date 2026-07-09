@@ -11,10 +11,33 @@
   <meta property="og:description" content="Backlog, roadmap and docs as plain YAML and markdown inside your repository. No database, no SaaS, no account. MIT.">
   <meta property="og:url" content="https://roadmapped.work/">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://roadmapped.work/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Roadmapped — your repo is already your project management tool">
+  <meta name="twitter:description" content="Backlog, roadmap and docs as plain YAML and markdown inside your repository. No database, no SaaS, no account. MIT.">
+  <meta name="twitter:image" content="https://roadmapped.work/og.png">
   <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%3E%3Crect%20width='16'%20height='16'%20fill='%23171717'/%3E%3Crect%20x='3'%20y='4'%20width='10'%20height='2'%20fill='%23fafafa'/%3E%3Crect%20x='3'%20y='7'%20width='7'%20height='2'%20fill='%233b82f6'/%3E%3Crect%20x='3'%20y='10'%20width='10'%20height='2'%20fill='%23fafafa'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%3E%3Crect%20width='16'%20height='16'%20fill='%23171717'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Roadmapped",
+    "description": "Backlog, roadmap and docs as plain YAML and markdown inside your repository — the only source of truth. No database, no SaaS, no account. Your AI agent reads and writes it; you review the diff.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any (Node.js ≥ 22.18)",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "license": "https://opensource.org/licenses/MIT",
+    "url": "https://roadmapped.work/",
+    "codeRepository": "https://github.com/5e1y/roadmapped"
+  }
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -22,16 +45,10 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="/" aria-label="Roadmapped — home">
-        <svg class="brand-mark" width="18" height="18" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-          <rect width="16" height="16" class="mark-bg"/>
-          <rect x="3" y="4" width="10" height="2" class="mark-line"/>
-          <rect x="3" y="7" width="7" height="2" class="mark-accent"/>
-          <rect x="3" y="10" width="10" height="2" class="mark-line"/>
-        </svg>
         <span class="brand-name">Roadmapped</span>
       </a>
       <nav aria-label="Main">
-        <a class="header-link" href="https://github.com/OWNER/roadmapped">GitHub&nbsp;&rarr;</a>
+        <a class="header-link" href="https://github.com/5e1y/roadmapped">GitHub&nbsp;&rarr;</a>
       </nav>
     </div>
   </header>
@@ -51,8 +68,8 @@
           reads and writes it in the right format; you review the diff.
         </p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="https://github.com/OWNER/roadmapped">Get started — <code>npm install</code></a>
-          <a class="link-arrow" href="https://github.com/OWNER/roadmapped">View on GitHub&nbsp;&rarr;</a>
+          <a class="btn btn-primary" href="https://github.com/5e1y/roadmapped">Get started — <code>ask your agent</code></a>
+          <a class="link-arrow" href="https://github.com/5e1y/roadmapped">View on GitHub&nbsp;&rarr;</a>
         </div>
         <p class="cta-note">There&rsquo;s no step&nbsp;2. We checked.</p>
       </div>
@@ -77,7 +94,7 @@
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #14 done &middot; record written</div>
               <div class="cl" data-kind="you"><span class="cl-p">you &rsaquo;</span> <span class="cl-t">next</span></div>
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #10 Embed the real dashboard in the homepage &rarr; <span class="cl-progress">in_progress</span></div>
-              <div class="cl" data-kind="cmd">$ node scripts/task.mjs start 10</div>
+              <div class="cl" data-kind="cmd">$ npx roadmapped start 10</div>
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> The window on the right? That&rsquo;s it. Not a replica &mdash; the app.</div>
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #10 stays in_progress until you stop looking.</div>
             </div>
@@ -97,7 +114,7 @@
         <p class="demo-caption">
           Two windows. On the left, the loop your agent runs: take, work, record.
           On the right &mdash; not a screenshot, not a replica &mdash; the actual dashboard,
-          the same React app <code>npm install</code> gives you, with this page&rsquo;s own
+          the same React app <code>npx roadmapped dashboard</code> opens, with this page&rsquo;s own
           backlog baked in. Click around: the graph is the real graph, the panel is
           the real panel, and every edit is politely declined. Ticket&nbsp;#10 is
           &ldquo;Embed the real dashboard in the homepage&rdquo;. It&rsquo;s marked in&nbsp;progress.
@@ -120,17 +137,37 @@
           <article class="feature-card">
             <p class="feature-file">02-roadmap-no-dates.yaml</p>
             <h3 class="feature-title">Roadmap with no dates to lie about</h3>
-            <p>Your sections become milestones. <code>done</code> / <code>available</code> / <code>locked</code> states are computed from the dependency graph on every read, never stored. Nothing to drift out of sync, because there&rsquo;s no second copy.</p>
+            <p>Eight fixed stages, idea to mature, are your milestones — not sections you invent. <code>done</code> / <code>available</code> / <code>locked</code> states are computed from the dependency graph on every read, never stored. Nothing to drift out of sync, because there&rsquo;s no second copy.</p>
           </article>
           <article class="feature-card">
             <p class="feature-file">03-agent-first.yaml</p>
-            <h3 class="feature-title">Agent-first, by design</h3>
-            <p>A CLI (<code>scripts/task.mjs</code>) and a Claude skill so your agent creates specs, tasks and dependencies in the correct schema — and records what it ships with more discipline than most of us manage.</p>
+            <h3 class="feature-title">Agent-first, three ways</h3>
+            <p>A CLI (<code>npx roadmapped</code>), a Claude skill, and an MCP server exposing the same commands as tools — your agent creates specs, tasks and dependencies in the correct schema, and records what it ships with more discipline than most of us manage.</p>
           </article>
           <article class="feature-card">
             <p class="feature-file">04-validated-writes.yaml</p>
             <h3 class="feature-title">Validated writes, honest history</h3>
-            <p>Every write — from the dashboard or the CLI — goes through the same validator. On error, the change rolls back. Ids are never reused. Your git history is the audit log.</p>
+            <p>Every write — dashboard, CLI or MCP — goes through the same validator. On error, the change rolls back. Ids are never reused. Your git history is the audit log.</p>
+          </article>
+          <article class="feature-card">
+            <p class="feature-file">05-live-dashboard.yaml</p>
+            <h3 class="feature-title">Live, because the agent doesn&rsquo;t wait for you</h3>
+            <p>The dashboard updates itself the moment your agent writes — file-watch plus SSE, no refresh. The in-progress task pulses; a timestamped activity panel shows what changed and when.</p>
+          </article>
+          <article class="feature-card">
+            <p class="feature-file">06-multi-repo.yaml</p>
+            <h3 class="feature-title">One install, N repos</h3>
+            <p>The tool ships once; the data belongs to whichever repo you launch it from. Every dashboard header spells out which one it&rsquo;s looking at — <em>Roadmapped &times; your-repo</em> — so two open windows never get confused for the same project.</p>
+          </article>
+          <article class="feature-card">
+            <p class="feature-file">07-git-guard.yaml</p>
+            <h3 class="feature-title">Every change is a ticket, enforced at commit</h3>
+            <p>A pre-commit hook refuses a commit that touches product files while nothing is <code>in_progress</code> — chained after your existing hooks (husky, lefthook, whatever), never replacing them. <code>--no-verify</code> still works; skipping the ticket becomes a choice, not an accident.</p>
+          </article>
+          <article class="feature-card">
+            <p class="feature-file">08-docs-and-notepad.yaml</p>
+            <h3 class="feature-title">Your docs, rendered right next to the work</h3>
+            <p>The Docs view renders the markdown already in your <code>docs/</code> folder — specs, notes, the guide — no copy, no export. A scratch notepad lives beside it for the thoughts that aren&rsquo;t tasks yet. Same repo, same window as the backlog.</p>
           </article>
         </div>
       </div>
@@ -146,17 +183,17 @@
             <p>Everything is flat, hand-editable files: task YAML you can read without us, docs rendered straight from your <code>docs/</code> folder. The dashboard and the CLI read and write the same data through the same validator — never a second, parallel schema hiding somewhere.</p>
             <p class="callout">Yes, it&rsquo;s a folder of YAML files. No, it&rsquo;s not a database. That&rsquo;s kind of the point.</p>
           </div>
-          <div class="how-tree" role="img" aria-label="File tree: your repo contains docs/tasks with numbered section folders, task YAML files, an _archive folder which is the changelog, and scripts/task.mjs which is the CLI.">
+          <div class="how-tree" role="img" aria-label="File tree: your repo contains docs/tasks with the 8 fixed stage folders (idea to mature) and their task YAML files, plus a package.json so npx roadmapped can drive it all.">
 <pre>your-repo/
 ├─ docs/
 │  ├─ tasks/
-│  │  ├─ 01-foundations/
+│  │  ├─ 01-idea/
 │  │  │  ├─ _section.yaml
 │  │  │  └─ 03-auth-flow.yaml
 │  │  ├─ 04-build/
-│  │  └─ _archive/          <span class="tree-note">← the changelog</span>
+│  │  └─ 08-mature/          <span class="tree-note">← 8 fixed stages, always this order</span>
 │  └─ roadmap.md
-└─ scripts/task.mjs          <span class="tree-note">← the CLI</span></pre>
+└─ package.json               <span class="tree-note">← npx roadmapped drives it all</span></pre>
           </div>
         </div>
       </div>
@@ -165,21 +202,21 @@
     <!-- ============ Built by using itself ============ -->
     <section class="section" id="built-by-using-itself" aria-labelledby="built-title">
       <div class="container">
-        <p class="eyebrow"><span class="eyebrow-cmd">$ git log --oneline docs/tasks/_archive/</span></p>
+        <p class="eyebrow"><span class="eyebrow-cmd">$ git log --oneline docs/tasks/</span></p>
         <h2 class="section-title" id="built-title">Built by using itself</h2>
-        <p class="prose">Roadmapped&rsquo;s own backlog is managed by Roadmapped, mostly by a Claude agent that records every task it ships. The <code>_archive</code> folder is the changelog. The commit history is the proof. If you want to know whether the workflow holds up, don&rsquo;t take our word for it — read the archive.</p>
+        <p class="prose">Roadmapped&rsquo;s own backlog is managed by Roadmapped, mostly by a Claude agent that records every task it ships. Nothing gets archived: a done task just stays <code>done</code>, right where it was, with its <code>outcome</code>, <code>verification</code> and <code>commit</code> written onto the file. The done backlog and the commit history are the changelog. If you want to know whether the workflow holds up, don&rsquo;t take our word for it — read the backlog.</p>
       </div>
     </section>
 
     <!-- ============ Quickstart ============ -->
     <section class="section" id="quickstart" aria-labelledby="quickstart-title">
       <div class="container">
-        <p class="eyebrow"><span class="eyebrow-cmd">$ npm install</span></p>
+        <p class="eyebrow"><span class="eyebrow-cmd">$ node -v</span><span class="eyebrow-out">&nbsp;&nbsp;v22.18.0</span></p>
         <h2 class="section-title" id="quickstart-title">Quickstart</h2>
-        <pre class="code-block"><code>npm install
-npm run dev                  <span class="code-comment"># dashboard on http://localhost:5173</span>
-node scripts/task.mjs --help <span class="code-comment"># the CLI your agent (or you) drives</span></code></pre>
-        <p class="prose under-block">Point your AI agent at the Claude skill and it takes it from there.</p>
+        <pre class="code-block"><code>npx --yes github:5e1y/roadmapped init  <span class="code-comment"># scaffold docs/tasks/, the skill, the git guard</span>
+npx roadmapped dashboard               <span class="code-comment"># dashboard on http://localhost:5173</span>
+npx roadmapped --help                  <span class="code-comment"># the CLI your agent (or you) drives</span></code></pre>
+        <p class="prose under-block">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. Point your AI agent at the Claude skill — or just ask it to install Roadmapped from GitHub — and it takes it from there.</p>
       </div>
     </section>
 
@@ -197,9 +234,9 @@ node scripts/task.mjs --help <span class="code-comment"># the CLI your agent (or
             <h2 class="section-title pair-title" id="oss-title">Free, and actually free</h2>
             <p>MIT licensed. No pricing page, no seats, no &ldquo;contact sales.&rdquo; We don&rsquo;t have a customer success team to schedule an onboarding call — we don&rsquo;t have customers. It&rsquo;s free.</p>
             <p class="pair-links">
-              <a class="link-arrow" href="https://github.com/OWNER/roadmapped">Star it on GitHub</a>
+              <a class="link-arrow" href="https://github.com/5e1y/roadmapped">Star it on GitHub</a>
               <span class="link-sep" aria-hidden="true">&middot;</span>
-              <a class="link-arrow" href="https://github.com/OWNER/roadmapped#readme">Read the guide</a>
+              <a class="link-arrow" href="https://github.com/5e1y/roadmapped#readme">Read the guide</a>
             </p>
           </article>
         </div>
