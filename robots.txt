@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# La démo embarquée porte déjà un meta noindex ; on la laisse crawlable pour
+# que ce noindex soit vu (un Disallow empêcherait Google de le lire).
+
+Sitemap: https://roadmapped.dev/sitemap.xml
