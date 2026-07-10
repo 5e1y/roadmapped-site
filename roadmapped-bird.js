@@ -260,6 +260,18 @@ export function initBird(userOptions = {}) {
   addEventListener('resize', onResize);
   const requery = setInterval(queryPerchEls, 2000);  // le DOM peut changer après coup
 
+  // #285 — arrivé en BAS de page, l'oiseau cesse de suivre le curseur et va se
+  // percher sur le R du footer (#footer-perch), où il reste. Hystérésis (entre à
+  // ≤24px du bas, ressort au-delà de 160px) pour éviter le flicker au seuil.
+  let atBottom = false;
+  const distToBottom = () => document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+  const onScroll = () => {
+    if (!atBottom && distToBottom() <= 24) atBottom = true;
+    else if (atBottom && distToBottom() > 160) atBottom = false;
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
   function smoothDamp(cur, tgt, vel, dt, smooth, maxspd) {
     const omega = 2 / smooth, x = omega * dt, exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
     let change = cur - tgt; const maxCh = maxspd * smooth;
@@ -285,6 +297,12 @@ export function initBird(userOptions = {}) {
   function tick(t) {
     dtms = Math.min(40, t - last || 16); const dt = dtms / 1000; last = t;
     computePerches();                       // suit le scroll / resize / layout
+    // #285 : en bas de page, on vise le R du footer au lieu du curseur -> l'oiseau
+    // y vole, s'y pose et y reste (le repos idle/peck s'enclenche une fois posé).
+    if (atBottom) {
+      const fp = document.querySelector('#footer-perch');
+      if (fp) { const r = fp.getBoundingClientRect(); tx = (r.left + r.right) / 2; ty = r.top; }
+    }
     const dx = tx - bx, prevby = by;
 
     if (state === 'takeoff') {
@@ -395,6 +413,7 @@ export function initBird(userOptions = {}) {
       cancelAnimationFrame(raf); clearInterval(requery);
       removeEventListener('pointermove', onMove);
       removeEventListener('pointerdown', onMove);
+      removeEventListener('scroll', onScroll);
       removeEventListener('resize', onResize);
       if (themeObs) themeObs.disconnect();
       if (mqTheme) mqTheme.removeEventListener('change', rebakeTheme);
