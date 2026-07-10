@@ -686,7 +686,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   border: 1px solid var(--rule);
 }
 
-.how-step { padding: 1.25rem clamp(1.25rem, 2.5vw, 1.75rem); }
+.how-step { padding: 1.25rem clamp(1.25rem, 2.5vw, 1.75rem); cursor: pointer; }
 .how-step + .how-step { border-top: 1px solid var(--rule); }
 
 /* Le titre entier (numéro + intitulé) est le bouton de navigation. Reset
@@ -971,6 +971,8 @@ html.js-reveal .reveal.reveal-in {
      l'en-tête se resserre un peu. Le repli est ANIMÉ (#290) via grid-rows
      0fr↔1fr — insensible à la hauteur du contenu. Gated par html.js-accordion :
      sans JS, aucune règle de repli -> tout reste déplié (fallback). */
+  /* #290 : toute la carte cliquable en mobile, pas seulement la tête. */
+  .feature-card { cursor: pointer; }
   .feature-toggle { cursor: pointer; }
   html.js-accordion .feature-toggle[aria-expanded="false"] .feature-head { margin-bottom: 0.625rem; }
   html.js-accordion .feature-body {
