@@ -35,7 +35,19 @@ export function initBird(userOptions = {}) {
   // ---- données sprites ------------------------------------------------------
   const RAW = o.frames || SPRITES;
   const B = RAW.anims ? Object.assign({ palette: (RAW.meta || {}).palette }, RAW.anims) : RAW;
-  const PAL = Object.assign({}, B.palette, o.palette || {});
+  // Theme-aware (#272) : en thème sombre du site (page #0a0a0a) la calotte navy KK
+  // se fond. On l'éclaircit alors en bleu-ardoise clair, lisible sur sombre et
+  // distinct du corps blanc. Un override explicite o.palette.KK reste prioritaire.
+  const BASE_PAL = Object.assign({}, B.palette);
+  const DARK_KK = '#b4c2dd';
+  const isDark = () => {
+    const dt = document.documentElement.dataset.theme;
+    if (dt === 'dark') return true;
+    if (dt === 'light') return false;
+    return typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches;
+  };
+  const effectivePAL = () => Object.assign({}, BASE_PAL, isDark() ? { KK: DARK_KK } : {}, o.palette || {});
+  let PAL = effectivePAL();
   const SCALE = o.scale;
 
   // ---- réglages (repris du proto validé bird_chase.html) ---------------------
@@ -93,7 +105,17 @@ export function initBird(userOptions = {}) {
       return { img: oc, cx: sx / n, cy: sy / n, foot: maxr + 1, C, R };
     });
   }
-  const SPR = {}; for (const k of ['fly', 'walk', 'idle', 'peck', 'hop']) SPR[k] = [bake(B[k], 0), bake(B[k], 1)];
+  let SPR = {}; for (const k of ['fly', 'walk', 'idle', 'peck', 'hop']) SPR[k] = [bake(B[k], 0), bake(B[k], 1)];
+  // Re-bake au changement de thème : la géométrie (cx/cy/foot, donc FLY0/APEXCY) est
+  // identique, seules les couleurs des sprites changent -> on ne reconstruit que SPR.
+  function rebakeTheme() {
+    PAL = effectivePAL();
+    SPR = {}; for (const k of ['fly', 'walk', 'idle', 'peck', 'hop']) SPR[k] = [bake(B[k], 0), bake(B[k], 1)];
+  }
+  const themeObs = typeof MutationObserver === 'function' ? new MutationObserver(rebakeTheme) : null;
+  if (themeObs) themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  const mqTheme = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
+  if (mqTheme) mqTheme.addEventListener('change', rebakeTheme);
   const FLY0 = SPR.fly[0][0], flyCentToFeet = (FLY0.foot - FLY0.cy) * SCALE;
   const APEXCY = SPR.hop[0][TAKEOFF_SEQ[TAKEOFF_SEQ.length - 1]].cy; // corps à l'apex du saut
 
@@ -374,6 +396,8 @@ export function initBird(userOptions = {}) {
       removeEventListener('pointermove', onMove);
       removeEventListener('pointerdown', onMove);
       removeEventListener('resize', onResize);
+      if (themeObs) themeObs.disconnect();
+      if (mqTheme) mqTheme.removeEventListener('change', rebakeTheme);
       cv.remove();
     },
   };
