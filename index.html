@@ -524,6 +524,21 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
       function current() {
         return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light');
       }
+
+      // #282 — la démo (iframe même origine) suit le thème du site : chargée
+      // d'emblée avec ?theme= (pas de flash), puis mise à jour en live au toggle.
+      var demo = document.querySelector('.app-frame');
+      function syncDemo() {
+        if (!demo) return;
+        try {
+          var d = demo.contentDocument;
+          if (d && d.documentElement) d.documentElement.setAttribute('data-theme', current());
+        } catch (e) { /* pas encore chargée : le ?theme initial fait le job */ }
+      }
+      if (demo) {
+        demo.src = 'demo/?theme=' + current();
+        demo.addEventListener('load', syncDemo);
+      }
       function label() {
         if (btn) {
           btn.setAttribute('aria-label',
@@ -545,6 +560,7 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
           try { localStorage.setItem('theme', next); } catch (e) {}
           paintMeta();
           label();
+          syncDemo();
         });
       }
       if (mq.addEventListener) mq.addEventListener('change', label);
