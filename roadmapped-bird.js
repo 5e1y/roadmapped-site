@@ -1,5 +1,5 @@
 /*!
- * roadmapped-bird.js — la mascotte de roadmapped.work
+ * roadmapped-bird.js — la mascotte de roadmapped.dev
  * Un oiseau pixel-art qui suit le curseur et se pose sur le bord supérieur
  * des éléments marqués [data-bird-perch] (et sur le bas de la fenêtre).
  * ESM autonome : zéro dépendance, zéro asset externe (frames embarquées).
