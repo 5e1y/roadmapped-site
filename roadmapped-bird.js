@@ -13,8 +13,8 @@ const SPRITES = {"meta":{"facing":"left","palette":{"KK":"#0F1225","WW":"#DCE2E8
 
 export function initBird(userOptions = {}) {
   const o = Object.assign({
-    selector: '[data-bird-perch]',                    // éléments-perchoirs
-    fallbackSelector: 'section, article, [class*="card"]', // si aucun match
+    selector: '[data-bird-perch]',                    // perchoirs marqués (de confiance)
+    fallbackSelector: 'section, article, [class*="card"]', // auto-détection, AJOUTÉE aux marqués
     scale: 3,                                         // taille du pixel
     zIndex: 2147482000,                               // au-dessus de tout
     frames: null,        // objet au format frames.json ({meta,anims}) ou à plat
@@ -138,10 +138,16 @@ export function initBird(userOptions = {}) {
 
   let perchEls = [];
   function queryPerchEls() {
+    // Union : les éléments marqués [data-bird-perch] (de confiance, prioritaires au
+    // dédoublonnage) S'AJOUTENT aux éléments auto-détectés via fallbackSelector.
+    // Avant, l'explicite était exclusif : marquer UN encart supprimait tous les autres perchoirs.
     const explicit = Array.from(document.querySelectorAll(o.selector));
-    const raw = explicit.length
-      ? explicit.map(el => ({ el, trusted: true }))                                   // data-bird-perch
-      : (o.fallbackSelector ? Array.from(document.querySelectorAll(o.fallbackSelector)).map(el => ({ el, trusted: false })) : []);
+    const seen = new Set(explicit);
+    const fallback = o.fallbackSelector
+      ? Array.from(document.querySelectorAll(o.fallbackSelector)).filter(el => !seen.has(el))
+      : [];
+    const raw = explicit.map(el => ({ el, trusted: true }))       // marqué à la main : test visibilité seul
+      .concat(fallback.map(el => ({ el, trusted: false })));      // auto-détecté : doit être réellement peint
     perchEls = raw.filter(p => qualifies(p.el, p.trusted)).slice(0, 48);
   }
   const perches = [];

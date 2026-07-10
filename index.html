@@ -4,16 +4,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Roadmapped — your repo is already your project management tool</title>
-  <meta name="description" content="Backlog, roadmap and docs as plain YAML and markdown inside your repository — the only source of truth. No database, no SaaS, no account. Your AI agent reads and writes it; you review the diff.">
+  <title>Roadmapped: your repo is already your project management tool</title>
+  <meta name="description" content="Project management as plain YAML and markdown files in your repository: the only source of truth. No database, no SaaS, no account. Your AI agent reads and writes the files; you review the diff.">
   <link rel="canonical" href="https://roadmapped.work/">
-  <meta property="og:title" content="Roadmapped — your repo is already your project management tool">
+  <meta property="og:title" content="Roadmapped: your repo is already your project management tool">
   <meta property="og:description" content="Backlog, roadmap and docs as plain YAML and markdown inside your repository. No database, no SaaS, no account. MIT.">
   <meta property="og:url" content="https://roadmapped.work/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://roadmapped.work/og.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Roadmapped — your repo is already your project management tool">
+  <meta name="twitter:title" content="Roadmapped: your repo is already your project management tool">
   <meta name="twitter:description" content="Backlog, roadmap and docs as plain YAML and markdown inside your repository. No database, no SaaS, no account. MIT.">
   <meta name="twitter:image" content="https://roadmapped.work/og.png">
   <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
@@ -26,7 +26,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Roadmapped",
-    "description": "Backlog, roadmap and docs as plain YAML and markdown inside your repository — the only source of truth. No database, no SaaS, no account. Your AI agent reads and writes it; you review the diff.",
+    "description": "Project management as plain YAML and markdown files in your repository: the only source of truth. No database, no SaaS, no account. Your AI agent reads and writes the files; you review the diff.",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Any (Node.js ≥ 22.18)",
     "offers": {
@@ -45,7 +45,7 @@
 
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="/" aria-label="Roadmapped — home">
+      <a class="brand" href="/" aria-label="Roadmapped home">
         <span class="brand-name">Roadmapped</span>
       </a>
       <nav aria-label="Main">
@@ -64,20 +64,24 @@
           <span class="hero-beat">We just added the interface.</span>
         </h1>
         <p class="hero-sub">
-          Backlog, roadmap and docs as plain YAML and markdown inside your repository —
+          Backlog, roadmap and docs live as plain YAML and markdown files in your repo:
           the only source of truth. No database, no SaaS, no account. Your AI agent
-          reads and writes it in the right format; you review the diff.
+          reads and writes those files in the right format, you review the diff before it lands.
         </p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="https://github.com/5e1y/roadmapped">Get started — <code>ask your agent</code></a>
-          <a class="link-arrow" href="https://github.com/5e1y/roadmapped">View on GitHub&nbsp;&rarr;</a>
+          <a class="btn btn-primary" href="https://github.com/5e1y/roadmapped">Get started on GitHub&nbsp;&rarr;</a>
+          <div class="prompt-copy" role="group" aria-label="Prompt to copy for your AI agent">
+            <span class="prompt-tag">agent&nbsp;prompt</span>
+            <code class="prompt-text">Install Roadmapped in my repo: https://github.com/5e1y/roadmapped</code>
+            <button class="btn-copy" type="button" data-copy-text="Install Roadmapped in my repo: https://github.com/5e1y/roadmapped">Copy</button>
+          </div>
         </div>
         <p class="cta-note">There&rsquo;s no step&nbsp;2. We checked.</p>
       </div>
     </section>
 
-    <!-- ============ Live demo — two windows: the terminal, and the real app ============ -->
-    <section class="demo" aria-label="Live demo — a terminal driving the real Roadmapped dashboard, side by side">
+    <!-- ============ Live demo: two windows, the terminal and the real app ============ -->
+    <section class="demo" aria-label="Live demo: a terminal driving the real Roadmapped dashboard, side by side">
       <div class="demo-stage">
         <div class="duo">
 
@@ -85,7 +89,7 @@
           <div class="window window-terminal">
             <div class="window-bar">
               <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="window-name">claude &mdash; your terminal</span>
+              <span class="window-name">claude &middot; your terminal</span>
             </div>
             <div class="term" id="term">
               <div class="cl" data-kind="you"><span class="cl-p">you &rsaquo;</span> <span class="cl-t">take the next task</span></div>
@@ -96,7 +100,7 @@
               <div class="cl" data-kind="you"><span class="cl-p">you &rsaquo;</span> <span class="cl-t">next</span></div>
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #10 Embed the real dashboard in the homepage &rarr; <span class="cl-progress">in_progress</span></div>
               <div class="cl" data-kind="cmd">$ npx roadmapped start 10</div>
-              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> The window on the right? That&rsquo;s it. Not a replica &mdash; the app.</div>
+              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> The window on the right? That&rsquo;s it. Same app, not a replica.</div>
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #10 stays in_progress until you stop looking.</div>
             </div>
           </div>
@@ -105,21 +109,22 @@
           <div class="window window-app">
             <div class="window-bar">
               <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="window-name window-name-mono">localhost:5173 &mdash; Roadmapped</span>
+              <span class="window-name window-name-mono">localhost:5173 &middot; Roadmapped</span>
             </div>
-            <iframe class="app-frame" src="demo/" title="Roadmapped dashboard — read-only live demo showing this page's own backlog" loading="lazy"></iframe>
+            <iframe class="app-frame" src="demo/" title="Roadmapped dashboard: read-only live demo showing this page's own backlog" loading="lazy"></iframe>
           </div>
 
         </div>
 
         <p class="demo-caption">
-          Two windows. On the left, the loop your agent runs: take, work, record.
-          On the right &mdash; not a screenshot, not a replica &mdash; the actual dashboard,
-          the same React app <code>npx roadmapped dashboard</code> opens, with this page&rsquo;s own
-          backlog baked in. Click around: the graph is the real graph, the panel is
-          the real panel, and every edit is politely declined. Ticket&nbsp;#10 is
-          &ldquo;Embed the real dashboard in the homepage&rdquo;. It&rsquo;s marked in&nbsp;progress.
-          Look at it deciding whether it&rsquo;s done.
+          Two windows, two jobs. On the left: the loop your agent runs on a ticket
+          (take it, do the work, record it). On the right: the real dashboard, not a
+          mockup. It&rsquo;s the same app <code>npx roadmapped dashboard</code> opens on your
+          machine, loaded here with this page&rsquo;s own backlog. Click around: the data
+          is real and the interactions work, only writes are blocked, so nothing you
+          click here ends up in our repo. Ticket&nbsp;#10, &ldquo;Embed the real dashboard
+          in the homepage,&rdquo; is marked in&nbsp;progress right on this page. Watch it
+          decide whether it&rsquo;s done.
         </p>
       </div>
     </section>
@@ -133,42 +138,42 @@
           <article class="feature-card">
             <p class="feature-file">01-backlog-lives-in-git.yaml</p>
             <h3 class="feature-title">Backlog that lives in git</h3>
-            <p>Sections and tasks under <code>docs/tasks/</code>. Full CRUD from the dashboard or the CLI. Every task is a YAML file you can diff, review, and blame — because it is one.</p>
+            <p>Sections and tasks under <code>docs/tasks/</code>. Full CRUD from the dashboard or the CLI. Every task is a YAML file you can diff, review and blame: it really is one.</p>
           </article>
           <article class="feature-card">
             <p class="feature-file">02-roadmap-no-dates.yaml</p>
             <h3 class="feature-title">Roadmap with no dates to lie about</h3>
-            <p>Eight fixed stages, idea to mature, are your milestones — not sections you invent. <code>done</code> / <code>available</code> / <code>locked</code> states are computed from the dependency graph on every read, never stored. Nothing to drift out of sync, because there&rsquo;s no second copy.</p>
+            <p>Eight fixed stages, from idea to mature, are your milestones instead of sections you invent. <code>done</code> / <code>available</code> / <code>locked</code> states are computed from the dependency graph on every read, never stored. Nothing drifts out of sync, because there&rsquo;s no second copy.</p>
           </article>
           <article class="feature-card">
             <p class="feature-file">03-agent-first.yaml</p>
             <h3 class="feature-title">Agent-first, three ways</h3>
-            <p>A CLI (<code>npx roadmapped</code>), a Claude skill, and an MCP server exposing the same commands as tools — your agent creates specs, tasks and dependencies in the correct schema, and records what it ships with more discipline than most of us manage.</p>
+            <p>A CLI (<code>npx roadmapped</code>), a Claude skill, and an MCP server exposing the same commands as tools. Your agent creates specs, tasks and dependencies in the correct schema, and records what it ships with more discipline than most of us manage.</p>
           </article>
           <article class="feature-card">
             <p class="feature-file">04-validated-writes.yaml</p>
             <h3 class="feature-title">Validated writes, honest history</h3>
-            <p>Every write — dashboard, CLI or MCP — goes through the same validator. On error, the change rolls back. Ids are never reused. Your git history is the audit log.</p>
+            <p>Every write (dashboard, CLI or MCP) goes through the same validator. On error, the change rolls back. Ids are never reused. Your git history is the audit log.</p>
           </article>
           <article class="feature-card">
             <p class="feature-file">05-live-dashboard.yaml</p>
             <h3 class="feature-title">Live, because the agent doesn&rsquo;t wait for you</h3>
-            <p>The dashboard updates itself the moment your agent writes — file-watch plus SSE, no refresh. The in-progress task pulses; a timestamped activity panel shows what changed and when.</p>
+            <p>The dashboard updates itself the moment your agent writes: file-watch plus SSE, no refresh. The in-progress task pulses; a timestamped activity panel shows what changed and when.</p>
           </article>
           <article class="feature-card">
             <p class="feature-file">06-multi-repo.yaml</p>
             <h3 class="feature-title">One install, N repos</h3>
-            <p>The tool ships once; the data belongs to whichever repo you launch it from. Every dashboard header spells out which one it&rsquo;s looking at — <em>Roadmapped &times; your-repo</em> — so two open windows never get confused for the same project.</p>
+            <p>The tool ships once; the data belongs to whichever repo you launch it from. Every dashboard header spells out which one it&rsquo;s looking at (<em>Roadmapped &times; your-repo</em>), so two open windows never get confused for the same project.</p>
           </article>
           <article class="feature-card">
             <p class="feature-file">07-git-guard.yaml</p>
             <h3 class="feature-title">Every change is a ticket, enforced at commit</h3>
-            <p>A pre-commit hook refuses a commit that touches product files while nothing is <code>in_progress</code> — chained after your existing hooks (husky, lefthook, whatever), never replacing them. <code>--no-verify</code> still works; skipping the ticket becomes a choice, not an accident.</p>
+            <p>A pre-commit hook refuses a commit that touches product files while nothing is <code>in_progress</code>. It chains after your existing hooks (husky, lefthook, whatever) instead of replacing them. <code>--no-verify</code> still works; skipping the ticket becomes a choice, not an accident.</p>
           </article>
           <article class="feature-card">
             <p class="feature-file">08-docs-and-notepad.yaml</p>
             <h3 class="feature-title">Your docs, rendered right next to the work</h3>
-            <p>The Docs view renders the markdown already in your <code>docs/</code> folder — specs, notes, the guide — no copy, no export. A scratch notepad lives beside it for the thoughts that aren&rsquo;t tasks yet. Same repo, same window as the backlog.</p>
+            <p>The Docs view renders the markdown already in your <code>docs/</code> folder (specs, notes, the guide). No copy, no export. A scratch notepad lives beside it for the thoughts that aren&rsquo;t tasks yet. Same repo, same window as the backlog.</p>
           </article>
         </div>
       </div>
@@ -177,14 +182,17 @@
     <!-- ============ How it works ============ -->
     <section class="section" id="how-it-works" aria-labelledby="how-title">
       <div class="container">
-        <p class="eyebrow"><span class="eyebrow-cmd">$ file 42-dark-mode.yaml</span><span class="eyebrow-out">&nbsp;&nbsp;ASCII text</span></p>
-        <h2 class="section-title" id="how-title">How it works (it&rsquo;s files)</h2>
+        <p class="eyebrow"><span class="eyebrow-cmd">$ git diff docs/tasks/04-build/17-dark-mode.yaml</span><span class="eyebrow-out">&nbsp;&nbsp;+status: done</span></p>
+        <h2 class="section-title" id="how-title">How it works, start to finish</h2>
         <div class="how-grid">
           <div class="how-prose">
-            <p>Everything is flat, hand-editable files: task YAML you can read without us, docs rendered straight from your <code>docs/</code> folder. The dashboard and the CLI read and write the same data through the same validator — never a second, parallel schema hiding somewhere.</p>
-            <p class="callout">Yes, it&rsquo;s a folder of YAML files. No, it&rsquo;s not a database. That&rsquo;s kind of the point.</p>
+            <p><strong>1. Feed it your mess.</strong> Point your agent at a rambling <code>roadmap.md</code>, or just tell it what needs to happen. It turns that into traceable tickets: one YAML file per task, filed in the right stage folder, dependencies wired up.</p>
+            <p><strong>2. Your agent works the files, not a web form.</strong> The same CLI and Claude skill it used to create the ticket also take it, flip its status, and record what shipped when it&rsquo;s done.</p>
+            <p><strong>3. You review the diff.</strong> Every write is a file change in your repo. Reviewing a new ticket, a status flip or a finished task looks exactly like reviewing a pull request, because that is what it is.</p>
+            <p><strong>4. The dashboard shows the whole picture.</strong> Backlog, roadmap and activity, computed live from those same files the moment your agent writes. No second database to keep in sync, because there isn&rsquo;t one.</p>
+            <p class="callout" data-bird-perch>Yes, it&rsquo;s a folder of YAML files. No, it&rsquo;s not a database. That&rsquo;s kind of the point.</p>
           </div>
-          <div class="how-tree" role="img" aria-label="File tree: your repo contains docs/tasks with the 8 fixed stage folders (idea to mature) and their task YAML files, plus a package.json so npx roadmapped can drive it all.">
+          <div class="how-tree" data-bird-perch role="img" aria-label="File tree: your repo contains docs/tasks with the 8 fixed stage folders (idea to mature) and their task YAML files, plus a package.json so npx roadmapped can drive it all.">
 <pre>your-repo/
 ├─ docs/
 │  ├─ tasks/
@@ -205,7 +213,7 @@
       <div class="container">
         <p class="eyebrow"><span class="eyebrow-cmd">$ git log --oneline docs/tasks/</span></p>
         <h2 class="section-title" id="built-title">Built by using itself</h2>
-        <p class="prose">Roadmapped&rsquo;s own backlog is managed by Roadmapped, mostly by a Claude agent that records every task it ships. Nothing gets archived: a done task just stays <code>done</code>, right where it was, with its <code>outcome</code>, <code>verification</code> and <code>commit</code> written onto the file. The done backlog and the commit history are the changelog. If you want to know whether the workflow holds up, don&rsquo;t take our word for it — read the backlog.</p>
+        <p class="prose">Roadmapped&rsquo;s own backlog is managed by Roadmapped, mostly by a Claude agent that records every task it ships. Nothing gets archived: a done task just stays <code>done</code>, right where it was, with its <code>outcome</code>, <code>verification</code> and <code>commit</code> written onto the file. The done backlog and the commit history are the changelog. If you want to know whether the workflow holds up, don&rsquo;t take our word for it: read the backlog.</p>
       </div>
     </section>
 
@@ -217,7 +225,7 @@
         <pre class="code-block"><code>npx --yes github:5e1y/roadmapped init  <span class="code-comment"># scaffold docs/tasks/, the skill, the git guard</span>
 npx roadmapped dashboard               <span class="code-comment"># dashboard on http://localhost:5173</span>
 npx roadmapped --help                  <span class="code-comment"># the CLI your agent (or you) drives</span></code></pre>
-        <p class="prose under-block">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. Point your AI agent at the Claude skill — or just ask it to install Roadmapped from GitHub — and it takes it from there.</p>
+        <p class="prose under-block">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. Point your AI agent at the Claude skill (or just ask it to install Roadmapped from GitHub) and it takes it from there.</p>
       </div>
     </section>
 
@@ -225,15 +233,15 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
     <section class="section" id="privacy" aria-label="Privacy and license">
       <div class="container">
         <div class="pair-grid">
-          <article class="pair-card" aria-labelledby="privacy-title">
+          <article class="pair-card" data-bird-perch aria-labelledby="privacy-title">
             <p class="eyebrow"><span class="eyebrow-cmd">$ curl api.roadmapped.work</span><br><span class="eyebrow-out">curl: (6) Could not resolve host</span></p>
             <h2 class="section-title pair-title" id="privacy-title">Where your data lives</h2>
-            <p>On your machine, in your repo. Not out of principle — we simply don&rsquo;t have a server to send it to. Deleting your account is <code>rm -rf</code>. GDPR compliant by design; the design being that we never had your data.</p>
+            <p>On your machine, in your repo. Not out of principle: we simply don&rsquo;t have a server to send it to. Deleting your account is <code>rm -rf</code>. GDPR compliant by design; the design being that we never had your data.</p>
           </article>
-          <article class="pair-card" aria-labelledby="oss-title">
+          <article class="pair-card" data-bird-perch aria-labelledby="oss-title">
             <p class="eyebrow"><span class="eyebrow-cmd">$ head -1 LICENSE</span><br><span class="eyebrow-out">MIT License</span></p>
             <h2 class="section-title pair-title" id="oss-title">Free, and actually free</h2>
-            <p>MIT licensed. No pricing page, no seats, no &ldquo;contact sales.&rdquo; We don&rsquo;t have a customer success team to schedule an onboarding call — we don&rsquo;t have customers. It&rsquo;s free.</p>
+            <p>MIT licensed. No pricing page, no seats, no &ldquo;contact sales.&rdquo; We don&rsquo;t have a customer success team to schedule an onboarding call. We don&rsquo;t have customers. It&rsquo;s free.</p>
             <p class="pair-links">
               <a class="link-arrow" href="https://github.com/5e1y/roadmapped">Star it on GitHub</a>
               <span class="link-sep" aria-hidden="true">&middot;</span>
@@ -244,22 +252,66 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
       </div>
     </section>
 
+    <!-- ============ Final CTA ============ -->
+    <section class="section" id="cta-final" aria-labelledby="cta-final-title">
+      <div class="container">
+        <p class="eyebrow"><span class="eyebrow-cmd">$ open https://github.com/5e1y/roadmapped</span></p>
+        <h2 class="section-title" id="cta-final-title">Still reading? That&rsquo;s the whole pitch.</h2>
+        <p class="prose">Point your agent at the repo, or hand it the prompt below, and it takes it from there.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="https://github.com/5e1y/roadmapped">Get started on GitHub&nbsp;&rarr;</a>
+          <div class="prompt-copy" role="group" aria-label="Prompt to copy for your AI agent">
+            <span class="prompt-tag">agent&nbsp;prompt</span>
+            <code class="prompt-text">Install Roadmapped in my repo: https://github.com/5e1y/roadmapped</code>
+            <button class="btn-copy" type="button" data-copy-text="Install Roadmapped in my repo: https://github.com/5e1y/roadmapped">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <p>Roadmapped — project management as flat files. MIT &copy; R&eacute;mi Courtillon.</p>
+      <p>Roadmapped: project management as flat files. MIT &copy; R&eacute;mi Courtillon.</p>
       <p class="footer-note">Made with an AI agent that proofreads this site and thinks it&rsquo;s too salesy.</p>
     </div>
   </footer>
 
   <script src="terminal.js"></script>
 
-  <!-- Mascotte Roadmapped (#253) : l'oiseau pixel-art suit le curseur et se pose
-       sur les éléments visuels de la page (cartes, boutons, panneaux, chips de code).
+  <!-- Copy-to-clipboard for the "agent prompt" boxes (hero + final CTA). One
+       delegated listener, no dependency. -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-copy');
+      if (!btn) return;
+      var text = btn.dataset.copyText;
+      var reset = function () {
+        var original = btn.dataset.label || btn.textContent;
+        btn.dataset.label = original;
+        btn.textContent = 'Copied';
+        btn.disabled = true;
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.disabled = false;
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(reset, reset);
+      } else {
+        reset();
+      }
+    });
+  </script>
+
+  <!-- Mascotte Roadmapped (#253, fix #254) : l'oiseau pixel-art suit le curseur et se
+       pose sur les éléments visuels de la page (cartes, boutons, panneaux, chips de code).
        Overlay fixed pointer-events:none — ne bloque jamais clics ni scroll.
-       Perchoirs = fallback filtré « réellement peint » (fond opaque/bordure/contenu),
-       seuil abaissé pour autoriser boutons & petits éléments. -->
+       Perchoirs = union [data-bird-perch] (encarts blancs du bas : pair-cards privacy/MIT,
+       how-tree, callout — de confiance, test visibilité seul) + fallback filtré
+       « réellement peint » (fond opaque/bordure/contenu), seuil abaissé pour
+       autoriser boutons & petits éléments. -->
   <script type="module">
     import { initBird } from './roadmapped-bird.js'
     initBird({

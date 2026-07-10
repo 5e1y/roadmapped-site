@@ -522,3 +522,47 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Prompt-to-copy CTA (hero + final CTA) ---------- */
+
+.prompt-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  max-width: 100%;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: 0.55rem 0.7rem;
+}
+
+.prompt-tag {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.prompt-text {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  background: none;
+  padding: 0;
+  color: var(--soft);
+  white-space: normal;
+  word-break: break-word;
+}
+
+.btn-copy {
+  flex: none;
+  border: 1px solid var(--edge);
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 550;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+}
+.btn-copy:hover { background: var(--hover); }
+.btn-copy:disabled { color: var(--muted); cursor: default; }
