@@ -200,44 +200,33 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   border-top: 1px solid var(--rule);
 }
 
-/* ---------- Header ---------- */
+/* ---------- Nav flottante (#266, ex-header) ----------
+   Le header est parti : le hero XXL porte la marque. Survivent le lien
+   GitHub et le toggle thème (#268), épinglés en haut à droite. Fond --page
+   opaque : lisibles par-dessus tout ce qui scrolle dessous. */
 
-.site-header {
-  border-bottom: 1px solid var(--rule);
-  /* Transparent : les rails et les pixels passent derrière le header. */
-}
-
-.header-inner {
+.corner-nav {
+  position: fixed;
+  top: 0.875rem;
+  right: 0.875rem;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 3.5rem;
+  align-items: stretch;
+  gap: 0.5rem;
+  z-index: 20;
 }
 
-.brand {
+.corner-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  height: 2rem;
+  padding-inline: 0.7rem;
+  border: 1px solid var(--edge);
+  background: var(--page);
   color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 550;
 }
-.brand:hover { text-decoration: none; }
-
-.brand-name {
-  font-weight: 650;
-  letter-spacing: -0.01em;
-}
-
-.header-nav {
-  display: flex;
-  align-items: center;
-  gap: 1.125rem;
-}
-
-.header-link {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--ink);
-}
+.corner-link:hover { background: var(--hover); text-decoration: none; }
 
 /* Toggle thème (#268) : carré, zéro radius, comme le reste des surfaces. */
 .theme-toggle {
@@ -248,7 +237,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   height: 2rem;
   padding: 0;
   border: 1px solid var(--edge);
-  background: transparent;
+  background: var(--page);
   color: var(--ink);
   cursor: pointer;
 }
@@ -257,16 +246,73 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .theme-toggle .icon-sun  { display: var(--icon-sun); }
 .theme-toggle .icon-moon { display: var(--icon-moon); }
 
-/* ---------- Hero ---------- */
+/* Masqué visuellement, lu par les lecteurs d'écran (le h1 du hero). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
 
-.hero { padding-block: clamp(4rem, 10vw, 7.5rem) clamp(2.5rem, 5vw, 4rem); }
+/* ---------- Hero + wordmark XXL (#266) ----------
+   « Roadmapped » bord à bord du viewport : un <svg> pleine largeur dont le
+   viewBox est recalé en JS sur l'encre exacte du mot (script wordmark dans
+   index.html) — hauteur intrinsèque via l'aspect-ratio du viewBox, rendu
+   vectoriel net à toute taille. Le perchoir .wordmark-perch, positionné sur
+   le haut du glyphe R, est invisible mais garde pointer-events:auto : c'est
+   la condition pour rester un perchoir « de confiance » de l'oiseau. */
 
-.hero-title {
-  max-width: 24ch;
-  font-size: clamp(2.125rem, 5.4vw, 3.625rem);
+.hero {
+  /* padding-top > ~3.5rem : le R doit rester posable dès le chargement
+     (l'oiseau exige ~42px de ciel au-dessus d'un perchoir), et le wordmark
+     ne doit pas passer sous la nav flottante. */
+  padding-block: clamp(3.75rem, 7vw, 6rem) clamp(2.5rem, 5vw, 4rem);
+}
+
+.wordmark {
+  position: relative;
+  display: block;
+  width: 100%;
+  color: var(--ink);
+}
+
+.wordmark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.wordmark-text {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 100px;      /* = 100 unités user : doit rester égal au FS du script wordmark */
+  letter-spacing: 0;     /* surtout pas de tracking : le canvas de mesure n'en tient pas compte */
+  fill: currentColor;
+}
+
+.wordmark-perch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;              /* dimensionné par le script wordmark ; 0 = ignoré par l'oiseau */
+  height: 18px;          /* ≥ 16px : seuil de hauteur des perchoirs */
+  background: transparent;
+  pointer-events: auto;  /* requis : un perchoir marqué doit « exister » au pointeur */
+}
+
+.hero .container { margin-top: clamp(1.75rem, 4vw, 3rem); }
+
+.hero-tagline {
+  max-width: 34ch;
+  font-size: clamp(1.375rem, 2.6vw, 1.875rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.08;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   text-wrap: balance;
 }
 
@@ -606,16 +652,21 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .pair-links { margin-top: 1.25rem; }
 .link-sep { color: var(--muted); margin-inline: 0.5rem; }
 
-/* ---------- Footer ---------- */
+/* ---------- Footer (XXL, #266) ----------
+   Le wordmark géant referme la page en miroir du hero ; son R est le second
+   perchoir de l'oiseau. Pas de padding-bottom : le mot s'assoit sur le bord
+   bas de la fenêtre. */
 
 .site-footer {
   border-top: 1px solid var(--rule);
-  padding-block: 2.5rem;
+  padding-block: 2.5rem 0;
   font-size: 0.9375rem;
   color: var(--soft);
 }
 
 .footer-note { color: var(--muted); margin-top: 0.375rem; }
+
+.wordmark-footer { margin-top: clamp(2rem, 5vw, 3.5rem); }
 
 /* ---------- Reveals au scroll (#267) ----------
    html.js-reveal n'est posé (dans <head>) que si IntersectionObserver

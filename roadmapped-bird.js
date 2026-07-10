@@ -7,6 +7,14 @@
  *   import { initBird } from './roadmapped-bird.js';
  *   const bird = initBird();   // options : voir README / signature ci-dessous
  *   bird.destroy();            // retire l'oiseau et tous ses listeners
+ *
+ * Perchoir de départ (#266) :
+ *   initBird({ startPerchSelector: '#hero-perch', startDelayMs: 1000 })
+ *   -> l'oiseau démarre POSÉ sur ce perchoir (au lieu d'entrer par le haut),
+ *      reste immobile en idle pendant startDelayMs, puis suit le curseur
+ *      normalement. Si le sélecteur ne matche pas un perchoir valide au
+ *      chargement (élément absent, hors viewport…), retour au comportement
+ *      historique : entrée par le haut, atterrissage en bas.
  */
 
 const SPRITES = {"meta":{"facing":"left","palette":{"KK":"#0F1225","WW":"#DCE2E8","mm":"#C6CCD4","OR":"#EA6200"},"empty":"..","note":"Chaque anim porte ses propres dimensions (cols/rows) : le lecteur les lit par-anim. Chaque frame est une grille de codes 2 chars separes par espaces. Rendu: cellules pleines, nearest-neighbor, aucun transform."},"anims":{"idle":{"fps":6,"cols":16,"rows":12,"ground":true,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK mm KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. WW","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW ..",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. WW .."]]},"walk":{"fps":8,"cols":16,"rows":12,"ground":true,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. WW WW ..",".. .. .. .. OR .. .. .. OR .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. WW .. WW .. .. .. .. WW WW ..",".. .. .. .. .. .. OR .. OR .. .. .. .. .. .. ..",".. .. .. .. .. .. OR .. .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. OR .. OR .. .. .. .. WW WW ..",".. .. .. .. .. OR .. .. OR .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. WW .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. OR .. .. .. .. .. .. .. .."]]},"fly":{"fps":10,"cols":18,"rows":10,"ground":false,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..","WW .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. WW ..","WW .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. WW ..",".. WW WW WW .. .. .. .. .. .. .. .. .. WW WW WW .. ..",".. .. WW WW KK KK WW .. .. .. WW WW WW WW WW .. .. ..",".. .. .. KK KK KK KK WW WW WW WW WW mm .. .. .. WW WW",".. .. OR OR OR WW WW KK WW mm mm WW WW WW WW WW .. ..",".. .. .. .. .. .. .. mm WW WW WW mm mm mm .. .. .. ..",".. .. .. .. .. .. .. .. mm mm mm .. OR OR .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. WW WW mm KK KK WW .. .. .. .. .. .. mm WW WW WW ..","WW .. .. KK KK KK KK WW WW WW WW WW mm .. .. .. .. WW",".. .. OR OR OR WW WW KK WW mm mm WW WW WW WW WW .. ..",".. .. .. .. .. .. .. mm WW WW WW mm mm mm .. .. .. ..",".. .. .. .. .. .. .. .. mm mm mm .. OR OR .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. KK KK .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. KK KK KK KK WW WW WW WW mm mm .. .. .. ..","WW .. .. OR OR OR WW WW WW mm mm WW WW WW WW .. .. WW",".. WW mm mm .. .. .. mm WW WW WW mm mm mm .. WW WW ..",".. .. .. .. .. .. .. .. mm mm mm .. OR OR .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. WW WW mm mm KK KK .. .. .. .. .. .. mm WW WW WW ..","WW .. .. .. KK KK KK KK WW WW WW WW mm .. .. .. .. WW",".. .. .. OR OR OR WW WW WW mm mm WW WW WW WW WW .. ..",".. .. .. .. .. .. .. mm WW WW WW mm mm mm .. .. .. ..",".. .. .. .. .. .. .. .. mm mm mm .. OR OR .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."]]},"peck":{"fps":8,"cols":16,"rows":12,"ground":true,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW WW .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW mm WW .. .. .. ..",".. .. .. .. mm WW WW WW mm mm .. mm WW .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. .. WW WW ..",".. .. .. .. .. .. mm .. WW .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. WW WW .. .. ..",".. .. .. .. .. .. .. .. .. mm WW WW .. .. .. ..",".. .. .. .. .. mm mm WW WW WW mm .. .. .. .. ..",".. .. KK KK WW WW WW WW WW mm .. .. .. .. .. ..",".. KK KK WW WW WW WW WW mm .. .. .. .. .. .. ..",".. KK OR WW mm mm mm WW .. .. .. .. .. .. .. ..",".. OR .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW WW .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW mm WW .. .. .. ..",".. .. .. .. mm WW WW WW mm mm .. mm WW .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. .. WW WW ..",".. .. .. .. .. .. mm .. WW .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. WW WW .. .. ..",".. .. .. .. .. .. .. .. .. mm WW WW .. .. .. ..",".. .. .. .. .. mm mm WW WW WW mm .. .. .. .. ..",".. .. KK KK WW WW WW WW WW mm .. .. .. .. .. ..",".. KK KK WW WW WW WW WW mm .. .. .. .. .. .. ..",".. KK OR WW mm mm mm WW .. .. .. .. .. .. .. ..",".. OR .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW WW .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW mm WW .. .. .. ..",".. .. .. .. mm WW WW WW mm mm .. mm WW .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. .. WW WW ..",".. .. .. .. .. .. mm .. WW .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."]]},"hop":{"fps":10,"cols":16,"rows":12,"ground":true,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. WW ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW ..","OR OR OR WW WW KK .. .. .. .. .. .. .. WW .. ..",".. .. .. WW mm mm WW WW WW WW .. .. WW .. .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm mm .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. WW WW WW ..",".. .. .. .. .. OR mm OR WW .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. .. OR .. OR .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."],[".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. .. OR OR .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. .. OR .. OR .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. WW ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW ..","OR OR OR WW WW KK .. .. .. .. .. .. .. WW .. ..",".. .. .. WW mm mm WW WW WW WW .. .. WW .. .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm mm .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. WW WW WW ..",".. .. .. .. .. OR mm OR WW .. .. .. .. .. .. .."]]}}};
@@ -20,6 +28,8 @@ export function initBird(userOptions = {}) {
     frames: null,        // objet au format frames.json ({meta,anims}) ou à plat
     palette: null,       // override partiel, ex. {KK:'#141A30'} pour fond sombre
     reducedMotion: null, // true/false pour forcer ; null = media query
+    startPerchSelector: null, // perchoir de départ : l'oiseau démarre posé dessus (#266)
+    startDelayMs: 0,          // immobile pendant ce délai avant de suivre le curseur
   }, userOptions);
 
   // ---- données sprites ------------------------------------------------------
@@ -88,16 +98,37 @@ export function initBird(userOptions = {}) {
   const APEXCY = SPR.hop[0][TAKEOFF_SEQ[TAKEOFF_SEQ.length - 1]].cy; // corps à l'apex du saut
 
   // ---- prefers-reduced-motion : posé, calme, pas de poursuite ----------------
+  // Avec un perchoir de départ (#266), l'oiseau est dessiné posé DESSUS (il
+  // « habite » la page : redessiné au scroll puisque le canvas est fixed) ;
+  // sinon, coin bas-droit comme avant.
   if (reduce) {
+    const startEl = o.startPerchSelector ? document.querySelector(o.startPerchSelector) : null;
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
       const s = SPR.idle[0][0];
-      ctx.drawImage(s.img, Math.round(W * 0.82 - s.cx * SCALE), H - s.R * SCALE, s.C * SCALE, s.R * SCALE);
+      let x = Math.round(W * 0.82 - s.cx * SCALE), y = H - s.R * SCALE;
+      if (startEl) {
+        const r = startEl.getBoundingClientRect();
+        if (r.width > 0) {
+          x = Math.round((r.left + r.right) / 2 - s.cx * SCALE);
+          y = Math.round(r.top) - s.R * SCALE;
+        }
+      }
+      ctx.drawImage(s.img, x, y, s.C * SCALE, s.R * SCALE);
     };
     const onR = () => { resize(); draw(); };
     addEventListener('resize', onR);
+    if (startEl) addEventListener('scroll', draw, { passive: true });
     draw();
-    return { canvas: cv, refresh: draw, destroy() { removeEventListener('resize', onR); cv.remove(); } };
+    return {
+      canvas: cv,
+      refresh: draw,
+      destroy() {
+        removeEventListener('resize', onR);
+        if (startEl) removeEventListener('scroll', draw);
+        cv.remove();
+      },
+    };
   }
 
   // ---- perchoirs : uniquement des éléments RÉELLEMENT visibles ET peints -----
@@ -172,12 +203,33 @@ export function initBird(userOptions = {}) {
 
   // ---- état -------------------------------------------------------------------
   let state = 'air', groundId = null, groundY = 0;
-  let bx = W * 0.5, by = -B.fly.rows * SCALE * 2, vx = 0, vy = 0; // il entre par le haut
+  let bx = W * 0.5, by = -B.fly.rows * SCALE * 2, vx = 0, vy = 0; // fallback : il entre par le haut
   let tx = W * 0.5, ty = H - 24;                                  // et va se poser en bas
   let facing = 0, fi = 0, ft = 0, last = 0, vyS = 0, mode = 'fly', prevMode = 'fly', walkVel = 0;
   let seqPos = 0, seqTimer = 0, hopIdx = 0;
   let restAnim = 'idle', restTimer = 1e9, restPlaying = false, lastRest = '', streak = 0;
-  let dtms = 16, raf = 0;
+  let dtms = 16, raf = 0, holdUntil = 0;
+
+  // ---- perchoir de départ (#266) : démarrer POSÉ plutôt qu'en vol -------------
+  // Le sélecteur doit désigner un perchoir déjà qualifié (donc typiquement un
+  // [data-bird-perch]) ET visible/posable au chargement ; sinon on garde
+  // l'entrée par le haut. Le curseur virtuel (tx,ty) est initialisé SUR le
+  // perchoir : même une fois le délai écoulé, l'oiseau ne bouge pas tant que
+  // la souris n'a pas réellement bougé.
+  if (o.startPerchSelector) {
+    const startEl = document.querySelector(o.startPerchSelector);
+    if (startEl) {
+      computePerches();
+      const g0 = perches.find(p => p.id === startEl);
+      if (g0) {
+        state = 'ground'; groundId = g0.id; groundY = g0.y;
+        bx = (g0.l + g0.r) / 2; by = g0.y; vx = vy = 0;
+        tx = bx; ty = g0.y - 8;
+        mode = prevMode = 'idle'; fi = 0; walkVel = 0;
+        holdUntil = performance.now() + Math.max(0, o.startDelayMs || 0);
+      }
+    }
+  }
 
   const onMove = e => { tx = e.clientX; ty = e.clientY; };
   const onResize = () => { resize(); queryPerchEls(); };
@@ -258,7 +310,10 @@ export function initBird(userOptions = {}) {
     } else {                                // ground
       const s0 = seg();
       if (!s0) toAir();                     // perchoir sorti de l'écran -> chute
-      else {
+      else if (t < holdUntil) {             // délai de départ (#266) : immobile en idle,
+        groundY = s0.y;                     // le curseur n'existe pas encore pour lui
+        walkVel = 0; mode = 'idle';
+      } else {
         groundY = s0.y;
         const g2 = groundForCursor(TAKEOFF_BAND);
         if (!g2 || g2.id !== groundId) {    // la souris vise ailleurs -> saut de décollage

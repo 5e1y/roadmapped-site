@@ -57,30 +57,38 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/" aria-label="Roadmapped home">
-        <span class="brand-name">Roadmapped</span>
-      </a>
-      <nav class="header-nav" aria-label="Main">
-        <a class="header-link" href="https://github.com/5e1y/roadmapped">GitHub&nbsp;&rarr;</a>
-        <button class="theme-toggle" type="button" aria-label="Switch color theme">
-          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><circle cx="12" cy="12" r="4.25"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></svg>
-        </button>
-      </nav>
-    </div>
-  </header>
+  <!-- Le header est mort (#266) : le wordmark géant du hero tient lieu de
+       marque. Ce qui devait survivre — lien GitHub + toggle thème (#268) —
+       flotte en haut à droite, discret, toujours accessible. -->
+  <nav class="corner-nav" aria-label="Main">
+    <a class="corner-link" href="https://github.com/5e1y/roadmapped">GitHub&nbsp;&rarr;</a>
+    <button class="theme-toggle" type="button" aria-label="Switch color theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><circle cx="12" cy="12" r="4.25"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></svg>
+    </button>
+  </nav>
 
   <main id="main">
 
     <!-- ============ Hero ============ -->
+    <!-- Wordmark XXL (#266) : « Roadmapped » bord à bord, en SVG <text> pour
+         une géométrie mesurable — le viewBox est recalé en JS sur l'encre
+         exacte du mot (voir le script wordmark plus bas), et le perchoir
+         invisible .wordmark-perch est posé pile sur le haut du R pour
+         l'oiseau. Le viewBox inline n'est qu'un fallback sans JS. -->
     <section class="hero" aria-labelledby="hero-title">
+      <h1 class="sr-only" id="hero-title">Roadmapped</h1>
+      <div class="wordmark wordmark-hero" data-wordmark aria-hidden="true">
+        <svg viewBox="0 -72 654 94" preserveAspectRatio="xMidYMid meet" focusable="false">
+          <text class="wordmark-text" x="0" y="0">Roadmapped</text>
+        </svg>
+        <span class="wordmark-perch" id="hero-perch" data-bird-perch></span>
+      </div>
       <div class="container">
-        <h1 id="hero-title" class="hero-title">
+        <p class="hero-tagline">
           Your repo is already your project&nbsp;management tool.
           <span class="hero-beat">We just added the interface.</span>
-        </h1>
+        </p>
         <p class="hero-sub">
           Backlog, roadmap and docs live as plain YAML and markdown files in your repo:
           the only source of truth. No database, no SaaS, no account. Your AI agent
@@ -326,7 +334,89 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
       <p>Roadmapped: project management as flat files. MIT &copy; R&eacute;mi Courtillon.</p>
       <p class="footer-note">Made with an AI agent that proofreads this site and thinks it&rsquo;s too salesy.</p>
     </div>
+    <!-- Le même wordmark XXL qu'en hero (#266). Son R est un second perchoir :
+         l'oiseau voyage entre le R du haut et celui du bas selon le curseur. -->
+    <div class="wordmark wordmark-footer" data-wordmark aria-hidden="true">
+      <svg viewBox="0 -72 654 94" preserveAspectRatio="xMidYMid meet" focusable="false">
+        <text class="wordmark-text" x="0" y="0">Roadmapped</text>
+      </svg>
+      <span class="wordmark-perch" id="footer-perch" data-bird-perch></span>
+    </div>
   </footer>
+
+  <!-- Wordmark XXL (#266) : recadre chaque [data-wordmark] sur l'encre réelle
+       du mot et ancre le perchoir sur le haut du glyphe R.
+       Méthode : canvas 2D + TextMetrics (actualBoundingBox*) avec exactement
+       la police calculée du <text> SVG, à la même font-size (100px = 100
+       unités user du SVG). L'encre de « Roadmapped » donne le viewBox
+       (bord à bord, net à toute taille) ; l'encre de « R » seul — inchangée
+       par le crénage puisque le R ouvre le mot à x=0 — donne la boîte du
+       glyphe, convertie en pixels écran via le ratio largeur rendue/viewBox.
+       Repositionné au resize (et à fonts.ready, ceinture-bretelles).
+       Sans TextMetrics : viewBox inline conservé, perchoir large de 0 que
+       l'oiseau ignore — dégradation propre. -->
+  <script>
+    (function () {
+      var marks = document.querySelectorAll('[data-wordmark]');
+      if (!marks.length) return;
+      var meas = document.createElement('canvas').getContext('2d');
+      var FS = 100;                  // font-size du <text> : 1px mesuré = 1 unité SVG
+      var PAD = 2;                   // marge anti-rognage autour de l'encre
+      var MIN_PERCH_PX = 56;         // en dessous, on élargit (centré) : l'oiseau fait ~48px
+
+      function ink(m) {
+        var box = {
+          left:  -m.actualBoundingBoxLeft,
+          right:  m.actualBoundingBoxRight,
+          top:   -m.actualBoundingBoxAscent,
+          bottom: m.actualBoundingBoxDescent
+        };
+        if (!isFinite(box.left + box.right + box.top + box.bottom)) return null;
+        if (box.right - box.left <= 0 || box.bottom - box.top <= 0) return null;
+        return box;
+      }
+
+      var placed = [];
+      Array.prototype.forEach.call(marks, function (mark) {
+        var svg = mark.querySelector('svg');
+        var text = svg && svg.querySelector('text');
+        var perch = mark.querySelector('.wordmark-perch');
+        if (!svg || !text || !perch) return;
+        var word = text.textContent;
+        var s = getComputedStyle(text);
+        meas.font = (s.fontStyle || 'normal') + ' ' + (s.fontWeight || '800') + ' ' + FS + 'px ' + s.fontFamily;
+        if (meas.font.indexOf(FS + 'px') === -1) return;   // stack refusée par le canvas
+        var w = ink(meas.measureText(word));
+        var r = ink(meas.measureText(word.charAt(0)));     // le R : premier glyphe, à x=0
+        if (!w || !r) return;                              // vieux moteur sans TextMetrics
+        var vb = {
+          x: w.left - PAD, y: w.top - PAD,
+          w: (w.right - w.left) + 2 * PAD, h: (w.bottom - w.top) + 2 * PAD
+        };
+        svg.setAttribute('viewBox', vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
+        placed.push({ svg: svg, perch: perch, vb: vb, r: r });
+      });
+      if (!placed.length) return;
+
+      function place() {
+        placed.forEach(function (d) {
+          var box = d.svg.getBoundingClientRect();
+          if (!box.width) return;
+          var k = box.width / d.vb.w;                      // unités SVG -> px écran
+          var left = (d.r.left - d.vb.x) * k;
+          var top = (d.r.top - d.vb.y) * k;                // haut d'encre du R
+          var width = (d.r.right - d.r.left) * k;
+          if (width < MIN_PERCH_PX) { left -= (MIN_PERCH_PX - width) / 2; width = MIN_PERCH_PX; }
+          d.perch.style.left = left.toFixed(1) + 'px';
+          d.perch.style.top = top.toFixed(1) + 'px';
+          d.perch.style.width = width.toFixed(1) + 'px';
+        });
+      }
+      place();
+      addEventListener('resize', place);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+    })();
+  </script>
 
   <script src="terminal.js"></script>
 
@@ -408,18 +498,23 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
     })();
   </script>
 
-  <!-- Mascotte Roadmapped (#253, fix #254) : l'oiseau pixel-art suit le curseur et se
-       pose sur les éléments visuels de la page (cartes, boutons, panneaux, chips de code).
-       Overlay fixed pointer-events:none — ne bloque jamais clics ni scroll.
-       Perchoirs = union [data-bird-perch] (encarts blancs du bas : pair-cards privacy/MIT,
-       how-tree, callout — de confiance, test visibilité seul) + fallback filtré
-       « réellement peint » (fond opaque/bordure/contenu), seuil abaissé pour
-       autoriser boutons & petits éléments. -->
+  <!-- Mascotte Roadmapped (#253, fix #254, #266) : l'oiseau pixel-art suit le curseur
+       et se pose sur les éléments visuels de la page (cartes, boutons, panneaux, chips
+       de code). Overlay fixed pointer-events:none — ne bloque jamais clics ni scroll.
+       Perchoirs = union [data-bird-perch] (les deux R des wordmarks hero/footer,
+       pair-cards privacy/MIT, how-tree, callout — de confiance, test visibilité seul)
+       + fallback filtré « réellement peint » (fond opaque/bordure/contenu), seuil
+       abaissé pour autoriser boutons & petits éléments.
+       #266 : il démarre POSÉ sur le R du hero (startPerchSelector), immobile ~1 s
+       (startDelayMs), puis suit le curseur comme avant. En reduced-motion il reste
+       perché sur ce même R, statique. -->
   <script type="module">
     import { initBird } from './roadmapped-bird.js'
     initBird({
       fallbackSelector: '.feature-card, .btn, .window, .window-bar, pre, code',
       minPerchWidth: 44,
+      startPerchSelector: '#hero-perch',
+      startDelayMs: 1000,
     })
   </script>
 </body>
