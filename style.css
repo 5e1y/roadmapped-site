@@ -667,7 +667,15 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
      Chaque titre est un bouton (.how-step-btn) : cliquer saute au quart
      de piste correspondant (script stepper). */
 
-.how-stage { margin-top: 1.5rem; }
+/* Desktop : 2 colonnes — les 4 étapes à gauche, les aperçus à droite (#290). */
+.how-stage {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+  width: 100%;
+}
 
 .how-steps {
   list-style: none;
@@ -717,6 +725,65 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   max-width: 58ch;
 }
 
+/* --- Aperçus (#290) : panneau peint à droite, un visuel actif à la fois --- */
+.how-visuals {
+  position: relative;
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--rule);
+}
+.how-visual { padding: clamp(1.25rem, 2.5vw, 1.75rem); overflow-x: auto; }
+.how-visual + .how-visual { border-top: 1px solid var(--rule); }
+
+.how-tree { overflow-x: auto; }
+.how-tree pre,
+.how-shell,
+.how-diff {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1.85;
+  color: var(--ink);
+}
+.tree-note { color: var(--muted); }
+.sh-ps1 { color: var(--accent); }
+.sh-out { color: var(--muted); }
+.diff-file { color: var(--muted); }
+.diff-del  { color: var(--muted); }
+.diff-add  { color: var(--accent); }
+
+.how-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.board-col {
+  min-width: 0;
+  background: var(--page);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 11rem;
+}
+.board-head {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.125rem;
+}
+.board-card {
+  display: block;
+  height: 1.5rem;
+  background: var(--card);
+  border: 1px solid var(--edge);
+}
+.board-card.is-live { box-shadow: inset 2px 0 0 var(--accent); }
+.board-card.is-done { opacity: 0.55; }
+
 /* --- Régime pinné --- */
 
 html.js-stepper .how-scroll { height: 400vh; }
@@ -739,6 +806,25 @@ html.js-stepper .how-step:hover { opacity: 0.75; }
 html.js-stepper .how-step.is-active {
   opacity: 1;
   box-shadow: inset 2px 0 0 var(--accent);
+}
+
+html.js-stepper .how-visuals { height: min(58vh, 26rem); overflow: hidden; }
+html.js-stepper .how-visual { display: none; border-top: 0; }
+html.js-stepper .how-visual.is-active {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+  animation: how-visual-in 0.4s ease;
+}
+html.js-stepper .how-visual.is-active > * { margin-block: auto; }
+@keyframes how-visual-in { from { opacity: 0; } }
+
+/* Mobile / tablette (sous le seuil du stepper pinné) : on retire les aperçus,
+   les 4 étapes seules en une colonne (#290 — retour Rémi : aperçus desktop only). */
+@media (max-width: 62rem) {
+  .how-stage { grid-template-columns: 1fr; }
+  .how-visuals { display: none; }
 }
 
 .callout {
@@ -880,11 +966,24 @@ html.js-reveal .reveal.reveal-in {
 
   .feature-card { padding: 1.375rem; }
 
-  /* #287 : sous ce breakpoint les cartes deviennent un accordéon (le JS
-     pose aria-expanded/hidden). La tête devient cliquable ; repliée,
-     l'en-tête se resserre un peu. */
+  /* #287 : sous ce breakpoint les cartes deviennent un accordéon (le JS pose
+     aria-expanded + la classe .is-open). La tête devient cliquable ; repliée,
+     l'en-tête se resserre un peu. Le repli est ANIMÉ (#290) via grid-rows
+     0fr↔1fr — insensible à la hauteur du contenu. Gated par html.js-accordion :
+     sans JS, aucune règle de repli -> tout reste déplié (fallback). */
   .feature-toggle { cursor: pointer; }
-  .feature-toggle[aria-expanded="false"] .feature-head { margin-bottom: 0.625rem; }
+  html.js-accordion .feature-toggle[aria-expanded="false"] .feature-head { margin-bottom: 0.625rem; }
+  html.js-accordion .feature-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+  }
+  html.js-accordion .feature-body > * { overflow: hidden; }
+  html.js-accordion .feature-card.is-open .feature-body { grid-template-rows: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js-accordion .feature-body { transition: none; }
 }
 
 /* Sous ~768px le contenu touche les bords : la grille de colonnes
