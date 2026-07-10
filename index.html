@@ -253,5 +253,28 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
   </footer>
 
   <script src="terminal.js"></script>
+
+  <!-- Mascotte Roadmapped (#253) : l'oiseau pixel-art suit le curseur et se pose
+       sur les éléments visuels de la page (cartes, boutons, panneaux, chips de code).
+       Overlay fixed pointer-events:none — ne bloque jamais clics ni scroll.
+       Perchoirs = fallback filtré « réellement peint » (fond opaque/bordure/contenu),
+       seuil abaissé pour autoriser boutons & petits éléments. -->
+  <script type="module">
+    import { initBird } from './roadmapped-bird.js'
+    const dark = matchMedia('(prefers-color-scheme: dark)')
+    // Lisibilité sur les 2 thèmes (page #fafafa clair / #0a0a0a sombre) sans toucher
+    // à la palette de marque : halo clair en sombre (tête navy), ombre douce en clair (corps blanc).
+    const halo = () => dark.matches
+      ? 'drop-shadow(0 0 1.5px rgba(255,255,255,.55))'
+      : 'drop-shadow(0 1px 1.5px rgba(0,0,0,.28))'
+    const bird = initBird({
+      fallbackSelector: '.feature-card, .btn, .window, .window-bar, pre, code',
+      minPerchWidth: 44,
+    })
+    if (bird && bird.canvas) {
+      bird.canvas.style.filter = halo()
+      dark.addEventListener('change', () => { bird.canvas.style.filter = halo() })
+    }
+  </script>
 </body>
 </html>
