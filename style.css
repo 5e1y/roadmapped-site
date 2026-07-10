@@ -289,7 +289,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .wordmark-text {
   font-family: var(--sans);
-  font-weight: 800;
+  font-weight: 600;      /* #276 : gros mais medium/semibold, plus bold */
   font-size: 100px;      /* = 100 unités user : doit rester égal au FS du script wordmark */
   letter-spacing: 0;     /* surtout pas de tracking : le canvas de mesure n'en tient pas compte */
   fill: currentColor;
@@ -310,11 +310,20 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .hero-tagline {
   max-width: 34ch;
   font-size: clamp(1.375rem, 2.6vw, 1.875rem);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
   text-wrap: balance;
 }
+
+/* #276 : les noms de fichiers de la tagline en monospace, l'accent porté par le
+   task.yaml (le vainqueur) via la couleur d'accent. */
+.hero-tagline code {
+  font-family: var(--mono);
+  font-size: 0.82em;
+  font-weight: 600;
+}
+.hero-beat code { color: var(--accent); }
 
 .hero-beat {
   display: block;
