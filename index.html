@@ -739,9 +739,10 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
         var y = window.scrollY + r.top + (span > 0 ? span * ((i + 0.5) / n) : 0);
         window.scrollTo({ top: y, behavior: 'smooth' });
       }
+      // #290 : toute l'étape est cliquable (le bouton du titre reste le contrôle
+      // clavier ; son clic bulle jusqu'au <li>, donc un seul déclenchement).
       steps.forEach(function (el, i) {
-        var btn = el.querySelector('.how-step-btn');
-        if (btn) btn.addEventListener('click', function () { goTo(i); });
+        el.addEventListener('click', function () { goTo(i); });
       });
       function apply() {
         var on = room.matches && !calm.matches;
@@ -814,8 +815,10 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
           }
         });
       }
+      // #290 : toute la carte est cliquable en mobile (le bouton reste le
+      // contrôle clavier ; son clic bulle jusqu'à la carte -> un seul toggle).
       items.forEach(function (it, i) {
-        it.btn.addEventListener('click', function () {
+        it.card.addEventListener('click', function () {
           if (!mq.matches) return;
           open = (open === i) ? -1 : i;
           paint();
