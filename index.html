@@ -4,17 +4,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Roadmapped: your repo is already your project management tool</title>
-  <meta name="description" content="Project management as plain YAML and markdown files in your repository: the only source of truth. No database, no SaaS, no account. Your AI agent reads and writes the files; you review the diff.">
+  <title>Roadmapped: a live project management dashboard for your repo</title>
+  <meta name="description" content="Turn your repo into your task management tool. A Monday/Jira/Linear-like live dashboard over the backlog and roadmap your AI agent writes as files in your repo. See what's done and what's planned; review the diff.">
   <link rel="canonical" href="https://roadmapped.work/">
-  <meta property="og:title" content="Roadmapped: your repo is already your project management tool">
-  <meta property="og:description" content="Backlog, roadmap and docs as plain YAML and markdown inside your repository. No database, no SaaS, no account. MIT.">
+  <meta property="og:title" content="Roadmapped: a live project management dashboard for your repo">
+  <meta property="og:description" content="Turn your repo into a live project management dashboard: the backlog and roadmap your AI agent writes as files, with the big-picture view. MIT.">
   <meta property="og:url" content="https://roadmapped.work/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://roadmapped.work/og.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Roadmapped: your repo is already your project management tool">
-  <meta name="twitter:description" content="Backlog, roadmap and docs as plain YAML and markdown inside your repository. No database, no SaaS, no account. MIT.">
+  <meta name="twitter:title" content="Roadmapped: a live project management dashboard for your repo">
+  <meta name="twitter:description" content="Turn your repo into a live project management dashboard: the backlog and roadmap your AI agent writes as files, with the big-picture view. MIT.">
   <meta name="twitter:image" content="https://roadmapped.work/og.png">
   <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
@@ -40,7 +40,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Roadmapped",
-    "description": "Project management as plain YAML and markdown files in your repository: the only source of truth. No database, no SaaS, no account. Your AI agent reads and writes the files; you review the diff.",
+    "description": "Turn your repo into your task management tool. A Monday/Jira/Linear-like live dashboard over the backlog and roadmap your AI agent writes as files in your repo. See what's done and what's planned; review the diff.",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Any (Node.js ≥ 22.18)",
     "offers": {
@@ -86,13 +86,14 @@
       </div>
       <div class="container">
         <p class="hero-tagline">
-          Your repo is already your project&nbsp;management tool.
-          <span class="hero-beat">We just added the interface.</span>
+          The <code>roadmap.md</code> is dead.
+          <span class="hero-beat">All hail the <code>task.yaml</code>.</span>
         </p>
         <p class="hero-sub">
-          Backlog, roadmap and docs live as plain YAML and markdown files in your repo:
-          the only source of truth. No database, no SaaS, no account. Your AI agent
-          reads and writes those files in the right format, you review the diff before it lands.
+          Transform your repo into your task management tool. Visualize your backlog,
+          what&rsquo;s finished, and what&rsquo;s planned up ahead, and lead your development
+          to success with a true big-picture view: a Monday/Jira/Linear-like live
+          project management dashboard, running on the files your AI agent already writes.
         </p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="https://github.com/5e1y/roadmapped">Get started on GitHub&nbsp;&rarr;</a>
@@ -237,20 +238,46 @@
       </div>
     </section>
 
-    <!-- ============ How it works ============ -->
+    <!-- ============ How it works (#280) ============
+         Section pinnée + stepper au scroll. La piste .how-scroll fait 400vh
+         quand html.js-stepper est posé (script stepper plus bas : grand
+         écran + pas de prefers-reduced-motion) ; .how-pin se fige et le
+         quart de piste courant active une étape. Sans JS / en reduced
+         motion / sur petit écran : aucune piste, les étapes et visuels
+         s'empilent, tout est lisible.
+         Perchoir : data-bird-perch vit sur .how-visuals (cadre peint
+         constant) et sur le callout, comme avant. -->
     <section class="section" id="how-it-works" aria-labelledby="how-title">
       <div class="container reveal">
         <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;git diff docs/tasks/04-build/17-dark-mode.yaml</span><span class="eyebrow-out">&nbsp;&nbsp;+status: done</span></p>
         <h2 class="section-title" id="how-title">How it works, start to finish</h2>
-        <div class="how-grid">
-          <div class="how-prose">
-            <p><strong>1. Feed it your mess.</strong> Point your agent at a rambling <code>roadmap.md</code>, or just tell it what needs to happen. It turns that into traceable tickets: one YAML file per task, filed in the right stage folder, dependencies wired up.</p>
-            <p><strong>2. Your agent works the files, not a web form.</strong> The same CLI and Claude skill it used to create the ticket also take it, flip its status, and record what shipped when it&rsquo;s done.</p>
-            <p><strong>3. You review the diff.</strong> Every write is a file change in your repo. Reviewing a new ticket, a status flip or a finished task looks exactly like reviewing a pull request, because that is what it is.</p>
-            <p><strong>4. The dashboard shows the whole picture.</strong> Backlog, roadmap and activity, computed live from those same files the moment your agent writes. No second database to keep in sync, because there isn&rsquo;t one.</p>
-            <p class="callout" data-bird-perch>Yes, it&rsquo;s a folder of YAML files. No, it&rsquo;s not a database. That&rsquo;s kind of the point.</p>
-          </div>
-          <div class="how-tree" data-bird-perch role="img" aria-label="File tree: your repo contains docs/tasks with the 8 fixed stage folders (idea to mature) and their task YAML files, plus a package.json so npx roadmapped can drive it all.">
+      </div>
+
+      <div class="how-scroll" data-stepper>
+        <div class="how-pin">
+          <div class="container how-stage">
+            <ol class="how-steps">
+              <li class="how-step is-active">
+                <h3 class="how-step-title"><span class="how-step-num">01</span>Feed it your mess.</h3>
+                <p>Point your agent at a rambling <code>roadmap.md</code>, or just tell it what needs to happen. It turns that into traceable tickets: one YAML file per task, filed in the right stage folder, dependencies wired up.</p>
+              </li>
+              <li class="how-step">
+                <h3 class="how-step-title"><span class="how-step-num">02</span>Your agent works the files, not a web form.</h3>
+                <p>The same CLI and Claude skill it used to create the ticket also take it, flip its status, and record what shipped when it&rsquo;s done.</p>
+              </li>
+              <li class="how-step">
+                <h3 class="how-step-title"><span class="how-step-num">03</span>You review the diff.</h3>
+                <p>Every write is a file change in your repo. Reviewing a new ticket, a status flip or a finished task looks exactly like reviewing a pull request, because that is what it is.</p>
+              </li>
+              <li class="how-step">
+                <h3 class="how-step-title"><span class="how-step-num">04</span>The dashboard shows the whole picture.</h3>
+                <p>Backlog, roadmap and activity, computed live from those same files the moment your agent writes. No second database to keep in sync, because there isn&rsquo;t one.</p>
+              </li>
+            </ol>
+
+            <div class="how-visuals" data-bird-perch>
+              <div class="how-visual is-active">
+                <div class="how-tree" role="img" aria-label="File tree: your repo contains docs/tasks with the 8 fixed stage folders (idea to mature) and their task YAML files, plus a package.json so npx roadmapped can drive it all.">
 <pre>your-repo/
 ├─ docs/
 │  ├─ tasks/
@@ -261,8 +288,46 @@
 │  │  └─ 08-mature/          <span class="tree-note">← 8 fixed stages, always this order</span>
 │  └─ roadmap.md
 └─ package.json               <span class="tree-note">← npx roadmapped drives it all</span></pre>
+                </div>
+              </div>
+              <div class="how-visual">
+                <pre class="how-shell" role="img" aria-label="Terminal: the agent takes ticket 17 with the CLI, works, then records it done."><span class="sh-ps1">$</span> npx roadmapped take 17
+<span class="sh-out">#17 dark-mode &rarr; in_progress</span>
+
+<span class="sh-ps1">$</span> npx roadmapped done 17
+<span class="sh-out">#17 done &middot; outcome + commit recorded</span></pre>
+              </div>
+              <div class="how-visual">
+                <pre class="how-diff" role="img" aria-label="Git diff of a task file: status flips from in progress to done, outcome and commit written onto the file."><span class="diff-file">docs/tasks/04-build/17-dark-mode.yaml</span>
+  title: Dark mode
+<span class="diff-del">- status: in_progress</span>
+<span class="diff-add">+ status: done</span>
+<span class="diff-add">+ outcome: Toggle + persisted choice</span>
+<span class="diff-add">+ commit: 4f2a91c</span></pre>
+              </div>
+              <div class="how-visual">
+                <div class="how-board" role="img" aria-label="Dashboard view: backlog, in progress and done columns, computed live from the same task files.">
+                  <div class="board-col">
+                    <span class="board-head">Backlog</span>
+                    <i class="board-card"></i><i class="board-card"></i><i class="board-card"></i>
+                  </div>
+                  <div class="board-col">
+                    <span class="board-head">In progress</span>
+                    <i class="board-card is-live"></i>
+                  </div>
+                  <div class="board-col">
+                    <span class="board-head">Done</span>
+                    <i class="board-card is-done"></i><i class="board-card is-done"></i><i class="board-card is-done"></i><i class="board-card is-done"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div class="container">
+        <p class="callout" data-bird-perch>Yes, it&rsquo;s a folder of YAML files. No, it&rsquo;s not a database. That&rsquo;s kind of the point.</p>
       </div>
     </section>
 
@@ -459,6 +524,21 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
       function current() {
         return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light');
       }
+
+      // #282 — la démo (iframe même origine) suit le thème du site : chargée
+      // d'emblée avec ?theme= (pas de flash), puis mise à jour en live au toggle.
+      var demo = document.querySelector('.app-frame');
+      function syncDemo() {
+        if (!demo) return;
+        try {
+          var d = demo.contentDocument;
+          if (d && d.documentElement) d.documentElement.setAttribute('data-theme', current());
+        } catch (e) { /* pas encore chargée : le ?theme initial fait le job */ }
+      }
+      if (demo) {
+        demo.src = 'demo/?theme=' + current();
+        demo.addEventListener('load', syncDemo);
+      }
       function label() {
         if (btn) {
           btn.setAttribute('aria-label',
@@ -480,6 +560,7 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
           try { localStorage.setItem('theme', next); } catch (e) {}
           paintMeta();
           label();
+          syncDemo();
         });
       }
       if (mq.addEventListener) mq.addEventListener('change', label);
@@ -498,11 +579,78 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
     })();
   </script>
 
+  <!-- Stepper « How it works » (#280). La piste [data-stepper] mesure sa
+       progression au scroll (-rect.top / (hauteur - 100vh)) et active l'étape
+       du quart courant. Le régime pinné n'existe que si html.js-stepper est
+       posé, et il ne l'est que si : (1) pas de prefers-reduced-motion,
+       (2) viewport ≥ 62rem de large et ≥ 36rem de haut (en dessous, la piste
+       de 400vh et la colonne épinglée n'ont pas la place). Les deux media
+       queries sont écoutées : le régime se (dés)active en live. Sans JS, ce
+       script n'existe pas et le CSS fallback empile tout. Ce script tourne
+       AVANT le module oiseau (script classique vs module différé) : l'état
+       initial des visuels est posé quand l'oiseau recense ses perchoirs. -->
+  <script>
+    (function () {
+      var track = document.querySelector('[data-stepper]');
+      if (!track) return;
+      var steps = Array.prototype.slice.call(track.querySelectorAll('.how-step'));
+      var visuals = Array.prototype.slice.call(track.querySelectorAll('.how-visual'));
+      var n = Math.min(steps.length, visuals.length);
+      if (!n) return;
+      var root = document.documentElement;
+      var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var room = window.matchMedia('(min-width: 62rem) and (min-height: 36rem)');
+      var enabled = false, current = -1, ticking = false;
+
+      function setStep(i) {
+        if (i === current) return;
+        current = i;
+        steps.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
+        visuals.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
+      }
+      function update() {
+        ticking = false;
+        if (!enabled) return;
+        var r = track.getBoundingClientRect();
+        var span = r.height - window.innerHeight;
+        var p = span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 0;
+        setStep(Math.min(n - 1, Math.floor(p * n)));
+      }
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+      function apply() {
+        var on = room.matches && !calm.matches;
+        if (on === enabled) return;
+        enabled = on;
+        root.classList.toggle('js-stepper', on);
+        if (on) {
+          addEventListener('scroll', onScroll, { passive: true });
+          addEventListener('resize', onScroll);
+          current = -1;
+          update();
+        } else {
+          removeEventListener('scroll', onScroll);
+          removeEventListener('resize', onScroll);
+          setStep(0);   // fallback : état neutre, le CSS hors .js-stepper ignore is-active
+        }
+      }
+      if (calm.addEventListener) {
+        calm.addEventListener('change', apply);
+        room.addEventListener('change', apply);
+      }
+      apply();
+    })();
+  </script>
+
   <!-- Mascotte Roadmapped (#253, fix #254, #266) : l'oiseau pixel-art suit le curseur
        et se pose sur les éléments visuels de la page (cartes, boutons, panneaux, chips
        de code). Overlay fixed pointer-events:none — ne bloque jamais clics ni scroll.
        Perchoirs = union [data-bird-perch] (les deux R des wordmarks hero/footer,
-       pair-cards privacy/MIT, how-tree, callout — de confiance, test visibilité seul)
+       pair-cards privacy/MIT, cadre des visuels du stepper .how-visuals, callout
+       — de confiance, test visibilité seul)
        + fallback filtré « réellement peint » (fond opaque/bordure/contenu), seuil
        abaissé pour autoriser boutons & petits éléments.
        #266 : il démarre POSÉ sur le R du hero (startPerchSelector), immobile ~1 s

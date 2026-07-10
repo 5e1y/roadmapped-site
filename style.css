@@ -3,17 +3,24 @@
    Same visual world as the app: monochrome + one blue, tri-layer
    page/card/rule, zero-radius surfaces, system fonts. No dependencies.
 
-   DA (#262–#268) :
-   - Gabarit unique : --container-max partagé par les sections texte ET la
-     scène démo (fini les textes étriqués à côté d'encarts larges).
-   - Cage Vercel : deux rails verticaux (body::after) + filets horizontaux
-     pleine largeur entre sections, le tout en --rule.
-   - Pixels : tuile SVG basse opacité (clin d'œil à la mascotte) en calque
-     fixe derrière tout le contenu (z-index:-1, jamais au-dessus).
-   - Doctrine bleu (--accent) : le bleu signale un ÉTAT ou une INTERACTION,
-     rien d'autre — liens texte, focus, sélection, statut in_progress du
-     terminal, filet du callout, et le sigil « $ » des eyebrows. L'orange
+   DA (#262–#268, passe v3 #277–#280) :
+   - Première partie full-bleed (#277) : hero + démo s'étendent bord à bord ;
+     les rails d'antan deviennent une grille de colonnes régulière (--grid-*)
+     peinte derrière ces deux sections. Le reste garde le conteneur centré
+     (--container-max) et les filets horizontaux entre sections.
+   - Trame de points (#278) : halftone fin et régulier (radial-gradient) en
+     calque fixe derrière tout le contenu (z-index:-1, jamais au-dessus),
+     plus dense en haut de viewport, estompé vers le bas.
+   - Doctrine bleu assouplie (#279) : le bleu signale toujours les ÉTATS et
+     INTERACTIONS (liens, focus, sélection, in_progress, callout, sigil $),
+     et s'autorise désormais quelques accents de DA à faible dose : points
+     de la trame teintés bleu, halo diffus derrière le hero, lignes de la
+     grille de colonnes, numéros d'étape du stepper. PARCIMONIE. L'orange
      #EA6200 reste la propriété exclusive de l'oiseau.
+   - How it works (#280) : section pinnée + stepper au scroll, pilotée par
+     html.js-stepper (posé par JS si écran assez grand ET pas de
+     prefers-reduced-motion). Sans la classe : les 4 étapes s'empilent,
+     lisibles, aucune piste géante vide.
    - Thème : :root = clair ; le sombre vit deux fois (media query pour l'OS,
      [data-theme="dark"] pour le toggle) — GARDER LES DEUX BLOCS EN SYNC.
    ========================================================================== */
@@ -43,11 +50,15 @@
   --icon-sun:  none;
   --icon-moon: block;
 
-  /* Pixels épars (navy de structure, ~6 %) — même semis que le bloc sombre. */
-  --px-tile: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='192'%20height='192'%3E%3Cg%20fill='%230F1225'%20fill-opacity='.06'%3E%3Crect%20x='20'%20y='12'%20width='4'%20height='4'/%3E%3Crect%20x='88'%20y='4'%20width='4'%20height='4'/%3E%3Crect%20x='148'%20y='28'%20width='8'%20height='8'/%3E%3Crect%20x='40'%20y='64'%20width='4'%20height='4'/%3E%3Crect%20x='184'%20y='60'%20width='4'%20height='4'/%3E%3Crect%20x='116'%20y='76'%20width='4'%20height='4'/%3E%3Crect%20x='8'%20y='108'%20width='8'%20height='8'/%3E%3Crect%20x='172'%20y='96'%20width='4'%20height='4'/%3E%3Crect%20x='68'%20y='128'%20width='4'%20height='4'/%3E%3Crect%20x='140'%20y='152'%20width='4'%20height='4'/%3E%3Crect%20x='32'%20y='168'%20width='4'%20height='4'/%3E%3Crect%20x='96'%20y='176'%20width='4'%20height='4'/%3E%3C/g%3E%3C/svg%3E");
+  /* Trame de points (#278) + accents bleus (#279). Le point est un navy-bleu
+     très transparent ; le halo et les lignes de grille tirent sur --accent. */
+  --dot:  rgba(30, 64, 175, 0.14);
+  --halo: rgba(37, 99, 235, 0.08);
+  --grid-line: #e2e7f3;   /* --rule légèrement bleui, encore plus discret */
+  --grid-step: clamp(7.5rem, 10vw, 10rem);  /* pas des colonnes (#277) */
 
-  /* Gabarit (#263) : une seule largeur pour tout — sections texte, grilles
-     et scène démo. 84rem laisse les rails visibles dès un laptop 1440px. */
+  /* Gabarit (#263, amendé #277) : la largeur des sections à conteneur
+     centré. Hero et démo y échappent désormais (full-bleed). */
   --container-max: 84rem;
   --container-pad: clamp(1.25rem, 4vw, 2rem);
 
@@ -79,7 +90,9 @@
     --icon-sun:  block;
     --icon-moon: none;
 
-    --px-tile: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='192'%20height='192'%3E%3Cg%20fill='%23ededed'%20fill-opacity='.05'%3E%3Crect%20x='20'%20y='12'%20width='4'%20height='4'/%3E%3Crect%20x='88'%20y='4'%20width='4'%20height='4'/%3E%3Crect%20x='148'%20y='28'%20width='8'%20height='8'/%3E%3Crect%20x='40'%20y='64'%20width='4'%20height='4'/%3E%3Crect%20x='184'%20y='60'%20width='4'%20height='4'/%3E%3Crect%20x='116'%20y='76'%20width='4'%20height='4'/%3E%3Crect%20x='8'%20y='108'%20width='8'%20height='8'/%3E%3Crect%20x='172'%20y='96'%20width='4'%20height='4'/%3E%3Crect%20x='68'%20y='128'%20width='4'%20height='4'/%3E%3Crect%20x='140'%20y='152'%20width='4'%20height='4'/%3E%3Crect%20x='32'%20y='168'%20width='4'%20height='4'/%3E%3Crect%20x='96'%20y='176'%20width='4'%20height='4'/%3E%3C/g%3E%3C/svg%3E");
+    --dot:  rgba(147, 197, 253, 0.10);
+    --halo: rgba(59, 130, 246, 0.10);
+    --grid-line: #232a38;
   }
 }
 
@@ -107,7 +120,9 @@
   --icon-sun:  block;
   --icon-moon: none;
 
-  --px-tile: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='192'%20height='192'%3E%3Cg%20fill='%23ededed'%20fill-opacity='.05'%3E%3Crect%20x='20'%20y='12'%20width='4'%20height='4'/%3E%3Crect%20x='88'%20y='4'%20width='4'%20height='4'/%3E%3Crect%20x='148'%20y='28'%20width='8'%20height='8'/%3E%3Crect%20x='40'%20y='64'%20width='4'%20height='4'/%3E%3Crect%20x='184'%20y='60'%20width='4'%20height='4'/%3E%3Crect%20x='116'%20y='76'%20width='4'%20height='4'/%3E%3Crect%20x='8'%20y='108'%20width='8'%20height='8'/%3E%3Crect%20x='172'%20y='96'%20width='4'%20height='4'/%3E%3Crect%20x='68'%20y='128'%20width='4'%20height='4'/%3E%3Crect%20x='140'%20y='152'%20width='4'%20height='4'/%3E%3Crect%20x='32'%20y='168'%20width='4'%20height='4'/%3E%3Crect%20x='96'%20y='176'%20width='4'%20height='4'/%3E%3C/g%3E%3C/svg%3E");
+  --dot:  rgba(147, 197, 253, 0.10);
+  --halo: rgba(59, 130, 246, 0.10);
+  --grid-line: #232a38;
 }
 
 /* ---------- Reset (minimal) ---------- */
@@ -117,8 +132,8 @@ body, h1, h2, h3, p, pre { margin: 0; }
 
 html { -webkit-text-size-adjust: 100%; }
 
-/* Le fond de page vit sur <html> : les calques z-index:-1 (pixels, rails)
-   se glissent ainsi ENTRE le fond et le contenu du <body>. */
+/* Le fond de page vit sur <html> : le calque z-index:-1 (trame de points)
+   se glisse ainsi ENTRE le fond et le contenu du <body>. */
 html { background: var(--page); }
 
 body {
@@ -129,31 +144,23 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Calque pixels (#265b) : fixe, derrière tout, insensible au pointeur.
-   L'oiseau (canvas z-index énorme) et la lisibilité ne le croisent jamais. */
+/* Trame de points (#278, remplace la tuile pixel-art) : halftone fin et
+   régulier, fixe, derrière tout, insensible au pointeur. Le masque vertical
+   la rend plus présente en haut du viewport (derrière le hero au chargement)
+   et l'estompe vers le bas. L'oiseau (canvas z-index énorme) et la
+   lisibilité ne la croisent jamais. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: var(--px-tile);
-  background-size: 192px 192px;
-}
-
-/* Rails verticaux (#265a) : la cage qui suit --container-max sur toute la
-   hauteur, y compris à travers header et footer. */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: min(100%, var(--container-max));
-  transform: translateX(-50%);
-  border-inline: 1px solid var(--rule);
-  z-index: -1;
-  pointer-events: none;
+  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1.6px);
+  background-size: 24px 24px;
+  -webkit-mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.55) 45%, rgba(0, 0, 0, 0.28) 100%);
+  mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.55) 45%, rgba(0, 0, 0, 0.28) 100%);
 }
 
 ::selection { background: var(--tint); color: var(--ink); }
@@ -272,7 +279,23 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
      (l'oiseau exige ~42px de ciel au-dessus d'un perchoir), et le wordmark
      ne doit pas passer sous la nav flottante. */
   padding-block: clamp(3.75rem, 7vw, 6rem) clamp(2.5rem, 5vw, 4rem);
+
+  /* #277 + #279 : grille de colonnes régulière bord à bord (les rails,
+     démultipliés) + halo bleu très diffus derrière le wordmark. Peints sur
+     la section elle-même : sous le contenu par construction, et continus
+     avec la même grille de .demo (mêmes step/position sur toute la
+     largeur du viewport). */
+  background-image:
+    radial-gradient(58% 42% at 50% 0%, var(--halo), transparent 72%),
+    linear-gradient(to right, var(--grid-line) 0 1px, transparent 1px);
+  background-size: 100% 100%, var(--grid-step) 100%;
+  background-position: 50% 0, 50% 0;
+  background-repeat: no-repeat, repeat;
 }
+
+/* #277 : le hero s'étend bord à bord — son conteneur perd le cap, la
+   lisibilité reste tenue par les max-width en ch du texte. */
+.hero .container { max-width: none; }
 
 .wordmark {
   position: relative;
@@ -289,7 +312,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .wordmark-text {
   font-family: var(--sans);
-  font-weight: 800;
+  font-weight: 600;      /* #276 : gros mais medium/semibold, plus bold */
   font-size: 100px;      /* = 100 unités user : doit rester égal au FS du script wordmark */
   letter-spacing: 0;     /* surtout pas de tracking : le canvas de mesure n'en tient pas compte */
   fill: currentColor;
@@ -310,11 +333,20 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .hero-tagline {
   max-width: 34ch;
   font-size: clamp(1.375rem, 2.6vw, 1.875rem);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
   text-wrap: balance;
 }
+
+/* #276 : les noms de fichiers de la tagline en monospace, l'accent porté par le
+   task.yaml (le vainqueur) via la couleur d'accent. */
+.hero-tagline code {
+  font-family: var(--mono);
+  font-size: 0.82em;
+  font-weight: 600;
+}
+.hero-beat code { color: var(--accent); }
 
 .hero-beat {
   display: block;
@@ -376,13 +408,18 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- Live demo: two windows (terminal + the real app) ---------- */
 
-.demo { padding-block: 0 clamp(3rem, 7vw, 5rem); }
+.demo {
+  padding-block: 0 clamp(3rem, 7vw, 5rem);
+  /* #277 : même grille de colonnes que le hero, sans le halo — les deux
+     sections étant pleine largeur, les lignes se prolongent sans couture. */
+  background-image: linear-gradient(to right, var(--grid-line) 0 1px, transparent 1px);
+  background-size: var(--grid-step) 100%;
+  background-position: 50% 0;
+}
 
-/* La scène s'aligne désormais sur le gabarit commun (#263) : mêmes rails,
-   même largeur que les sections texte. */
+/* #277 : la scène démo est full-bleed elle aussi — seul le padding de
+   gabarit la retient aux bords. */
 .demo-stage {
-  max-width: var(--container-max);
-  margin-inline: auto;
   padding-inline: var(--container-pad);
 }
 
@@ -565,35 +602,132 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   color: var(--soft);
 }
 
-/* ---------- How it works ---------- */
+/* ---------- How it works : stepper pinné au scroll (#280) ----------
+   Deux régimes, commutés par html.js-stepper (posé par le script stepper
+   uniquement si viewport assez grand ET pas de prefers-reduced-motion) :
 
-.how-grid {
+   - SANS la classe (fallback no-JS / reduced-motion / petit écran) :
+     .how-scroll et .how-pin sont des blocs ordinaires, les 4 étapes
+     s'empilent à pleine opacité et les 4 visuels s'empilent dans le
+     panneau, séparés d'un filet. Rien n'est épinglé, rien n'est vide.
+
+   - AVEC la classe : .how-scroll devient une piste de 400vh, .how-pin se
+     fige (sticky, 100vh) et le script active l'étape du quart de piste
+     courant. Étapes inactives estompées (opacity .4 — jamais ≤ .05 : le
+     test de visibilité de l'oiseau tolère la pénombre). Visuels inactifs
+     en display:none : leur rect disparaît, l'oiseau (qui relit la
+     géométrie à chaque frame) ne peut pas viser un panneau invisible.
+
+   Perchoir : [data-bird-perch] vit sur .how-visuals, le cadre peint
+   (fond --card + bordure) qui reste constant pendant que son contenu
+   change. L'ex-perchoir .how-tree redevient un simple visuel. */
+
+.how-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   gap: clamp(1.5rem, 4vw, 3.5rem);
   align-items: start;
   margin-top: 1.5rem;
+  width: 100%;
 }
 
-.how-prose p { max-width: 58ch; color: var(--soft); }
-.how-prose p + p { margin-top: 1.25rem; }
-
-.callout {
-  background: var(--card);
-  border: 1px solid var(--rule);
-  box-shadow: inset 2px 0 0 var(--accent);
-  padding: 1rem 1.25rem;
-  color: var(--ink) !important;
+.how-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.how-tree {
+.how-step {
+  max-width: 52ch;
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--rule);
+}
+.how-step + .how-step { margin-top: 1.75rem; }
+
+.how-step-num {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--accent);   /* #279 : petit accent bleu de structure */
+  margin-right: 0.5rem;
+}
+
+.how-step-title {
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.375rem;
+}
+
+.how-step p {
+  font-size: 0.9688rem;
+  color: var(--soft);
+}
+
+/* Le cadre des visuels : LE panneau peint, constant, posable. */
+.how-visuals {
+  position: relative;
+  min-width: 0;
   background: var(--card);
   border: 1px solid var(--rule);
-  padding: 1.25rem 1.5rem;
+}
+
+.how-visual {
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
   overflow-x: auto;
 }
+.how-visual + .how-visual { border-top: 1px solid var(--rule); }
 
-.how-tree pre {
+/* --- Régime pinné --- */
+
+html.js-stepper .how-scroll { height: 400vh; }
+
+html.js-stepper .how-pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+html.js-stepper .how-stage { align-items: center; margin-top: 0; }
+
+html.js-stepper .how-step {
+  opacity: 0.4;
+  transition: opacity 0.3s ease, border-color 0.3s ease;
+}
+html.js-stepper .how-step.is-active {
+  opacity: 1;
+  border-left-color: var(--accent);
+}
+
+html.js-stepper .how-visuals {
+  height: min(58vh, 26rem);
+  overflow: hidden;
+}
+html.js-stepper .how-visual {
+  display: none;
+  border-top: 0;
+}
+html.js-stepper .how-visual.is-active {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+  animation: how-visual-in 0.4s ease;
+}
+/* Centre le visuel quand il tient, dégénère en scroll propre (haut
+   atteignable) quand il déborde — contrairement à justify-content:center. */
+html.js-stepper .how-visual.is-active > * { margin-block: auto; }
+@keyframes how-visual-in { from { opacity: 0; } }
+
+/* --- Contenus des visuels --- */
+
+.how-tree { overflow-x: auto; }
+
+.how-tree pre,
+.how-shell,
+.how-diff {
   font-family: var(--mono);
   font-size: 0.8125rem;
   line-height: 1.85;
@@ -601,6 +735,60 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
 
 .tree-note { color: var(--muted); }
+
+.sh-ps1 { color: var(--accent); }
+.sh-out { color: var(--muted); }
+
+.diff-file { color: var(--muted); }
+.diff-del  { color: var(--muted); }
+.diff-add  { color: var(--accent); }
+
+/* Mini board (visuel 4) : trois colonnes, cartes muettes. */
+.how-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+.board-col {
+  min-width: 0;
+  background: var(--page);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 11rem;
+}
+
+.board-head {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.125rem;
+}
+
+.board-card {
+  display: block;
+  height: 1.5rem;
+  background: var(--card);
+  border: 1px solid var(--edge);
+}
+.board-card.is-live { box-shadow: inset 2px 0 0 var(--accent); }
+.board-card.is-done { opacity: 0.55; }
+
+.callout {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  box-shadow: inset 2px 0 0 var(--accent);
+  padding: 1rem 1.25rem;
+  color: var(--ink) !important;
+  max-width: 58ch;
+  margin-top: clamp(1.75rem, 4vw, 2.5rem);
+}
 
 /* ---------- Quickstart ---------- */
 
@@ -723,14 +911,20 @@ html.js-reveal .window-app.reveal { transition-delay: 90ms; }
   .feature-grid,
   .pair-grid { grid-template-columns: 1fr; }
 
-  .how-grid { grid-template-columns: 1fr; }
+  .how-stage { grid-template-columns: 1fr; }
 
   .feature-card { padding: 1.375rem; }
 }
 
-/* Sous ~768px le conteneur touche les bords : les rails n'apportent rien. */
+/* Sous ~768px le contenu touche les bords : la grille de colonnes
+   n'apporte plus rien (#277) — le hero garde son halo (#279). */
 @media (max-width: 48rem) {
-  body::after { display: none; }
+  .hero {
+    background-image: radial-gradient(58% 42% at 50% 0%, var(--halo), transparent 72%);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+  .demo { background-image: none; }
 }
 
 /* ---------- Motion ---------- */
