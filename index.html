@@ -342,6 +342,55 @@
                 <p>Backlog, roadmap and activity, computed live from those same files the moment your agent writes. No second database to keep in sync, because there isn&rsquo;t one.</p>
               </li>
             </ol>
+            <!-- Aperçus (#283, restaurés #290) : visibles sur DESKTOP à droite des
+                 étapes (l'actif s'affiche), masqués sur mobile (4 étapes seules). -->
+            <div class="how-visuals" aria-hidden="true">
+              <div class="how-visual is-active">
+                <div class="how-tree" role="img" aria-label="File tree: your repo contains docs/tasks with the fixed stage folders and their task YAML files, plus a package.json so npx roadmapped can drive it all.">
+<pre>your-repo/
+├─ docs/
+│  ├─ tasks/
+│  │  ├─ 01-idea/
+│  │  │  ├─ _section.yaml
+│  │  │  └─ 03-auth-flow.yaml
+│  │  ├─ 04-build/
+│  │  └─ 08-mature/          <span class="tree-note">← fixed stages, always this order</span>
+│  └─ roadmap.md
+└─ package.json               <span class="tree-note">← npx roadmapped drives it all</span></pre>
+                </div>
+              </div>
+              <div class="how-visual">
+                <pre class="how-shell" role="img" aria-label="Terminal: the agent takes ticket 17 with the CLI, works, then records it done."><span class="sh-ps1">$</span> npx roadmapped take 17
+<span class="sh-out">#17 dark-mode &rarr; in_progress</span>
+
+<span class="sh-ps1">$</span> npx roadmapped done 17
+<span class="sh-out">#17 done &middot; outcome + commit recorded</span></pre>
+              </div>
+              <div class="how-visual">
+                <pre class="how-diff" role="img" aria-label="Git diff of a task file: status flips from in progress to done, outcome and commit written onto the file."><span class="diff-file">docs/tasks/04-build/17-dark-mode.yaml</span>
+  title: Dark mode
+<span class="diff-del">- status: in_progress</span>
+<span class="diff-add">+ status: done</span>
+<span class="diff-add">+ outcome: Toggle + persisted choice</span>
+<span class="diff-add">+ commit: 4f2a91c</span></pre>
+              </div>
+              <div class="how-visual">
+                <div class="how-board" role="img" aria-label="Dashboard view: backlog, in progress and done columns, computed live from the same task files.">
+                  <div class="board-col">
+                    <span class="board-head">Backlog</span>
+                    <i class="board-card"></i><i class="board-card"></i><i class="board-card"></i>
+                  </div>
+                  <div class="board-col">
+                    <span class="board-head">In progress</span>
+                    <i class="board-card is-live"></i>
+                  </div>
+                  <div class="board-col">
+                    <span class="board-head">Done</span>
+                    <i class="board-card is-done"></i><i class="board-card is-done"></i><i class="board-card is-done"></i><i class="board-card is-done"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -652,6 +701,7 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
       var track = document.querySelector('[data-stepper]');
       if (!track) return;
       var steps = Array.prototype.slice.call(track.querySelectorAll('.how-step'));
+      var visuals = Array.prototype.slice.call(track.querySelectorAll('.how-visual'));
       var n = steps.length;
       if (!n) return;
       var root = document.documentElement;
@@ -663,6 +713,7 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
         if (i === current) return;
         current = i;
         steps.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
+        visuals.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
       }
       function update() {
         ticking = false;
@@ -737,11 +788,15 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
         if (!btn || !body) return;
         if (!body.id) body.id = 'feature-body-' + (i + 1);
         btn.setAttribute('aria-controls', body.id);
-        items.push({ btn: btn, body: body });
+        items.push({ card: card, btn: btn, body: body });
       });
       if (!items.length) return;
+      // Gate CSS (#290) : sans cette classe, aucune règle de repli -> tout déplié.
+      document.documentElement.classList.add('js-accordion');
       var open = 0;   // la première ouverte par défaut
 
+      // #290 : repli ANIMÉ (grid-rows via .is-open sur la carte) au lieu de
+      // hidden (non animable). inert sur le corps replié = hors focus/AT.
       function paint() {
         var mobile = mq.matches;
         items.forEach(function (it, i) {
@@ -749,11 +804,13 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
             var isOpen = i === open;
             it.btn.setAttribute('aria-expanded', String(isOpen));
             it.btn.tabIndex = 0;
-            it.body.hidden = !isOpen;
+            it.card.classList.toggle('is-open', isOpen);
+            it.body.inert = !isOpen;
           } else {
             it.btn.removeAttribute('aria-expanded');
             it.btn.tabIndex = -1;   // inerte en desktop : pas un stop clavier
-            it.body.hidden = false;
+            it.card.classList.remove('is-open');
+            it.body.inert = false;
           }
         });
       }
