@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Roadmapped — roadmapped.work
+   Roadmapped — roadmapped.dev
    Same visual world as the app: monochrome + one blue, tri-layer
    page/card/rule, zero-radius surfaces, system fonts. No dependencies.
 
@@ -17,10 +17,14 @@
      de la trame teintés bleu, halo diffus derrière le hero, lignes de la
      grille de colonnes, numéros d'étape du stepper. PARCIMONIE. L'orange
      #EA6200 reste la propriété exclusive de l'oiseau.
-   - How it works (#280) : section pinnée + stepper au scroll, pilotée par
-     html.js-stepper (posé par JS si écran assez grand ET pas de
+   - How it works (#280, remanié #283) : section pinnée + stepper au scroll,
+     pilotée par html.js-stepper (posé par JS si écran assez grand ET pas de
      prefers-reduced-motion). Sans la classe : les 4 étapes s'empilent,
-     lisibles, aucune piste géante vide.
+     lisibles, aucune piste géante vide. Depuis #283 : plus d'aperçus
+     latéraux, les 4 étapes seules dans un panneau peint, titres cliquables.
+   - Passe v4 (#283/#284/#286/#287) : reveals généralisés + stagger (#284),
+     wordmark en deux lignes bord à bord en mobile (#286), accordéon des
+     feature-cards en mobile (#287).
    - Thème : :root = clair ; le sombre vit deux fois (media query pour l'OS,
      [data-theme="dark"] pour le toggle) — GARDER LES DEUX BLOCS EN SYNC.
    ========================================================================== */
@@ -310,6 +314,22 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   height: auto;
 }
 
+/* #286 : en mobile, le wordmark casse en deux lignes bord à bord —
+   « Road » puis « mapped », chacune remplissant la largeur. Trois <svg>
+   par wordmark ; on n'en montre qu'un (desktop) ou deux (mobile).
+   Sélecteurs préfixés .wordmark : il faut battre « .wordmark svg »
+   ci-dessus (0,1,1) dans les deux sens. */
+.wordmark .wordmark-line-two { display: none; }
+.wordmark .wordmark-line-two + .wordmark-line-two {
+  /* Les viewBox sont recalés au ras de l'encre : sans marge, l'ascendante
+     du « d » de mapped toucherait la ligne du dessus. */
+  margin-top: clamp(0.375rem, 1.6vw, 0.625rem);
+}
+@media (max-width: 40rem) {
+  .wordmark .wordmark-line-one { display: none; }
+  .wordmark .wordmark-line-two { display: block; }
+}
+
 .wordmark-text {
   font-family: var(--sans);
   font-weight: 600;      /* #276 : gros mais medium/semibold, plus bold */
@@ -567,6 +587,22 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   padding: 1.75rem;
 }
 
+/* #287 : l'en-tête complet (fichier + icône + titre) vit dans un <button>
+   à l'intérieur du h3. En desktop le bouton est invisible en tant que tel
+   (reset complet, cursor par défaut, hors tabulation via JS) : la carte est
+   pixel pour pixel celle d'avant. En mobile il devient la tête d'accordéon. */
+.feature-toggle {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
 .feature-head {
   display: flex;
   align-items: flex-start;
@@ -578,6 +614,8 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .feature-file {
   font-family: var(--mono);
   font-size: 0.75rem;
+  font-weight: 400;        /* dans le h3 désormais : ne pas hériter du 650 */
+  letter-spacing: normal;
   color: var(--muted);
 }
 
@@ -597,52 +635,66 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   margin-bottom: 0.5rem;
 }
 
-.feature-card p:not(.feature-file) {
+.feature-name { display: block; }
+
+.feature-body p {
   font-size: 0.9688rem;
   color: var(--soft);
 }
 
-/* ---------- How it works : stepper pinné au scroll (#280) ----------
+/* Ceinture-bretelles : hidden doit gagner quoi qu'il arrive. */
+.feature-body[hidden] { display: none; }
+
+/* ---------- How it works : stepper pinné au scroll (#280, remanié #283) ----
+   Les 4 aperçus latéraux ont disparu (#283) : ne restent que les 4 étapes
+   (numéro + titre + texte), dans un panneau peint — .how-steps, fond --card
+   + bordure. C'est LUI qui porte le [data-bird-perch] de la zone (l'ex
+   .how-visuals a emporté le sien en partant) ; le callout garde le sien.
+
    Deux régimes, commutés par html.js-stepper (posé par le script stepper
    uniquement si viewport assez grand ET pas de prefers-reduced-motion) :
 
    - SANS la classe (fallback no-JS / reduced-motion / petit écran) :
      .how-scroll et .how-pin sont des blocs ordinaires, les 4 étapes
-     s'empilent à pleine opacité et les 4 visuels s'empilent dans le
-     panneau, séparés d'un filet. Rien n'est épinglé, rien n'est vide.
+     s'empilent à pleine opacité dans le panneau, séparées d'un filet.
+     Rien n'est épinglé, rien n'est vide, is-active est ignoré.
 
    - AVEC la classe : .how-scroll devient une piste de 400vh, .how-pin se
      fige (sticky, 100vh) et le script active l'étape du quart de piste
-     courant. Étapes inactives estompées (opacity .4 — jamais ≤ .05 : le
-     test de visibilité de l'oiseau tolère la pénombre). Visuels inactifs
-     en display:none : leur rect disparaît, l'oiseau (qui relit la
-     géométrie à chaque frame) ne peut pas viser un panneau invisible.
+     courant. Étapes inactives estompées (opacity .45 — jamais ≤ .05 : le
+     test de visibilité de l'oiseau tolère la pénombre), étape active à
+     pleine opacité + filet bleu inset (même vocabulaire que le callout).
+     Chaque titre est un bouton (.how-step-btn) : cliquer saute au quart
+     de piste correspondant (script stepper). */
 
-   Perchoir : [data-bird-perch] vit sur .how-visuals, le cadre peint
-   (fond --card + bordure) qui reste constant pendant que son contenu
-   change. L'ex-perchoir .how-tree redevient un simple visuel. */
-
-.how-stage {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  gap: clamp(1.5rem, 4vw, 3.5rem);
-  align-items: start;
-  margin-top: 1.5rem;
-  width: 100%;
-}
+.how-stage { margin-top: 1.5rem; }
 
 .how-steps {
   list-style: none;
   margin: 0;
   padding: 0;
+  max-width: 46rem;
+  background: var(--card);
+  border: 1px solid var(--rule);
 }
 
-.how-step {
-  max-width: 52ch;
-  padding-left: 1.1rem;
-  border-left: 2px solid var(--rule);
+.how-step { padding: 1.25rem clamp(1.25rem, 2.5vw, 1.75rem); }
+.how-step + .how-step { border-top: 1px solid var(--rule); }
+
+/* Le titre entier (numéro + intitulé) est le bouton de navigation. Reset
+   complet : au repos il ressemble trait pour trait à l'ancien titre. */
+.how-step-btn {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
-.how-step + .how-step { margin-top: 1.75rem; }
 
 .how-step-num {
   font-family: var(--mono);
@@ -662,21 +714,8 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .how-step p {
   font-size: 0.9688rem;
   color: var(--soft);
+  max-width: 58ch;
 }
-
-/* Le cadre des visuels : LE panneau peint, constant, posable. */
-.how-visuals {
-  position: relative;
-  min-width: 0;
-  background: var(--card);
-  border: 1px solid var(--rule);
-}
-
-.how-visual {
-  padding: clamp(1.25rem, 2.5vw, 1.75rem);
-  overflow-x: auto;
-}
-.how-visual + .how-visual { border-top: 1px solid var(--rule); }
 
 /* --- Régime pinné --- */
 
@@ -690,95 +729,17 @@ html.js-stepper .how-pin {
   align-items: center;
 }
 
-html.js-stepper .how-stage { align-items: center; margin-top: 0; }
+html.js-stepper .how-stage { margin-top: 0; width: 100%; }
 
 html.js-stepper .how-step {
-  opacity: 0.4;
-  transition: opacity 0.3s ease, border-color 0.3s ease;
+  opacity: 0.45;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
 }
+html.js-stepper .how-step:hover { opacity: 0.75; }
 html.js-stepper .how-step.is-active {
   opacity: 1;
-  border-left-color: var(--accent);
+  box-shadow: inset 2px 0 0 var(--accent);
 }
-
-html.js-stepper .how-visuals {
-  height: min(58vh, 26rem);
-  overflow: hidden;
-}
-html.js-stepper .how-visual {
-  display: none;
-  border-top: 0;
-}
-html.js-stepper .how-visual.is-active {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: auto;
-  animation: how-visual-in 0.4s ease;
-}
-/* Centre le visuel quand il tient, dégénère en scroll propre (haut
-   atteignable) quand il déborde — contrairement à justify-content:center. */
-html.js-stepper .how-visual.is-active > * { margin-block: auto; }
-@keyframes how-visual-in { from { opacity: 0; } }
-
-/* --- Contenus des visuels --- */
-
-.how-tree { overflow-x: auto; }
-
-.how-tree pre,
-.how-shell,
-.how-diff {
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  line-height: 1.85;
-  color: var(--ink);
-}
-
-.tree-note { color: var(--muted); }
-
-.sh-ps1 { color: var(--accent); }
-.sh-out { color: var(--muted); }
-
-.diff-file { color: var(--muted); }
-.diff-del  { color: var(--muted); }
-.diff-add  { color: var(--accent); }
-
-/* Mini board (visuel 4) : trois colonnes, cartes muettes. */
-.how-board {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
-}
-
-.board-col {
-  min-width: 0;
-  background: var(--page);
-  padding: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-height: 11rem;
-}
-
-.board-head {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 0.125rem;
-}
-
-.board-card {
-  display: block;
-  height: 1.5rem;
-  background: var(--card);
-  border: 1px solid var(--edge);
-}
-.board-card.is-live { box-shadow: inset 2px 0 0 var(--accent); }
-.board-card.is-done { opacity: 0.55; }
 
 .callout {
   background: var(--card);
@@ -856,23 +817,29 @@ html.js-stepper .how-visual.is-active > * { margin-block: auto; }
 
 .wordmark-footer { margin-top: clamp(2rem, 5vw, 3.5rem); }
 
-/* ---------- Reveals au scroll (#267) ----------
+/* ---------- Reveals au scroll (#267, généralisés #284) ----------
    html.js-reveal n'est posé (dans <head>) que si IntersectionObserver
    existe ET que prefers-reduced-motion ne demande pas le calme : sans JS
    ou en reduced-motion, tout est visible d'emblée. `transform: none` en
-   état final — aucun containing block résiduel. */
+   état final — aucun containing block résiduel.
+   #284 : fade + rise (14px) sur tous les éléments notables ; le stagger
+   entre éléments d'un même lot est un transition-delay inline posé par
+   l'IO (script reveals), nettoyé en fin de transition. Les éléments
+   perchoirs de l'oiseau qui portent .reveal repassent toujours à
+   opacity 1 (l'oiseau ignore opacity ≤ .05 en attendant) ; les deux
+   wordmarks, perchoirs de départ, ne sont JAMAIS .reveal. */
 
 html.js-reveal .reveal {
   opacity: 0;
   transform: translateY(14px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 html.js-reveal .reveal.reveal-in {
   opacity: 1;
   transform: none;
 }
-/* La fenêtre app suit le terminal d'un souffle. */
-html.js-reveal .window-app.reveal { transition-delay: 90ms; }
 
 /* ---------- Responsive ---------- */
 
@@ -911,9 +878,13 @@ html.js-reveal .window-app.reveal { transition-delay: 90ms; }
   .feature-grid,
   .pair-grid { grid-template-columns: 1fr; }
 
-  .how-stage { grid-template-columns: 1fr; }
-
   .feature-card { padding: 1.375rem; }
+
+  /* #287 : sous ce breakpoint les cartes deviennent un accordéon (le JS
+     pose aria-expanded/hidden). La tête devient cliquable ; repliée,
+     l'en-tête se resserre un peu. */
+  .feature-toggle { cursor: pointer; }
+  .feature-toggle[aria-expanded="false"] .feature-head { margin-bottom: 0.625rem; }
 }
 
 /* Sous ~768px le contenu touche les bords : la grille de colonnes
@@ -933,6 +904,9 @@ html.js-reveal .window-app.reveal { transition-delay: 90ms; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    /* #284 : neutralise aussi les délais de stagger posés inline par
+       l'IO si la préférence bascule en cours de session. */
+    transition-delay: 0ms !important;
   }
 }
 

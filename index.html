@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Roadmapped: a live project management dashboard for your repo</title>
   <meta name="description" content="Turn your repo into your task management tool. A Monday/Jira/Linear-like live dashboard over the backlog and roadmap your AI agent writes as files in your repo. See what's done and what's planned; review the diff.">
-  <link rel="canonical" href="https://roadmapped.work/">
+  <link rel="canonical" href="https://roadmapped.dev/">
   <meta property="og:title" content="Roadmapped: a live project management dashboard for your repo">
   <meta property="og:description" content="Turn your repo into a live project management dashboard: the backlog and roadmap your AI agent writes as files, with the big-picture view. MIT.">
-  <meta property="og:url" content="https://roadmapped.work/">
+  <meta property="og:url" content="https://roadmapped.dev/">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://roadmapped.work/og.png">
+  <meta property="og:image" content="https://roadmapped.dev/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Roadmapped: a live project management dashboard for your repo">
   <meta name="twitter:description" content="Turn your repo into a live project management dashboard: the backlog and roadmap your AI agent writes as files, with the big-picture view. MIT.">
-  <meta name="twitter:image" content="https://roadmapped.work/og.png">
+  <meta name="twitter:image" content="https://roadmapped.dev/og.png">
   <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
   <!-- Thème (#268) : applique le choix persisté AVANT le premier paint, et
@@ -49,7 +49,7 @@
       "priceCurrency": "USD"
     },
     "license": "https://opensource.org/licenses/MIT",
-    "url": "https://roadmapped.work/",
+    "url": "https://roadmapped.dev/",
     "codeRepository": "https://github.com/5e1y/roadmapped"
   }
   </script>
@@ -78,24 +78,35 @@
          l'oiseau. Le viewBox inline n'est qu'un fallback sans JS. -->
     <section class="hero" aria-labelledby="hero-title">
       <h1 class="sr-only" id="hero-title">Roadmapped</h1>
+      <!-- #286 : une ligne en desktop, deux lignes bord à bord (Road / mapped)
+           en mobile. Trois <svg> ; la media query n'en montre qu'une (desktop)
+           ou deux (mobile). Le script wordmark recale chaque viewBox sur son
+           encre réelle, et le perchoir suit le R de la ligne VISIBLE
+           (desktop : « Roadmapped » ; mobile : « Road », première ligne). -->
       <div class="wordmark wordmark-hero" data-wordmark aria-hidden="true">
-        <svg viewBox="0 -72 654 94" preserveAspectRatio="xMidYMid meet" focusable="false">
+        <svg class="wordmark-line-one" viewBox="0 -72 654 94" preserveAspectRatio="xMidYMid meet" focusable="false">
           <text class="wordmark-text" x="0" y="0">Roadmapped</text>
+        </svg>
+        <svg class="wordmark-line-two" viewBox="0 -72 246 76" preserveAspectRatio="xMidYMid meet" focusable="false">
+          <text class="wordmark-text" x="0" y="0">Road</text>
+        </svg>
+        <svg class="wordmark-line-two" viewBox="0 -72 376 94" preserveAspectRatio="xMidYMid meet" focusable="false">
+          <text class="wordmark-text" x="0" y="0">mapped</text>
         </svg>
         <span class="wordmark-perch" id="hero-perch" data-bird-perch></span>
       </div>
       <div class="container">
-        <p class="hero-tagline">
+        <p class="hero-tagline reveal">
           The <code>roadmap.md</code> is dead.
           <span class="hero-beat">All hail the <code>task.yaml</code>.</span>
         </p>
-        <p class="hero-sub">
+        <p class="hero-sub reveal">
           Transform your repo into your task management tool. Visualize your backlog,
           what&rsquo;s finished, and what&rsquo;s planned up ahead, and lead your development
           to success with a true big-picture view: a Monday/Jira/Linear-like live
           project management dashboard, running on the files your AI agent already writes.
         </p>
-        <div class="hero-cta">
+        <div class="hero-cta reveal">
           <a class="btn btn-primary" href="https://github.com/5e1y/roadmapped">Get started on GitHub&nbsp;&rarr;</a>
           <div class="prompt-copy" role="group" aria-label="Prompt to copy for your AI agent">
             <span class="prompt-tag">agent&nbsp;prompt</span>
@@ -103,7 +114,7 @@
             <button class="btn-copy" type="button" data-copy-text="Install Roadmapped in my repo: https://github.com/5e1y/roadmapped">Copy</button>
           </div>
         </div>
-        <p class="cta-note">There&rsquo;s no step&nbsp;2. We checked.</p>
+        <p class="cta-note reveal">There&rsquo;s no step&nbsp;2. We checked.</p>
       </div>
     </section>
 
@@ -122,7 +133,7 @@
               <div class="cl" data-kind="you"><span class="cl-p">you &rsaquo;</span> <span class="cl-t">take the next task</span></div>
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #14 Deploy to Cloudflare Pages &rarr; <span class="cl-progress">in_progress</span></div>
               <div class="cl" data-kind="cmd">$ npx wrangler deploy</div>
-              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> Live at roadmapped.work. You&rsquo;re on it.</div>
+              <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> Live at roadmapped.dev. You&rsquo;re on it.</div>
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #14 done &middot; record written</div>
               <div class="cl" data-kind="you"><span class="cl-p">you &rsaquo;</span> <span class="cl-t">next</span></div>
               <div class="cl" data-kind="agent"><span class="cl-p">agent &rsaquo;</span> #10 Embed the real dashboard in the homepage &rarr; <span class="cl-progress">in_progress</span></div>
@@ -156,212 +167,221 @@
       </div>
     </section>
 
-    <!-- ============ Features ============ -->
+    <!-- ============ Features ============
+         #287 : chaque carte = un en-tête (fichier + icône + titre) dans un
+         <button class="feature-toggle"> et un corps .feature-body. En desktop
+         la grille est inchangée (le bouton est inerte, tout est déplié). En
+         mobile (≤ 760px), le script accordéon replie les corps : première
+         ouverte par défaut, une seule ouverte à la fois, aria-expanded +
+         hidden. Sans JS : tout reste déplié, à toutes les tailles. -->
     <section class="section" id="features" aria-labelledby="features-title">
-      <div class="container reveal">
-        <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;ls docs/tasks/</span></p>
-        <h2 class="section-title" id="features-title">What&rsquo;s in the folder</h2>
+      <div class="container">
+        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;ls docs/tasks/</span></p>
+        <h2 class="section-title reveal" id="features-title">What&rsquo;s in the folder</h2>
         <div class="feature-grid">
-          <article class="feature-card">
-            <div class="feature-head">
-              <p class="feature-file">01-backlog-lives-in-git.yaml</p>
-              <!-- git branch, nœuds carrés -->
-              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><rect x="3.75" y="3.75" width="4.5" height="4.5"/><rect x="3.75" y="15.75" width="4.5" height="4.5"/><rect x="15.75" y="3.75" width="4.5" height="4.5"/><path d="M6 8.25v7.5M18 8.25V12H6"/></svg>
+          <article class="feature-card reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">01-backlog-lives-in-git.yaml</span>
+                  <!-- git branch, nœuds carrés -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><rect x="3.75" y="3.75" width="4.5" height="4.5"/><rect x="3.75" y="15.75" width="4.5" height="4.5"/><rect x="15.75" y="3.75" width="4.5" height="4.5"/><path d="M6 8.25v7.5M18 8.25V12H6"/></svg>
+                </span>
+                <span class="feature-name">Backlog that lives in git</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>Sections and tasks under <code>docs/tasks/</code>. Full CRUD from the dashboard or the CLI. Every task is a YAML file you can diff, review and blame: it really is one.</p>
             </div>
-            <h3 class="feature-title">Backlog that lives in git</h3>
-            <p>Sections and tasks under <code>docs/tasks/</code>. Full CRUD from the dashboard or the CLI. Every task is a YAML file you can diff, review and blame: it really is one.</p>
           </article>
-          <article class="feature-card">
-            <div class="feature-head">
-              <p class="feature-file">02-roadmap-no-dates.yaml</p>
-              <!-- marches : les 8 stages, toujours dans cet ordre -->
-              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M3 20.25h4.5v-4.5H12v-4.5h4.5v-4.5H21"/></svg>
+          <article class="feature-card reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">02-roadmap-no-dates.yaml</span>
+                  <!-- marches : les 8 stages, toujours dans cet ordre -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M3 20.25h4.5v-4.5H12v-4.5h4.5v-4.5H21"/></svg>
+                </span>
+                <span class="feature-name">Roadmap with no dates to lie about</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>Eight fixed stages, from idea to mature, are your milestones instead of sections you invent. <code>done</code> / <code>available</code> / <code>locked</code> states are computed from the dependency graph on every read, never stored. Nothing drifts out of sync, because there&rsquo;s no second copy.</p>
             </div>
-            <h3 class="feature-title">Roadmap with no dates to lie about</h3>
-            <p>Eight fixed stages, from idea to mature, are your milestones instead of sections you invent. <code>done</code> / <code>available</code> / <code>locked</code> states are computed from the dependency graph on every read, never stored. Nothing drifts out of sync, because there&rsquo;s no second copy.</p>
           </article>
-          <article class="feature-card">
-            <div class="feature-head">
-              <p class="feature-file">03-agent-first.yaml</p>
-              <!-- terminal -->
-              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15"/><path d="M6.75 9.75 9.75 12l-3 2.25M12.75 15.75h4.5"/></svg>
+          <article class="feature-card reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">03-agent-first.yaml</span>
+                  <!-- terminal -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15"/><path d="M6.75 9.75 9.75 12l-3 2.25M12.75 15.75h4.5"/></svg>
+                </span>
+                <span class="feature-name">Agent-first, three ways</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>A CLI (<code>npx roadmapped</code>), a Claude skill, and an MCP server exposing the same commands as tools. Your agent creates specs, tasks and dependencies in the correct schema, and records what it ships with more discipline than most of us manage.</p>
             </div>
-            <h3 class="feature-title">Agent-first, three ways</h3>
-            <p>A CLI (<code>npx roadmapped</code>), a Claude skill, and an MCP server exposing the same commands as tools. Your agent creates specs, tasks and dependencies in the correct schema, and records what it ships with more discipline than most of us manage.</p>
           </article>
-          <article class="feature-card">
-            <div class="feature-head">
-              <p class="feature-file">04-validated-writes.yaml</p>
-              <!-- case cochée -->
-              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><rect x="3.75" y="3.75" width="16.5" height="16.5"/><path d="m8.25 12.25 2.75 2.75 4.75-5.5"/></svg>
+          <article class="feature-card reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">04-validated-writes.yaml</span>
+                  <!-- case cochée -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><rect x="3.75" y="3.75" width="16.5" height="16.5"/><path d="m8.25 12.25 2.75 2.75 4.75-5.5"/></svg>
+                </span>
+                <span class="feature-name">Validated writes, honest history</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>Every write (dashboard, CLI or MCP) goes through the same validator. On error, the change rolls back. Ids are never reused. Your git history is the audit log.</p>
             </div>
-            <h3 class="feature-title">Validated writes, honest history</h3>
-            <p>Every write (dashboard, CLI or MCP) goes through the same validator. On error, the change rolls back. Ids are never reused. Your git history is the audit log.</p>
           </article>
-          <article class="feature-card">
-            <div class="feature-head">
-              <p class="feature-file">05-live-dashboard.yaml</p>
-              <!-- pouls d'activité -->
-              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M3 12h3.75L9.75 5.25l4.5 13.5L17.25 12H21"/></svg>
+          <article class="feature-card reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">05-live-dashboard.yaml</span>
+                  <!-- pouls d'activité -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M3 12h3.75L9.75 5.25l4.5 13.5L17.25 12H21"/></svg>
+                </span>
+                <span class="feature-name">Live, because the agent doesn&rsquo;t wait for you</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>The dashboard updates itself the moment your agent writes: file-watch plus SSE, no refresh. The in-progress task pulses; a timestamped activity panel shows what changed and when.</p>
             </div>
-            <h3 class="feature-title">Live, because the agent doesn&rsquo;t wait for you</h3>
-            <p>The dashboard updates itself the moment your agent writes: file-watch plus SSE, no refresh. The in-progress task pulses; a timestamped activity panel shows what changed and when.</p>
           </article>
-          <article class="feature-card">
-            <div class="feature-head">
-              <p class="feature-file">06-multi-repo.yaml</p>
-              <!-- carrés empilés : un outil, N repos -->
-              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M8.25 8.25V3.75h12v12h-4.5"/><rect x="3.75" y="8.25" width="12" height="12"/></svg>
+          <article class="feature-card reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">06-multi-repo.yaml</span>
+                  <!-- carrés empilés : un outil, N repos -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M8.25 8.25V3.75h12v12h-4.5"/><rect x="3.75" y="8.25" width="12" height="12"/></svg>
+                </span>
+                <span class="feature-name">One install, N repos</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>The tool ships once; the data belongs to whichever repo you launch it from. Every dashboard header spells out which one it&rsquo;s looking at (<em>Roadmapped &times; your-repo</em>), so two open windows never get confused for the same project.</p>
             </div>
-            <h3 class="feature-title">One install, N repos</h3>
-            <p>The tool ships once; the data belongs to whichever repo you launch it from. Every dashboard header spells out which one it&rsquo;s looking at (<em>Roadmapped &times; your-repo</em>), so two open windows never get confused for the same project.</p>
           </article>
-          <article class="feature-card">
-            <div class="feature-head">
-              <p class="feature-file">07-git-guard.yaml</p>
-              <!-- cadenas -->
-              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="9.75"/><path d="M8.25 10.5V7.5a3.75 3.75 0 0 1 7.5 0v3M12 14.25v2.25"/></svg>
+          <article class="feature-card reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">07-git-guard.yaml</span>
+                  <!-- cadenas -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="9.75"/><path d="M8.25 10.5V7.5a3.75 3.75 0 0 1 7.5 0v3M12 14.25v2.25"/></svg>
+                </span>
+                <span class="feature-name">Every change is a ticket, enforced at commit</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>A pre-commit hook refuses a commit that touches product files while nothing is <code>in_progress</code>. It chains after your existing hooks (husky, lefthook, whatever) instead of replacing them. <code>--no-verify</code> still works; skipping the ticket becomes a choice, not an accident.</p>
             </div>
-            <h3 class="feature-title">Every change is a ticket, enforced at commit</h3>
-            <p>A pre-commit hook refuses a commit that touches product files while nothing is <code>in_progress</code>. It chains after your existing hooks (husky, lefthook, whatever) instead of replacing them. <code>--no-verify</code> still works; skipping the ticket becomes a choice, not an accident.</p>
           </article>
-          <article class="feature-card">
-            <div class="feature-head">
-              <p class="feature-file">08-docs-and-notepad.yaml</p>
-              <!-- page de doc -->
-              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M5.25 3.75H14l4.75 4.75v11.75H5.25Z"/><path d="M14 3.75V8.5h4.75M8.5 13h7M8.5 16.5h7"/></svg>
+          <article class="feature-card reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">08-docs-and-notepad.yaml</span>
+                  <!-- page de doc -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M5.25 3.75H14l4.75 4.75v11.75H5.25Z"/><path d="M14 3.75V8.5h4.75M8.5 13h7M8.5 16.5h7"/></svg>
+                </span>
+                <span class="feature-name">Your docs, rendered right next to the work</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>The Docs view renders the markdown already in your <code>docs/</code> folder (specs, notes, the guide). No copy, no export. A scratch notepad lives beside it for the thoughts that aren&rsquo;t tasks yet. Same repo, same window as the backlog.</p>
             </div>
-            <h3 class="feature-title">Your docs, rendered right next to the work</h3>
-            <p>The Docs view renders the markdown already in your <code>docs/</code> folder (specs, notes, the guide). No copy, no export. A scratch notepad lives beside it for the thoughts that aren&rsquo;t tasks yet. Same repo, same window as the backlog.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ============ How it works (#280) ============
-         Section pinnée + stepper au scroll. La piste .how-scroll fait 400vh
-         quand html.js-stepper est posé (script stepper plus bas : grand
-         écran + pas de prefers-reduced-motion) ; .how-pin se fige et le
-         quart de piste courant active une étape. Sans JS / en reduced
-         motion / sur petit écran : aucune piste, les étapes et visuels
-         s'empilent, tout est lisible.
-         Perchoir : data-bird-perch vit sur .how-visuals (cadre peint
-         constant) et sur le callout, comme avant. -->
+    <!-- ============ How it works (#280, remanié #283) ============
+         Section pinnée + stepper au scroll, sans aperçus latéraux : les
+         4 étapes seules, dans un panneau peint. La piste .how-scroll fait
+         400vh quand html.js-stepper est posé (script stepper plus bas :
+         grand écran + pas de prefers-reduced-motion) ; .how-pin se fige et
+         le quart de piste courant active une étape (les autres s'estompent).
+         Chaque titre d'étape est un bouton : cliquer saute au quart de piste
+         correspondant. Sans JS / en reduced motion / sur petit écran :
+         aucune piste, les 4 étapes s'empilent, tout est lisible.
+         Perchoir : les .how-visuals ont disparu (#283) — leur data-bird-perch
+         est reporté sur .how-steps, le panneau peint (fond + bordure) qui
+         reste constant ; le callout garde le sien. -->
     <section class="section" id="how-it-works" aria-labelledby="how-title">
-      <div class="container reveal">
-        <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;git diff docs/tasks/04-build/17-dark-mode.yaml</span><span class="eyebrow-out">&nbsp;&nbsp;+status: done</span></p>
-        <h2 class="section-title" id="how-title">How it works, start to finish</h2>
+      <div class="container">
+        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;git diff docs/tasks/04-build/17-dark-mode.yaml</span><span class="eyebrow-out">&nbsp;&nbsp;+status: done</span></p>
+        <h2 class="section-title reveal" id="how-title">How it works, start to finish</h2>
       </div>
 
       <div class="how-scroll" data-stepper>
         <div class="how-pin">
           <div class="container how-stage">
-            <ol class="how-steps">
+            <ol class="how-steps reveal" data-bird-perch>
               <li class="how-step is-active">
-                <h3 class="how-step-title"><span class="how-step-num">01</span>Feed it your mess.</h3>
+                <h3 class="how-step-title"><button class="how-step-btn" type="button"><span class="how-step-num">01</span>Feed it your mess.</button></h3>
                 <p>Point your agent at a rambling <code>roadmap.md</code>, or just tell it what needs to happen. It turns that into traceable tickets: one YAML file per task, filed in the right stage folder, dependencies wired up.</p>
               </li>
               <li class="how-step">
-                <h3 class="how-step-title"><span class="how-step-num">02</span>Your agent works the files, not a web form.</h3>
+                <h3 class="how-step-title"><button class="how-step-btn" type="button"><span class="how-step-num">02</span>Your agent works the files, not a web form.</button></h3>
                 <p>The same CLI and Claude skill it used to create the ticket also take it, flip its status, and record what shipped when it&rsquo;s done.</p>
               </li>
               <li class="how-step">
-                <h3 class="how-step-title"><span class="how-step-num">03</span>You review the diff.</h3>
+                <h3 class="how-step-title"><button class="how-step-btn" type="button"><span class="how-step-num">03</span>You review the diff.</button></h3>
                 <p>Every write is a file change in your repo. Reviewing a new ticket, a status flip or a finished task looks exactly like reviewing a pull request, because that is what it is.</p>
               </li>
               <li class="how-step">
-                <h3 class="how-step-title"><span class="how-step-num">04</span>The dashboard shows the whole picture.</h3>
+                <h3 class="how-step-title"><button class="how-step-btn" type="button"><span class="how-step-num">04</span>The dashboard shows the whole picture.</button></h3>
                 <p>Backlog, roadmap and activity, computed live from those same files the moment your agent writes. No second database to keep in sync, because there isn&rsquo;t one.</p>
               </li>
             </ol>
-
-            <div class="how-visuals" data-bird-perch>
-              <div class="how-visual is-active">
-                <div class="how-tree" role="img" aria-label="File tree: your repo contains docs/tasks with the 8 fixed stage folders (idea to mature) and their task YAML files, plus a package.json so npx roadmapped can drive it all.">
-<pre>your-repo/
-├─ docs/
-│  ├─ tasks/
-│  │  ├─ 01-idea/
-│  │  │  ├─ _section.yaml
-│  │  │  └─ 03-auth-flow.yaml
-│  │  ├─ 04-build/
-│  │  └─ 08-mature/          <span class="tree-note">← 8 fixed stages, always this order</span>
-│  └─ roadmap.md
-└─ package.json               <span class="tree-note">← npx roadmapped drives it all</span></pre>
-                </div>
-              </div>
-              <div class="how-visual">
-                <pre class="how-shell" role="img" aria-label="Terminal: the agent takes ticket 17 with the CLI, works, then records it done."><span class="sh-ps1">$</span> npx roadmapped take 17
-<span class="sh-out">#17 dark-mode &rarr; in_progress</span>
-
-<span class="sh-ps1">$</span> npx roadmapped done 17
-<span class="sh-out">#17 done &middot; outcome + commit recorded</span></pre>
-              </div>
-              <div class="how-visual">
-                <pre class="how-diff" role="img" aria-label="Git diff of a task file: status flips from in progress to done, outcome and commit written onto the file."><span class="diff-file">docs/tasks/04-build/17-dark-mode.yaml</span>
-  title: Dark mode
-<span class="diff-del">- status: in_progress</span>
-<span class="diff-add">+ status: done</span>
-<span class="diff-add">+ outcome: Toggle + persisted choice</span>
-<span class="diff-add">+ commit: 4f2a91c</span></pre>
-              </div>
-              <div class="how-visual">
-                <div class="how-board" role="img" aria-label="Dashboard view: backlog, in progress and done columns, computed live from the same task files.">
-                  <div class="board-col">
-                    <span class="board-head">Backlog</span>
-                    <i class="board-card"></i><i class="board-card"></i><i class="board-card"></i>
-                  </div>
-                  <div class="board-col">
-                    <span class="board-head">In progress</span>
-                    <i class="board-card is-live"></i>
-                  </div>
-                  <div class="board-col">
-                    <span class="board-head">Done</span>
-                    <i class="board-card is-done"></i><i class="board-card is-done"></i><i class="board-card is-done"></i><i class="board-card is-done"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
       <div class="container">
-        <p class="callout" data-bird-perch>Yes, it&rsquo;s a folder of YAML files. No, it&rsquo;s not a database. That&rsquo;s kind of the point.</p>
+        <p class="callout reveal" data-bird-perch>Yes, it&rsquo;s a folder of YAML files. No, it&rsquo;s not a database. That&rsquo;s kind of the point.</p>
       </div>
     </section>
 
     <!-- ============ Built by using itself ============ -->
     <section class="section" id="built-by-using-itself" aria-labelledby="built-title">
-      <div class="container reveal">
-        <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;git log --oneline docs/tasks/</span></p>
-        <h2 class="section-title" id="built-title">Built by using itself</h2>
-        <p class="prose">Roadmapped&rsquo;s own backlog is managed by Roadmapped, mostly by a Claude agent that records every task it ships. Nothing gets archived: a done task just stays <code>done</code>, right where it was, with its <code>outcome</code>, <code>verification</code> and <code>commit</code> written onto the file. The done backlog and the commit history are the changelog. If you want to know whether the workflow holds up, don&rsquo;t take our word for it: read the backlog.</p>
+      <div class="container">
+        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;git log --oneline docs/tasks/</span></p>
+        <h2 class="section-title reveal" id="built-title">Built by using itself</h2>
+        <p class="prose reveal">Roadmapped&rsquo;s own backlog is managed by Roadmapped, mostly by a Claude agent that records every task it ships. Nothing gets archived: a done task just stays <code>done</code>, right where it was, with its <code>outcome</code>, <code>verification</code> and <code>commit</code> written onto the file. The done backlog and the commit history are the changelog. If you want to know whether the workflow holds up, don&rsquo;t take our word for it: read the backlog.</p>
       </div>
     </section>
 
     <!-- ============ Quickstart ============ -->
     <section class="section" id="quickstart" aria-labelledby="quickstart-title">
-      <div class="container reveal">
-        <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;node -v</span><span class="eyebrow-out">&nbsp;&nbsp;v22.18.0</span></p>
-        <h2 class="section-title" id="quickstart-title">Quickstart</h2>
-        <pre class="code-block"><code>npx --yes github:5e1y/roadmapped init  <span class="code-comment"># scaffold docs/tasks/, the skill, the git guard</span>
+      <div class="container">
+        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;node -v</span><span class="eyebrow-out">&nbsp;&nbsp;v22.18.0</span></p>
+        <h2 class="section-title reveal" id="quickstart-title">Quickstart</h2>
+        <pre class="code-block reveal"><code>npx --yes github:5e1y/roadmapped init  <span class="code-comment"># scaffold docs/tasks/, the skill, the git guard</span>
 npx roadmapped dashboard               <span class="code-comment"># dashboard on http://localhost:5173</span>
 npx roadmapped --help                  <span class="code-comment"># the CLI your agent (or you) drives</span></code></pre>
-        <p class="prose under-block">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. Point your AI agent at the Claude skill (or just ask it to install Roadmapped from GitHub) and it takes it from there.</p>
+        <p class="prose under-block reveal">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. Point your AI agent at the Claude skill (or just ask it to install Roadmapped from GitHub) and it takes it from there.</p>
       </div>
     </section>
 
     <!-- ============ Privacy + Open source ============ -->
     <section class="section" id="privacy" aria-label="Privacy and license">
-      <div class="container reveal">
+      <div class="container">
         <div class="pair-grid">
-          <article class="pair-card" data-bird-perch aria-labelledby="privacy-title">
-            <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;curl api.roadmapped.work</span><br><span class="eyebrow-out">curl: (6) Could not resolve host</span></p>
+          <article class="pair-card reveal" data-bird-perch aria-labelledby="privacy-title">
+            <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;curl api.roadmapped.dev</span><br><span class="eyebrow-out">curl: (6) Could not resolve host</span></p>
             <h2 class="section-title pair-title" id="privacy-title">Where your data lives</h2>
             <p>On your machine, in your repo. Not out of principle: we simply don&rsquo;t have a server to send it to. Deleting your account is <code>rm -rf</code>. GDPR compliant by design; the design being that we never had your data.</p>
           </article>
-          <article class="pair-card" data-bird-perch aria-labelledby="oss-title">
+          <article class="pair-card reveal" data-bird-perch aria-labelledby="oss-title">
             <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;head -1 LICENSE</span><br><span class="eyebrow-out">MIT License</span></p>
             <h2 class="section-title pair-title" id="oss-title">Free, and actually free</h2>
             <p>MIT licensed. No pricing page, no seats, no &ldquo;contact sales.&rdquo; We don&rsquo;t have a customer success team to schedule an onboarding call. We don&rsquo;t have customers. It&rsquo;s free.</p>
@@ -377,11 +397,11 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
 
     <!-- ============ Final CTA ============ -->
     <section class="section" id="cta-final" aria-labelledby="cta-final-title">
-      <div class="container reveal">
-        <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;open https://github.com/5e1y/roadmapped</span></p>
-        <h2 class="section-title" id="cta-final-title">Still reading? That&rsquo;s the whole pitch.</h2>
-        <p class="prose">Point your agent at the repo, or hand it the prompt below, and it takes it from there.</p>
-        <div class="hero-cta">
+      <div class="container">
+        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;open https://github.com/5e1y/roadmapped</span></p>
+        <h2 class="section-title reveal" id="cta-final-title">Still reading? That&rsquo;s the whole pitch.</h2>
+        <p class="prose reveal">Point your agent at the repo, or hand it the prompt below, and it takes it from there.</p>
+        <div class="hero-cta reveal">
           <a class="btn btn-primary" href="https://github.com/5e1y/roadmapped">Get started on GitHub&nbsp;&rarr;</a>
           <div class="prompt-copy" role="group" aria-label="Prompt to copy for your AI agent">
             <span class="prompt-tag">agent&nbsp;prompt</span>
@@ -396,30 +416,43 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
 
   <footer class="site-footer">
     <div class="container">
-      <p>Roadmapped: project management as flat files. MIT &copy; R&eacute;mi Courtillon.</p>
-      <p class="footer-note">Made with an AI agent that proofreads this site and thinks it&rsquo;s too salesy.</p>
+      <p class="reveal">Roadmapped: project management as flat files. MIT &copy; R&eacute;mi Courtillon.</p>
+      <p class="footer-note reveal">Made with an AI agent that proofreads this site and thinks it&rsquo;s too salesy.</p>
     </div>
-    <!-- Le même wordmark XXL qu'en hero (#266). Son R est un second perchoir :
-         l'oiseau voyage entre le R du haut et celui du bas selon le curseur. -->
+    <!-- Le même wordmark XXL qu'en hero (#266, deux lignes en mobile #286).
+         Son R est un second perchoir (#footer-perch — l'oiseau le vise par
+         id) : l'oiseau voyage entre le R du haut et celui du bas selon le
+         curseur. Pas de .reveal ici : un perchoir ne part jamais d'opacity 0. -->
     <div class="wordmark wordmark-footer" data-wordmark aria-hidden="true">
-      <svg viewBox="0 -72 654 94" preserveAspectRatio="xMidYMid meet" focusable="false">
+      <svg class="wordmark-line-one" viewBox="0 -72 654 94" preserveAspectRatio="xMidYMid meet" focusable="false">
         <text class="wordmark-text" x="0" y="0">Roadmapped</text>
+      </svg>
+      <svg class="wordmark-line-two" viewBox="0 -72 246 76" preserveAspectRatio="xMidYMid meet" focusable="false">
+        <text class="wordmark-text" x="0" y="0">Road</text>
+      </svg>
+      <svg class="wordmark-line-two" viewBox="0 -72 376 94" preserveAspectRatio="xMidYMid meet" focusable="false">
+        <text class="wordmark-text" x="0" y="0">mapped</text>
       </svg>
       <span class="wordmark-perch" id="footer-perch" data-bird-perch></span>
     </div>
   </footer>
 
-  <!-- Wordmark XXL (#266) : recadre chaque [data-wordmark] sur l'encre réelle
-       du mot et ancre le perchoir sur le haut du glyphe R.
+  <!-- Wordmark XXL (#266, deux lignes mobiles #286) : recadre chaque <svg> de
+       [data-wordmark] sur l'encre réelle de son mot et ancre le perchoir sur
+       le haut du glyphe R de la ligne VISIBLE.
        Méthode : canvas 2D + TextMetrics (actualBoundingBox*) avec exactement
        la police calculée du <text> SVG, à la même font-size (100px = 100
-       unités user du SVG). L'encre de « Roadmapped » donne le viewBox
-       (bord à bord, net à toute taille) ; l'encre de « R » seul — inchangée
-       par le crénage puisque le R ouvre le mot à x=0 — donne la boîte du
-       glyphe, convertie en pixels écran via le ratio largeur rendue/viewBox.
-       Repositionné au resize (et à fonts.ready, ceinture-bretelles).
-       Sans TextMetrics : viewBox inline conservé, perchoir large de 0 que
-       l'oiseau ignore — dégradation propre. -->
+       unités user du SVG). L'encre du mot donne le viewBox (bord à bord, net
+       à toute taille) ; l'encre de « R » seul — inchangée par le crénage
+       puisque le R ouvre son mot à x=0 — donne la boîte du glyphe, convertie
+       en pixels écran via le ratio largeur rendue/viewBox. Seules les lignes
+       qui COMMENCENT par R (« Roadmapped » en desktop, « Road » en mobile)
+       pilotent le perchoir ; une ligne masquée par la media query a un rect
+       de largeur 0 et passe son tour — au resize (breakpoint croisé), la
+       ligne devenue visible reprend la main. Repositionné au resize (et à
+       fonts.ready, ceinture-bretelles). Sans TextMetrics : viewBox inline
+       conservés, perchoir large de 0 que l'oiseau ignore — dégradation
+       propre. -->
   <script>
     (function () {
       var marks = document.querySelectorAll('[data-wordmark]');
@@ -443,33 +476,40 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
 
       var placed = [];
       Array.prototype.forEach.call(marks, function (mark) {
-        var svg = mark.querySelector('svg');
-        var text = svg && svg.querySelector('text');
         var perch = mark.querySelector('.wordmark-perch');
-        if (!svg || !text || !perch) return;
-        var word = text.textContent;
-        var s = getComputedStyle(text);
-        meas.font = (s.fontStyle || 'normal') + ' ' + (s.fontWeight || '800') + ' ' + FS + 'px ' + s.fontFamily;
-        if (meas.font.indexOf(FS + 'px') === -1) return;   // stack refusée par le canvas
-        var w = ink(meas.measureText(word));
-        var r = ink(meas.measureText(word.charAt(0)));     // le R : premier glyphe, à x=0
-        if (!w || !r) return;                              // vieux moteur sans TextMetrics
-        var vb = {
-          x: w.left - PAD, y: w.top - PAD,
-          w: (w.right - w.left) + 2 * PAD, h: (w.bottom - w.top) + 2 * PAD
-        };
-        svg.setAttribute('viewBox', vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
-        placed.push({ svg: svg, perch: perch, vb: vb, r: r });
+        Array.prototype.forEach.call(mark.querySelectorAll('svg'), function (svg) {
+          var text = svg.querySelector('text');
+          if (!text) return;
+          var word = text.textContent;
+          var s = getComputedStyle(text);
+          meas.font = (s.fontStyle || 'normal') + ' ' + (s.fontWeight || '800') + ' ' + FS + 'px ' + s.fontFamily;
+          if (meas.font.indexOf(FS + 'px') === -1) return;   // stack refusée par le canvas
+          var w = ink(meas.measureText(word));
+          if (!w) return;                                    // vieux moteur sans TextMetrics
+          var vb = {
+            x: w.left - PAD, y: w.top - PAD,
+            w: (w.right - w.left) + 2 * PAD, h: (w.bottom - w.top) + 2 * PAD
+          };
+          svg.setAttribute('viewBox', vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
+          var d = { mark: mark, svg: svg, vb: vb, perch: null, r: null };
+          if (perch && word.charAt(0) === 'R') {             // seule la ligne au R porte le perchoir
+            var r = ink(meas.measureText('R'));
+            if (r) { d.perch = perch; d.r = r; }
+          }
+          placed.push(d);
+        });
       });
       if (!placed.length) return;
 
       function place() {
         placed.forEach(function (d) {
+          if (!d.perch) return;
           var box = d.svg.getBoundingClientRect();
-          if (!box.width) return;
+          if (!box.width) return;                          // ligne masquée : l'autre pilote
+          var host = d.mark.getBoundingClientRect();       // le perchoir est positionné dans .wordmark
           var k = box.width / d.vb.w;                      // unités SVG -> px écran
-          var left = (d.r.left - d.vb.x) * k;
-          var top = (d.r.top - d.vb.y) * k;                // haut d'encre du R
+          var left = (box.left - host.left) + (d.r.left - d.vb.x) * k;
+          var top = (box.top - host.top) + (d.r.top - d.vb.y) * k;   // haut d'encre du R
           var width = (d.r.right - d.r.left) * k;
           if (width < MIN_PERCH_PX) { left -= (MIN_PERCH_PX - width) / 2; width = MIN_PERCH_PX; }
           d.perch.style.left = left.toFixed(1) + 'px';
@@ -567,35 +607,52 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
       paintMeta();
       label();
 
+      // #284 — reveals généralisés : fade + rise sur tous les éléments
+      // notables. Le stagger est calculé PAR LOT : les cibles qui entrent
+      // dans le même callback IO (donc révélées ensemble, en ordre document)
+      // se décalent de 75 ms chacune, plafonné ; une cible qui entre seule
+      // plus tard part à 0 ms. Le délai inline est nettoyé en fin de
+      // transition pour ne pas polluer d'autres transitions opacity/transform
+      // (l'estompage des étapes du stepper, par exemple).
       if (!root.classList.contains('js-reveal')) return;
       var io = new IntersectionObserver(function (entries) {
+        var k = 0;
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
-          entry.target.classList.add('reveal-in');
-          io.unobserve(entry.target);
+          var el = entry.target;
+          el.style.transitionDelay = (Math.min(k, 7) * 75) + 'ms';
+          el.addEventListener('transitionend', function clear(e) {
+            if (e.target !== el) return;   // transitionend bulle : ignorer les enfants
+            el.style.transitionDelay = '';
+            el.removeEventListener('transitionend', clear);
+          });
+          el.classList.add('reveal-in');
+          io.unobserve(el);
+          k++;
         });
       }, { rootMargin: '0px 0px -8% 0px' });
       document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
     })();
   </script>
 
-  <!-- Stepper « How it works » (#280). La piste [data-stepper] mesure sa
-       progression au scroll (-rect.top / (hauteur - 100vh)) et active l'étape
-       du quart courant. Le régime pinné n'existe que si html.js-stepper est
-       posé, et il ne l'est que si : (1) pas de prefers-reduced-motion,
-       (2) viewport ≥ 62rem de large et ≥ 36rem de haut (en dessous, la piste
-       de 400vh et la colonne épinglée n'ont pas la place). Les deux media
-       queries sont écoutées : le régime se (dés)active en live. Sans JS, ce
-       script n'existe pas et le CSS fallback empile tout. Ce script tourne
-       AVANT le module oiseau (script classique vs module différé) : l'état
-       initial des visuels est posé quand l'oiseau recense ses perchoirs. -->
+  <!-- Stepper « How it works » (#280, remanié #283 : plus d'aperçus, étapes
+       cliquables). La piste [data-stepper] mesure sa progression au scroll
+       (-rect.top / (hauteur - 100vh)) et active l'étape du quart courant.
+       Cliquer le titre d'une étape (.how-step-btn) scrolle programmatique-
+       ment au MILIEU du quart de piste correspondant — le pilotage scroll
+       existant fait le reste (l'état actif suit le défilement). Le régime
+       pinné n'existe que si html.js-stepper est posé, et il ne l'est que
+       si : (1) pas de prefers-reduced-motion, (2) viewport ≥ 62rem de large
+       et ≥ 36rem de haut. Les deux media queries sont écoutées : le régime
+       se (dés)active en live. Hors régime pinné, cliquer une étape se
+       contente de l'amener à l'écran. Sans JS, ce script n'existe pas et le
+       CSS fallback empile tout. -->
   <script>
     (function () {
       var track = document.querySelector('[data-stepper]');
       if (!track) return;
       var steps = Array.prototype.slice.call(track.querySelectorAll('.how-step'));
-      var visuals = Array.prototype.slice.call(track.querySelectorAll('.how-visual'));
-      var n = Math.min(steps.length, visuals.length);
+      var n = steps.length;
       if (!n) return;
       var root = document.documentElement;
       var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -606,7 +663,6 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
         if (i === current) return;
         current = i;
         steps.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
-        visuals.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
       }
       function update() {
         ticking = false;
@@ -621,6 +677,21 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
         ticking = true;
         requestAnimationFrame(update);
       }
+      // #283 — navigation cliquable : saute au quart de piste de l'étape i.
+      function goTo(i) {
+        if (!enabled) {
+          steps[i].scrollIntoView({ block: 'center', behavior: calm.matches ? 'auto' : 'smooth' });
+          return;
+        }
+        var r = track.getBoundingClientRect();
+        var span = r.height - window.innerHeight;
+        var y = window.scrollY + r.top + (span > 0 ? span * ((i + 0.5) / n) : 0);
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+      steps.forEach(function (el, i) {
+        var btn = el.querySelector('.how-step-btn');
+        if (btn) btn.addEventListener('click', function () { goTo(i); });
+      });
       function apply() {
         var on = room.matches && !calm.matches;
         if (on === enabled) return;
@@ -645,12 +716,65 @@ npx roadmapped --help                  <span class="code-comment"># the CLI your
     })();
   </script>
 
+  <!-- Accordéon « What's in the folder » (#287), mobile seulement (≤ 760px,
+       le breakpoint où la grille passe en une colonne). En desktop : bouton
+       inerte, hors tabulation, pas d'aria-expanded — la grille dépliée est
+       exactement celle d'avant. En mobile : première carte ouverte, une
+       seule ouverte à la fois (rouvrir la carte ouverte la replie),
+       aria-expanded + hidden posés par JS. La media query est écoutée : on
+       replie/déplie en live quand le viewport croise le breakpoint. Les
+       cartes restent peintes (fond + bordure) ouvertes ou fermées :
+       l'oiseau garde ses perchoirs de fallback. Sans JS : tout déplié. -->
+  <script>
+    (function () {
+      var cards = document.querySelectorAll('.feature-grid .feature-card');
+      if (!cards.length) return;
+      var mq = window.matchMedia('(max-width: 760px)');
+      var items = [];
+      Array.prototype.forEach.call(cards, function (card, i) {
+        var btn = card.querySelector('.feature-toggle');
+        var body = card.querySelector('.feature-body');
+        if (!btn || !body) return;
+        if (!body.id) body.id = 'feature-body-' + (i + 1);
+        btn.setAttribute('aria-controls', body.id);
+        items.push({ btn: btn, body: body });
+      });
+      if (!items.length) return;
+      var open = 0;   // la première ouverte par défaut
+
+      function paint() {
+        var mobile = mq.matches;
+        items.forEach(function (it, i) {
+          if (mobile) {
+            var isOpen = i === open;
+            it.btn.setAttribute('aria-expanded', String(isOpen));
+            it.btn.tabIndex = 0;
+            it.body.hidden = !isOpen;
+          } else {
+            it.btn.removeAttribute('aria-expanded');
+            it.btn.tabIndex = -1;   // inerte en desktop : pas un stop clavier
+            it.body.hidden = false;
+          }
+        });
+      }
+      items.forEach(function (it, i) {
+        it.btn.addEventListener('click', function () {
+          if (!mq.matches) return;
+          open = (open === i) ? -1 : i;
+          paint();
+        });
+      });
+      if (mq.addEventListener) mq.addEventListener('change', paint);
+      paint();
+    })();
+  </script>
+
   <!-- Mascotte Roadmapped (#253, fix #254, #266) : l'oiseau pixel-art suit le curseur
        et se pose sur les éléments visuels de la page (cartes, boutons, panneaux, chips
        de code). Overlay fixed pointer-events:none — ne bloque jamais clics ni scroll.
        Perchoirs = union [data-bird-perch] (les deux R des wordmarks hero/footer,
-       pair-cards privacy/MIT, cadre des visuels du stepper .how-visuals, callout
-       — de confiance, test visibilité seul)
+       pair-cards privacy/MIT, panneau des étapes du stepper .how-steps (#283),
+       callout — de confiance, test visibilité seul)
        + fallback filtré « réellement peint » (fond opaque/bordure/contenu), seuil
        abaissé pour autoriser boutons & petits éléments.
        #266 : il démarre POSÉ sur le R du hero (startPerchSelector), immobile ~1 s
