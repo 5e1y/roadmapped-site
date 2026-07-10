@@ -2,11 +2,27 @@
    Roadmapped — roadmapped.work
    Same visual world as the app: monochrome + one blue, tri-layer
    page/card/rule, zero-radius surfaces, system fonts. No dependencies.
+
+   DA (#262–#268) :
+   - Gabarit unique : --container-max partagé par les sections texte ET la
+     scène démo (fini les textes étriqués à côté d'encarts larges).
+   - Cage Vercel : deux rails verticaux (body::after) + filets horizontaux
+     pleine largeur entre sections, le tout en --rule.
+   - Pixels : tuile SVG basse opacité (clin d'œil à la mascotte) en calque
+     fixe derrière tout le contenu (z-index:-1, jamais au-dessus).
+   - Doctrine bleu (--accent) : le bleu signale un ÉTAT ou une INTERACTION,
+     rien d'autre — liens texte, focus, sélection, statut in_progress du
+     terminal, filet du callout, et le sigil « $ » des eyebrows. L'orange
+     #EA6200 reste la propriété exclusive de l'oiseau.
+   - Thème : :root = clair ; le sombre vit deux fois (media query pour l'OS,
+     [data-theme="dark"] pour le toggle) — GARDER LES DEUX BLOCS EN SYNC.
    ========================================================================== */
 
 /* ---------- Tokens ---------- */
 
 :root {
+  color-scheme: light;
+
   --page:   #fafafa;
   --card:   #ffffff;
   --rule:   #e5e5e5;
@@ -23,12 +39,27 @@
   --btn-ink:   #ffffff;
   --btn-hover: #404040;
 
+  /* Toggle thème : quelle icône montrer (la destination, pas l'état). */
+  --icon-sun:  none;
+  --icon-moon: block;
+
+  /* Pixels épars (navy de structure, ~6 %) — même semis que le bloc sombre. */
+  --px-tile: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='192'%20height='192'%3E%3Cg%20fill='%230F1225'%20fill-opacity='.06'%3E%3Crect%20x='20'%20y='12'%20width='4'%20height='4'/%3E%3Crect%20x='88'%20y='4'%20width='4'%20height='4'/%3E%3Crect%20x='148'%20y='28'%20width='8'%20height='8'/%3E%3Crect%20x='40'%20y='64'%20width='4'%20height='4'/%3E%3Crect%20x='184'%20y='60'%20width='4'%20height='4'/%3E%3Crect%20x='116'%20y='76'%20width='4'%20height='4'/%3E%3Crect%20x='8'%20y='108'%20width='8'%20height='8'/%3E%3Crect%20x='172'%20y='96'%20width='4'%20height='4'/%3E%3Crect%20x='68'%20y='128'%20width='4'%20height='4'/%3E%3Crect%20x='140'%20y='152'%20width='4'%20height='4'/%3E%3Crect%20x='32'%20y='168'%20width='4'%20height='4'/%3E%3Crect%20x='96'%20y='176'%20width='4'%20height='4'/%3E%3C/g%3E%3C/svg%3E");
+
+  /* Gabarit (#263) : une seule largeur pour tout — sections texte, grilles
+     et scène démo. 84rem laisse les rails visibles dès un laptop 1440px. */
+  --container-max: 84rem;
+  --container-pad: clamp(1.25rem, 4vw, 2rem);
+
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
+/* Sombre via l'OS — ignoré si le toggle a forcé le clair. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
     --page:   #0a0a0a;
     --card:   #161616;
     --rule:   #2a2a2a;
@@ -44,7 +75,39 @@
     --btn-bg:    #ededed;
     --btn-ink:   #0a0a0a;
     --btn-hover: #d4d4d4;
+
+    --icon-sun:  block;
+    --icon-moon: none;
+
+    --px-tile: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='192'%20height='192'%3E%3Cg%20fill='%23ededed'%20fill-opacity='.05'%3E%3Crect%20x='20'%20y='12'%20width='4'%20height='4'/%3E%3Crect%20x='88'%20y='4'%20width='4'%20height='4'/%3E%3Crect%20x='148'%20y='28'%20width='8'%20height='8'/%3E%3Crect%20x='40'%20y='64'%20width='4'%20height='4'/%3E%3Crect%20x='184'%20y='60'%20width='4'%20height='4'/%3E%3Crect%20x='116'%20y='76'%20width='4'%20height='4'/%3E%3Crect%20x='8'%20y='108'%20width='8'%20height='8'/%3E%3Crect%20x='172'%20y='96'%20width='4'%20height='4'/%3E%3Crect%20x='68'%20y='128'%20width='4'%20height='4'/%3E%3Crect%20x='140'%20y='152'%20width='4'%20height='4'/%3E%3Crect%20x='32'%20y='168'%20width='4'%20height='4'/%3E%3Crect%20x='96'%20y='176'%20width='4'%20height='4'/%3E%3C/g%3E%3C/svg%3E");
   }
+}
+
+/* Sombre via le toggle (#268) — gagne sur la media query dans les deux sens
+   (spécificité (0,2,0) contre le :root clair en (0,1,0)). */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --page:   #0a0a0a;
+  --card:   #161616;
+  --rule:   #2a2a2a;
+  --ink:    #ededed;
+  --soft:   #b9b9b9;
+  --muted:  #a3a3a3;
+  --accent: #60a5fa;
+  --tint:   #17233c;
+  --hover:  #202020;
+  --edge:   #3a3a3a;
+  --panel-shadow: -10px 0 24px rgba(0, 0, 0, 0.45);
+  --code-bg: #262626;
+  --btn-bg:    #ededed;
+  --btn-ink:   #0a0a0a;
+  --btn-hover: #d4d4d4;
+
+  --icon-sun:  block;
+  --icon-moon: none;
+
+  --px-tile: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='192'%20height='192'%3E%3Cg%20fill='%23ededed'%20fill-opacity='.05'%3E%3Crect%20x='20'%20y='12'%20width='4'%20height='4'/%3E%3Crect%20x='88'%20y='4'%20width='4'%20height='4'/%3E%3Crect%20x='148'%20y='28'%20width='8'%20height='8'/%3E%3Crect%20x='40'%20y='64'%20width='4'%20height='4'/%3E%3Crect%20x='184'%20y='60'%20width='4'%20height='4'/%3E%3Crect%20x='116'%20y='76'%20width='4'%20height='4'/%3E%3Crect%20x='8'%20y='108'%20width='8'%20height='8'/%3E%3Crect%20x='172'%20y='96'%20width='4'%20height='4'/%3E%3Crect%20x='68'%20y='128'%20width='4'%20height='4'/%3E%3Crect%20x='140'%20y='152'%20width='4'%20height='4'/%3E%3Crect%20x='32'%20y='168'%20width='4'%20height='4'/%3E%3Crect%20x='96'%20y='176'%20width='4'%20height='4'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* ---------- Reset (minimal) ---------- */
@@ -54,13 +117,43 @@ body, h1, h2, h3, p, pre { margin: 0; }
 
 html { -webkit-text-size-adjust: 100%; }
 
+/* Le fond de page vit sur <html> : les calques z-index:-1 (pixels, rails)
+   se glissent ainsi ENTRE le fond et le contenu du <body>. */
+html { background: var(--page); }
+
 body {
-  background: var(--page);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 1.0625rem;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Calque pixels (#265b) : fixe, derrière tout, insensible au pointeur.
+   L'oiseau (canvas z-index énorme) et la lisibilité ne le croisent jamais. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--px-tile);
+  background-size: 192px 192px;
+}
+
+/* Rails verticaux (#265a) : la cage qui suit --container-max sur toute la
+   hauteur, y compris à travers header et footer. */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: min(100%, var(--container-max));
+  transform: translateX(-50%);
+  border-inline: 1px solid var(--rule);
+  z-index: -1;
+  pointer-events: none;
 }
 
 ::selection { background: var(--tint); color: var(--ink); }
@@ -96,56 +189,130 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 /* ---------- Layout ---------- */
 
 .container {
-  max-width: 66rem;
+  max-width: var(--container-max);
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4vw, 2rem);
+  padding-inline: var(--container-pad);
 }
 
-.section { padding-block: clamp(3.5rem, 8vw, 5.5rem); }
-
-/* ---------- Header ---------- */
-
-.site-header {
-  border-bottom: 1px solid var(--rule);
-  background: var(--page);
+.section {
+  padding-block: clamp(3.5rem, 8vw, 5.5rem);
+  /* Filet horizontal pleine largeur : croise les rails, dessine la grille. */
+  border-top: 1px solid var(--rule);
 }
 
-.header-inner {
+/* ---------- Nav flottante (#266, ex-header) ----------
+   Le header est parti : le hero XXL porte la marque. Survivent le lien
+   GitHub et le toggle thème (#268), épinglés en haut à droite. Fond --page
+   opaque : lisibles par-dessus tout ce qui scrolle dessous. */
+
+.corner-nav {
+  position: fixed;
+  top: 0.875rem;
+  right: 0.875rem;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 3.5rem;
+  align-items: stretch;
+  gap: 0.5rem;
+  z-index: 20;
 }
 
-.brand {
+.corner-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  height: 2rem;
+  padding-inline: 0.7rem;
+  border: 1px solid var(--edge);
+  background: var(--page);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 550;
+}
+.corner-link:hover { background: var(--hover); text-decoration: none; }
+
+/* Toggle thème (#268) : carré, zéro radius, comme le reste des surfaces. */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--edge);
+  background: var(--page);
+  color: var(--ink);
+  cursor: pointer;
+}
+.theme-toggle:hover { background: var(--hover); }
+.theme-toggle svg { width: 16px; height: 16px; }
+.theme-toggle .icon-sun  { display: var(--icon-sun); }
+.theme-toggle .icon-moon { display: var(--icon-moon); }
+
+/* Masqué visuellement, lu par les lecteurs d'écran (le h1 du hero). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Hero + wordmark XXL (#266) ----------
+   « Roadmapped » bord à bord du viewport : un <svg> pleine largeur dont le
+   viewBox est recalé en JS sur l'encre exacte du mot (script wordmark dans
+   index.html) — hauteur intrinsèque via l'aspect-ratio du viewBox, rendu
+   vectoriel net à toute taille. Le perchoir .wordmark-perch, positionné sur
+   le haut du glyphe R, est invisible mais garde pointer-events:auto : c'est
+   la condition pour rester un perchoir « de confiance » de l'oiseau. */
+
+.hero {
+  /* padding-top > ~3.5rem : le R doit rester posable dès le chargement
+     (l'oiseau exige ~42px de ciel au-dessus d'un perchoir), et le wordmark
+     ne doit pas passer sous la nav flottante. */
+  padding-block: clamp(3.75rem, 7vw, 6rem) clamp(2.5rem, 5vw, 4rem);
+}
+
+.wordmark {
+  position: relative;
+  display: block;
+  width: 100%;
   color: var(--ink);
 }
-.brand:hover { text-decoration: none; }
 
-.brand-name {
-  font-weight: 650;
-  letter-spacing: -0.01em;
+.wordmark svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.header-link {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--ink);
+.wordmark-text {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 100px;      /* = 100 unités user : doit rester égal au FS du script wordmark */
+  letter-spacing: 0;     /* surtout pas de tracking : le canvas de mesure n'en tient pas compte */
+  fill: currentColor;
 }
 
-/* ---------- Hero ---------- */
+.wordmark-perch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;              /* dimensionné par le script wordmark ; 0 = ignoré par l'oiseau */
+  height: 18px;          /* ≥ 16px : seuil de hauteur des perchoirs */
+  background: transparent;
+  pointer-events: auto;  /* requis : un perchoir marqué doit « exister » au pointeur */
+}
 
-.hero { padding-block: clamp(4rem, 10vw, 7.5rem) clamp(2.5rem, 5vw, 4rem); }
+.hero .container { margin-top: clamp(1.75rem, 4vw, 3rem); }
 
-.hero-title {
-  max-width: 24ch;
-  font-size: clamp(2.125rem, 5.4vw, 3.625rem);
+.hero-tagline {
+  max-width: 34ch;
+  font-size: clamp(1.375rem, 2.6vw, 1.875rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.08;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   text-wrap: balance;
 }
 
@@ -198,7 +365,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .link-arrow {
   font-weight: 500;
-  color: var(--ink);
+  color: var(--accent);
 }
 
 .cta-note {
@@ -211,12 +378,12 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .demo { padding-block: 0 clamp(3rem, 7vw, 5rem); }
 
-/* The stage is deliberately wider than the text container: the demo is the
-   hero, not an illustration inside it. */
+/* La scène s'aligne désormais sur le gabarit commun (#263) : mêmes rails,
+   même largeur que les sections texte. */
 .demo-stage {
-  max-width: 105rem;
+  max-width: var(--container-max);
   margin-inline: auto;
-  padding-inline: clamp(1rem, 2.5vw, 2rem);
+  padding-inline: var(--container-pad);
 }
 
 /* Two distinct windows with a visible gap: the terminal is one app, the
@@ -332,6 +499,9 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   margin-bottom: 0.875rem;
 }
 
+/* Le sigil « $ » : seul accent bleu récurrent de la page (#264). */
+.eyebrow-ps1 { color: var(--accent); }
+
 .eyebrow-out { color: var(--muted); }
 
 .section-title {
@@ -348,7 +518,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .feature-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 1px;
   background: var(--rule);
   border: 1px solid var(--rule);
@@ -360,11 +530,27 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   padding: 1.75rem;
 }
 
+.feature-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+}
+
 .feature-file {
   font-family: var(--mono);
   font-size: 0.75rem;
   color: var(--muted);
-  margin-bottom: 0.875rem;
+}
+
+/* Icônes de cartes (#262) : trait fin monochrome, currentColor. */
+.feature-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -1px;
+  color: var(--muted);
 }
 
 .feature-title {
@@ -460,24 +646,52 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .pair-card > p:not(.eyebrow) {
   font-size: 0.9688rem;
   color: var(--soft);
+  max-width: 58ch;
 }
 
 .pair-links { margin-top: 1.25rem; }
-.pair-links .link-arrow { color: var(--accent); }
 .link-sep { color: var(--muted); margin-inline: 0.5rem; }
 
-/* ---------- Footer ---------- */
+/* ---------- Footer (XXL, #266) ----------
+   Le wordmark géant referme la page en miroir du hero ; son R est le second
+   perchoir de l'oiseau. Pas de padding-bottom : le mot s'assoit sur le bord
+   bas de la fenêtre. */
 
 .site-footer {
   border-top: 1px solid var(--rule);
-  padding-block: 2.5rem;
+  padding-block: 2.5rem 0;
   font-size: 0.9375rem;
   color: var(--soft);
 }
 
 .footer-note { color: var(--muted); margin-top: 0.375rem; }
 
+.wordmark-footer { margin-top: clamp(2rem, 5vw, 3.5rem); }
+
+/* ---------- Reveals au scroll (#267) ----------
+   html.js-reveal n'est posé (dans <head>) que si IntersectionObserver
+   existe ET que prefers-reduced-motion ne demande pas le calme : sans JS
+   ou en reduced-motion, tout est visible d'emblée. `transform: none` en
+   état final — aucun containing block résiduel. */
+
+html.js-reveal .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+html.js-reveal .reveal.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+/* La fenêtre app suit le terminal d'un souffle. */
+html.js-reveal .window-app.reveal { transition-delay: 90ms; }
+
 /* ---------- Responsive ---------- */
+
+/* Grille features : 4 → 2 → 1 colonnes. */
+@media (max-width: 76rem) {
+  .feature-grid { grid-template-columns: 1fr 1fr; }
+}
 
 /* The two windows stack below ~1000px: terminal first, then the app.
    The app window keeps a fixed height and scrolls internally — the page
@@ -514,6 +728,11 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .feature-card { padding: 1.375rem; }
 }
 
+/* Sous ~768px le conteneur touche les bords : les rails n'apportent rien. */
+@media (max-width: 48rem) {
+  body::after { display: none; }
+}
+
 /* ---------- Motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -522,3 +741,47 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Prompt-to-copy CTA (hero + final CTA) ---------- */
+
+.prompt-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  max-width: 100%;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: 0.55rem 0.7rem;
+}
+
+.prompt-tag {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.prompt-text {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  background: none;
+  padding: 0;
+  color: var(--soft);
+  white-space: normal;
+  word-break: break-word;
+}
+
+.btn-copy {
+  flex: none;
+  border: 1px solid var(--edge);
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 550;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+}
+.btn-copy:hover { background: var(--hover); }
+.btn-copy:disabled { color: var(--muted); cursor: default; }
