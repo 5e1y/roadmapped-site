@@ -15,9 +15,110 @@
  *      normalement. Si le sélecteur ne matche pas un perchoir valide au
  *      chargement (élément absent, hors viewport…), retour au comportement
  *      historique : entrée par le haut, atterrissage en bas.
+ *
+ * Easter egg — la chasse aux œufs :
+ *   des œufs pixel-art apparaissent dans la page ; survoler un œuf avec
+ *   l'oiseau le ramasse (confettis dorés & bleus + saut de joie), les œufs
+ *   ramassés suivent l'oiseau en file façon Yoshi, et se déposent dans un
+ *   nid posé sur le R du footer. La pile monte à chaque dépôt, sans plafond.
+ *   Options : { game:true, eggCount:5, eggRadius:56, eggScale, nestScale }.
+ *   Désactivé en reduced-motion, comme tout le reste du mouvement.
  */
 
 const SPRITES = {"meta":{"facing":"left","palette":{"KK":"#0F1225","WW":"#DCE2E8","mm":"#C6CCD4","OR":"#EA6200"},"empty":"..","note":"Chaque anim porte ses propres dimensions (cols/rows) : le lecteur les lit par-anim. Chaque frame est une grille de codes 2 chars separes par espaces. Rendu: cellules pleines, nearest-neighbor, aucun transform."},"anims":{"idle":{"fps":6,"cols":16,"rows":12,"ground":true,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK mm KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. WW","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW ..",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. WW .."]]},"walk":{"fps":8,"cols":16,"rows":12,"ground":true,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. WW WW ..",".. .. .. .. OR .. .. .. OR .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. WW .. WW .. .. .. .. WW WW ..",".. .. .. .. .. .. OR .. OR .. .. .. .. .. .. ..",".. .. .. .. .. .. OR .. .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. OR .. OR .. .. .. .. WW WW ..",".. .. .. .. .. OR .. .. OR .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. WW .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. OR .. .. .. .. .. .. .. .."]]},"fly":{"fps":10,"cols":18,"rows":10,"ground":false,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..","WW .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. WW ..","WW .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. WW ..",".. WW WW WW .. .. .. .. .. .. .. .. .. WW WW WW .. ..",".. .. WW WW KK KK WW .. .. .. WW WW WW WW WW .. .. ..",".. .. .. KK KK KK KK WW WW WW WW WW mm .. .. .. WW WW",".. .. OR OR OR WW WW KK WW mm mm WW WW WW WW WW .. ..",".. .. .. .. .. .. .. mm WW WW WW mm mm mm .. .. .. ..",".. .. .. .. .. .. .. .. mm mm mm .. OR OR .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. WW WW mm KK KK WW .. .. .. .. .. .. mm WW WW WW ..","WW .. .. KK KK KK KK WW WW WW WW WW mm .. .. .. .. WW",".. .. OR OR OR WW WW KK WW mm mm WW WW WW WW WW .. ..",".. .. .. .. .. .. .. mm WW WW WW mm mm mm .. .. .. ..",".. .. .. .. .. .. .. .. mm mm mm .. OR OR .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. KK KK .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. KK KK KK KK WW WW WW WW mm mm .. .. .. ..","WW .. .. OR OR OR WW WW WW mm mm WW WW WW WW .. .. WW",".. WW mm mm .. .. .. mm WW WW WW mm mm mm .. WW WW ..",".. .. .. .. .. .. .. .. mm mm mm .. OR OR .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. WW WW mm mm KK KK .. .. .. .. .. .. mm WW WW WW ..","WW .. .. .. KK KK KK KK WW WW WW WW mm .. .. .. .. WW",".. .. .. OR OR OR WW WW WW mm mm WW WW WW WW WW .. ..",".. .. .. .. .. .. .. mm WW WW WW mm mm mm .. .. .. ..",".. .. .. .. .. .. .. .. mm mm mm .. OR OR .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."]]},"peck":{"fps":8,"cols":16,"rows":12,"ground":true,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW WW .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW mm WW .. .. .. ..",".. .. .. .. mm WW WW WW mm mm .. mm WW .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. .. WW WW ..",".. .. .. .. .. .. mm .. WW .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. WW WW .. .. ..",".. .. .. .. .. .. .. .. .. mm WW WW .. .. .. ..",".. .. .. .. .. mm mm WW WW WW mm .. .. .. .. ..",".. .. KK KK WW WW WW WW WW mm .. .. .. .. .. ..",".. KK KK WW WW WW WW WW mm .. .. .. .. .. .. ..",".. KK OR WW mm mm mm WW .. .. .. .. .. .. .. ..",".. OR .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW WW .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW mm WW .. .. .. ..",".. .. .. .. mm WW WW WW mm mm .. mm WW .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. .. WW WW ..",".. .. .. .. .. .. mm .. WW .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. WW WW .. .. ..",".. .. .. .. .. .. .. .. .. mm WW WW .. .. .. ..",".. .. .. .. .. mm mm WW WW WW mm .. .. .. .. ..",".. .. KK KK WW WW WW WW WW mm .. .. .. .. .. ..",".. KK KK WW WW WW WW WW mm .. .. .. .. .. .. ..",".. KK OR WW mm mm mm WW .. .. .. .. .. .. .. ..",".. OR .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW WW","OR OR OR WW WW KK WW WW WW WW WW .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW mm WW .. .. .. ..",".. .. .. .. mm WW WW WW mm mm .. mm WW .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. .. WW WW ..",".. .. .. .. .. .. mm .. WW .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."]]},"hop":{"fps":10,"cols":16,"rows":12,"ground":true,"frames":[[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. WW ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW ..","OR OR OR WW WW KK .. .. .. .. .. .. .. WW .. ..",".. .. .. WW mm mm WW WW WW WW .. .. WW .. .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm mm .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. WW WW WW ..",".. .. .. .. .. OR mm OR WW .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. .. OR .. OR .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."],[".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. .. OR OR .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. .. ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. .. ..","OR OR OR WW WW KK .. .. .. .. .. .. .. .. WW WW",".. .. .. WW mm mm WW WW WW WW .. .. WW WW .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm WW .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. mm WW .. .. ..",".. .. .. .. .. .. mm .. WW .. .. .. .. WW WW ..",".. .. .. .. .. .. OR .. OR .. .. .. .. .. .. ..",".. .. .. .. .. OR .. OR .. .. .. .. .. .. .. .."],[".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..",".. .. KK KK .. .. .. .. .. .. .. .. .. .. WW ..",".. KK KK KK KK .. .. .. .. .. .. .. .. .. WW ..","OR OR OR WW WW KK .. .. .. .. .. .. .. WW .. ..",".. .. .. WW mm mm WW WW WW WW .. .. WW .. .. ..",".. .. .. mm WW WW WW WW WW WW WW mm .. .. .. ..",".. .. .. .. mm WW WW WW mm mm mm mm .. .. .. ..",".. .. .. .. .. mm mm mm WW mm .. .. WW WW WW ..",".. .. .. .. .. OR mm OR WW .. .. .. .. .. .. .."]]}}};
+
+// ---- assets du jeu (inline : zéro fetch au runtime, comme les frames) ------
+// Pixel-art sur grille 30px : egg.svg 120×150 -> 4×5 px natifs, nest.svg
+// 540×180 -> 18×6 px natifs. Rasterisés par bakeSVG() (échantillon au centre
+// de chaque cellule), puis dessinés ×scale en nearest-neighbor.
+const EGG_SVG = `<svg width="120" height="150" viewBox="0 0 120 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M30 90H0V120H30V90Z" fill="#B79573"/>
+<path d="M30 30H0V60H30V30Z" fill="#B79573"/>
+<path d="M120 30H90V60H120V30Z" fill="#B79573"/>
+<path d="M30 60H0V90H30V60Z" fill="#D2C3AE"/>
+<path d="M60 30H30V60H60V30Z" fill="#D2C3AE"/>
+<path d="M60 0H30V30H60V0Z" fill="#E1DCD5"/>
+<path d="M60 60H30V90H60V60Z" fill="#D2C3AE"/>
+<path d="M60 90H30V120H60V90Z" fill="#C9B59A"/>
+<path d="M90 30H60V60H90V30Z" fill="#E1DCD5"/>
+<path d="M90 0H60V30H90V0Z" fill="#D2C3AE"/>
+<path d="M90 60H60V90H90V60Z" fill="#D2C3AE"/>
+<path d="M90 90H60V120H90V90Z" fill="#C9B59A"/>
+<path d="M60 120H30V150H60V120Z" fill="#B79573"/>
+<path d="M90 120H60V150H90V120Z" fill="#966C53"/>
+<path d="M120 90H90V120H120V90Z" fill="#966C53"/>
+<path d="M120 60H90V90H120V60Z" fill="#C9B59A"/>
+</svg>`;
+const NEST_SVG = `<svg width="540" height="180" viewBox="0 0 540 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M120 0H90V30H120V0Z" fill="#B9A37C"/>
+<path d="M150 30H120V60H150V30Z" fill="#B9A37C"/>
+<path d="M180 60H150V90H180V60Z" fill="#B9A37C"/>
+<path d="M180 0H150V30H180V0Z" fill="#735E3A"/>
+<path d="M210 30H180V60H210V30Z" fill="#735E3A"/>
+<path d="M180 90H150V120H180V90Z" fill="#735E3A"/>
+<path d="M210 90H180V120H210V90Z" fill="#735E3A"/>
+<path d="M270 90H240V120H270V90Z" fill="#735E3A"/>
+<path d="M300 90H270V120H300V90Z" fill="#735E3A"/>
+<path d="M330 90H300V120H330V90Z" fill="#735E3A"/>
+<path d="M390 90H360V120H390V90Z" fill="#735E3A"/>
+<path d="M360 90H330V120H360V90Z" fill="#554934"/>
+<path d="M480 60H450V90H480V60Z" fill="#554934"/>
+<path d="M300 150H270V180H300V150Z" fill="#554934"/>
+<path d="M270 150H240V180H270V150Z" fill="#554934"/>
+<path d="M210 150H180V180H210V150Z" fill="#554934"/>
+<path d="M180 120H150V150H180V120Z" fill="#554934"/>
+<path d="M420 90H390V120H420V90Z" fill="#8A7550"/>
+<path d="M150 60H120V90H150V60Z" fill="#735E3A"/>
+<path d="M120 30H90V60H120V30Z" fill="#8A7550"/>
+<path d="M120 60H90V90H120V60Z" fill="#8A7550"/>
+<path d="M120 90H90V120H120V90Z" fill="#735E3A"/>
+<path d="M150 120H120V150H150V120Z" fill="#735E3A"/>
+<path d="M210 120H180V150H210V120Z" fill="#735E3A"/>
+<path d="M240 120H210V150H240V120Z" fill="#735E3A"/>
+<path d="M270 120H240V150H270V120Z" fill="#735E3A"/>
+<path d="M300 120H270V150H300V120Z" fill="#735E3A"/>
+<path d="M330 120H300V150H330V120Z" fill="#735E3A"/>
+<path d="M360 120H330V150H360V120Z" fill="#735E3A"/>
+<path d="M390 120H360V150H390V120Z" fill="#735E3A"/>
+<path d="M450 120H420V150H450V120Z" fill="#554934"/>
+<path d="M450 90H420V120H450V90Z" fill="#735E3A"/>
+<path d="M480 90H450V120H480V90Z" fill="#735E3A"/>
+<path d="M510 60H480V90H510V60Z" fill="#B9A37C"/>
+<path d="M450 60H420V90H450V60Z" fill="#735E3A"/>
+<path d="M390 60H360V90H390V60Z" fill="#735E3A"/>
+<path d="M360 60H330V90H360V60Z" fill="#735E3A"/>
+<path d="M330 60H300V90H330V60Z" fill="#735E3A"/>
+<path d="M300 60H270V90H300V60Z" fill="#735E3A"/>
+<path d="M270 60H240V90H270V60Z" fill="#735E3A"/>
+<path d="M480 30H450V60H480V30Z" fill="#B9A37C"/>
+<path d="M510 0H480V30H510V0Z" fill="#B9A37C"/>
+<path d="M540 0H510V30H540V0Z" fill="#B9A37C"/>
+<path d="M420 120H390V150H420V120Z" fill="#735E3A"/>
+<path d="M90 30H60V60H90V30Z" fill="#8A7550"/>
+<path d="M59.9982 3.9164e-05L30 0.329102L30.3291 30.3273L60.3273 29.9982L59.9982 3.9164e-05Z" fill="#8A7550"/>
+<path d="M29.9982 30L0 30.3291L0.329062 60.3273L30.3273 59.9982L29.9982 30Z" fill="#8A7550"/>
+<path d="M210 60H180V90H210V60Z" fill="#B9A37C"/>
+<path d="M240 90H210V120H240V90Z" fill="#B9A37C"/>
+<path d="M300 60H270V90H300V60Z" fill="#8A7550"/>
+<path d="M270 90H240V120H270V90Z" fill="#8A7550"/>
+<path d="M360 120H330V150H360V120Z" fill="#8A7550"/>
+<path d="M450 90H420V120H450V90Z" fill="#8A7550"/>
+<path d="M210 120H180V150H210V120Z" fill="#B9A37C"/>
+<path d="M210 90H180V120H210V90Z" fill="#8A7550"/>
+<path d="M270 120H240V150H270V120Z" fill="#B9A37C"/>
+<path d="M300 120H270V150H300V120Z" fill="#B9A37C"/>
+<path d="M330 150H300V180H330V150Z" fill="#B9A37C"/>
+<path d="M180 150H150V180H180V150Z" fill="#B9A37C"/>
+<path d="M360 150H330V180H360V150Z" fill="#B9A37C"/>
+<path d="M390 150H360V180H390V150Z" fill="#B9A37C"/>
+<path d="M420 120H390V150H420V120Z" fill="#B9A37C"/>
+<path d="M360 30H330V60H360V30Z" fill="#B9A37C"/>
+<path d="M330 60H300V90H330V60Z" fill="#B9A37C"/>
+<path d="M390 0H360V30H390V0Z" fill="#B9A37C"/>
+<path d="M420 30H390V60H420V30Z" fill="#B9A37C"/>
+<path d="M450 150H420V180H450V150Z" fill="#B9A37C"/>
+<path d="M150 90H120V120H150V90Z" fill="#B9A37C"/>
+</svg>`;
 
 export function initBird(userOptions = {}) {
   const o = Object.assign({
@@ -30,6 +131,11 @@ export function initBird(userOptions = {}) {
     reducedMotion: null, // true/false pour forcer ; null = media query
     startPerchSelector: null, // perchoir de départ : l'oiseau démarre posé dessus (#266)
     startDelayMs: 0,          // immobile pendant ce délai avant de suivre le curseur
+    game: true,               // easter egg : la chasse aux œufs (OFF en reduced-motion)
+    eggCount: 5,              // œufs simultanés posés dans la page
+    eggRadius: 56,            // rayon de ramassage autour de l'oiseau (px écran)
+    eggScale: null,           // taille d'un pixel d'œuf ; défaut 2×scale (œuf 24×30 ≈ le corps)
+    nestScale: null,          // taille d'un pixel de nid ; défaut 2×scale (nid 108×36)
   }, userOptions);
 
   // ---- données sprites ------------------------------------------------------
@@ -272,6 +378,218 @@ export function initBird(userOptions = {}) {
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  // ---- easter egg : la chasse aux œufs ----------------------------------------
+  // Tout vit sur LE canvas et LA boucle tick existants : gameUpdate() juste
+  // avant le clear, gameDrawUnder() sous l'oiseau (œufs posés, pile),
+  // gameDrawOver() par-dessus (nid au premier plan — l'oiseau est DEDANS —,
+  // lancers, traîne, confettis). Aucun listener supplémentaire : le scroll est
+  // lu directement, les rects sont recalculés chaque frame comme les perchoirs.
+  const GAME = o.game !== false;
+  const EGG_SC = (o.eggScale != null) ? o.eggScale : SCALE * 2;   // œuf 4×5 natif -> 24×30 px (~le corps)
+  const NEST_SC = (o.nestScale != null) ? o.nestScale : SCALE * 2; // nid 18×6 natif -> 108×36 px
+  const EGG_W = 4 * EGG_SC, EGG_H = 5 * EGG_SC, NEST_W = 18 * NEST_SC, NEST_H = 6 * NEST_SC;
+  const EGG_N = o.eggCount, EGG_R = o.eggRadius;
+  const TRAIL_GAP = EGG_W + 2, TRAIL_K = 11, TRAIL_SAG = 3; // chaîne : espacement, raideur, affaissement
+  const DROP_EVERY = 240, DROP_MS = 480, DROP_ARC = 52;     // dépôt : cadence de la file, durée+hauteur d'un lancer
+  const PILE_STEP = Math.round(EGG_H * 0.6);                // étage de pile < hauteur d'œuf : entassement cartoon
+  const CHEER_SEQ = TAKEOFF_SEQ.concat(LAND_SEQ);           // saut de joie : détente + amorti, sans décoller
+  let cheerPos = -1, cheerT = 0;
+
+  // Sprites œuf/nid : bake ASYNC (Image + data URI), même règle pixel-perfect
+  // que l'oiseau — canvas NATIF à la résolution pixel du SVG (grille 30px,
+  // échantillon au centre de chaque cellule), dessiné ×scale en nearest.
+  let eggSpr = null, nestSpr = null;
+  function bakeSVG(svg, natW, natH, done) {
+    const img = new Image();
+    img.onload = () => {
+      const full = document.createElement('canvas');
+      full.width = natW * 30; full.height = natH * 30;
+      const g = full.getContext('2d');
+      g.drawImage(img, 0, 0, full.width, full.height);
+      const px = g.getImageData(0, 0, full.width, full.height).data;
+      const oc = document.createElement('canvas'); oc.width = natW; oc.height = natH;
+      const og = oc.getContext('2d');
+      for (let r = 0; r < natH; r++) for (let c = 0; c < natW; c++) {
+        const i = ((r * 30 + 15) * full.width + (c * 30 + 15)) * 4;  // centre de cellule
+        if (px[i + 3] > 127) { og.fillStyle = 'rgb(' + px[i] + ',' + px[i + 1] + ',' + px[i + 2] + ')'; og.fillRect(c, r, 1, 1); }
+      }
+      done(oc);
+    };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+  if (GAME) { bakeSVG(EGG_SVG, 4, 5, c => { eggSpr = c; }); bakeSVG(NEST_SVG, 18, 6, c => { nestSpr = c; }); }
+
+  // Couleurs des confettis : le bleu de marque vient du CSS (--accent, suit le
+  // thème, lu au moment du burst), les dorés sont ceux de la coquille d'œuf.
+  const EGG_GOLDS = ['#E1DCD5', '#C9B59A', '#B79573'];
+  const readAccent = () => (getComputedStyle(document.documentElement).getPropertyValue('--accent') || '').trim() || '#2563eb';
+
+  // État du jeu : œufs posés ancrés en coordonnées DOCUMENT (ils restent dans
+  // l'interface au scroll) ; traîne et lancers en coordonnées écran (ils
+  // suivent l'oiseau, qui vit en écran) ; pile ancrée au nid — donc au monde,
+  // puisque le nid est recalé chaque frame sur le rect de #footer-perch.
+  const eggs = [], trail = [], drops = [], pile = [], parts = [];
+  let spawned = false, nestOn = false, dropTimer = 0, respawnAt = 0, fpEl = null, eggAim = false;
+
+  function burst(x, y, n, spread) {   // confettis pixel dorés & bleus, gravité + fade
+    const acc = readAccent();
+    for (let i = 0; i < n && parts.length < 220; i++) {
+      const a = Math.random() * Math.PI * 2, sp = spread * (0.35 + Math.random());
+      parts.push({
+        x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 70,
+        life: 550 + Math.random() * 350, t: 0, s: Math.random() < 0.5 ? 2 : 3,
+        col: Math.random() < 0.5 ? acc : EGG_GOLDS[(Math.random() * 3) | 0],
+      });
+    }
+  }
+  function spawnEggs() {   // EGG_N œufs éparpillés dans le document, jamais sur l'oiseau ni entassés
+    const docH = document.documentElement.scrollHeight;
+    for (let i = 0; i < EGG_N; i++) {
+      let x = 0, y = 0, ok = false;
+      for (let tr = 0; tr < 24 && !ok; tr++) {         // ponytail: 24 essais puis tant pis, il sera mal garé
+        x = W * (0.08 + Math.random() * 0.84);
+        y = 90 + Math.random() * Math.max(120, docH - 420);  // marge haute + on épargne la zone du nid
+        ok = Math.hypot(x - (bx + scrollX), y - (by + scrollY)) > 170;
+        for (const e of eggs) if (Math.hypot(x - e.x, y - e.y) < 130) { ok = false; break; }
+      }
+      // hopAt : petit sursaut périodique — l'œuf a l'air vivant, donc ramassable
+      eggs.push({ x, y, hopAt: performance.now() + 1500 + Math.random() * 4500 });
+    }
+  }
+  function nestRect() {   // ancrage du nid : posé sur le R du footer (rect live -> suit le scroll)
+    if (!fpEl) fpEl = document.querySelector('#footer-perch');
+    if (!fpEl) return null;
+    const r = fpEl.getBoundingClientRect();
+    if (!r.width) return null;
+    return { cx: Math.round((r.left + r.right) / 2), gy: Math.round(r.top) };
+  }
+  const slotBottom = (nr, n) => nr.gy + NEST_SC - n * PILE_STEP;  // bas de l'œuf de l'étage n (0 = au fond du panier)
+  function drawEggB(cx2, bottomY, rot, sq) {  // œuf ancré par sa BASE : squash/rotation autour du point de contact
+    ctx.save();
+    ctx.translate(Math.round(cx2), Math.round(bottomY));
+    if (rot) ctx.rotate(rot);
+    if (sq !== 1) ctx.scale(2 - sq, sq);      // écrasé => élargi : volume conservé, cartoon
+    ctx.drawImage(eggSpr, -EGG_W / 2, -EGG_H, EGG_W, EGG_H);
+    ctx.restore();
+  }
+
+  function gameUpdate(t, dt) {
+    if (!GAME || !eggSpr || !nestSpr) return;    // bake pas fini : le jeu attend son tour
+    if (!spawned) { spawned = true; spawnEggs(); }
+
+    // -- ramassage : l'oiseau passe à < EGG_R du centre d'un œuf posé
+    const bcy = (state === 'air') ? by : groundY - (B.idle.rows * SCALE) / 2;
+    for (let i = eggs.length - 1; i >= 0; i--) {
+      const e = eggs[i], ex = e.x - scrollX, ey = e.y - scrollY;
+      if (ex < -40 || ex > W + 40 || ey < -40 || ey > H + 40) continue;  // hors écran : injouable
+      if (Math.hypot(ex - bx, ey - bcy) > EGG_R) continue;
+      eggs.splice(i, 1);
+      trail.push({ x: ex, y: ey });
+      burst(ex, ey, 16, 100);
+      if (state === 'ground' && cheerPos < 0) { cheerPos = 0; cheerT = 0; }  // posé : saut de joie sur place
+    }
+
+    // -- traîne façon Yoshi : chaque œuf suit le précédent (corde amortie).
+    // La cible du maillon i est à TRAIL_GAP derrière le maillon i-1, dans SA
+    // direction actuelle (+ léger affaissement) : le retard se propage le long
+    // de la file -> l'ondulation serpentine. Le bob, lui, n'est que du dessin.
+    let lx = bx - (facing ? 1 : -1) * 10, ly = bcy + 6;   // point de traction : derrière/sous l'oiseau
+    const k = 1 - Math.exp(-dt * TRAIL_K);
+    for (const e of trail) {
+      const dx2 = e.x - lx, dy2 = e.y - ly, d = Math.hypot(dx2, dy2) || 1;
+      e.x += (lx + (dx2 / d) * TRAIL_GAP - e.x) * k;
+      e.y += (ly + (dy2 / d) * TRAIL_GAP + TRAIL_SAG - e.y) * k;
+      lx = e.x; ly = e.y;
+    }
+
+    // -- dépôt : posé sur le R du footer, la traîne tombe dans le nid œuf par œuf
+    const nr = nestRect();
+    const onNest = state === 'ground' && fpEl && groundId === fpEl;
+    if (onNest && !nestOn && nr) {   // le nid apparaît au premier perchage — et reste (la pile y est ancrée)
+      nestOn = true;
+      burst(nr.cx - NEST_W / 2, nr.gy, 10, 70); burst(nr.cx + NEST_W / 2, nr.gy, 10, 70);
+    }
+    if (onNest && trail.length) {
+      dropTimer += dtms;
+      if (dropTimer >= DROP_EVERY) {
+        dropTimer = 0;
+        const e = trail.shift();     // premier ramassé, premier tombé
+        drops.push({ sx: e.x, sy: e.y, slot: pile.length + drops.length,
+                     dx: ((Math.random() * 2 - 1) * 8) | 0, rot: (Math.random() * 2 - 1) * 0.22, t: 0 });
+      }
+    } else dropTimer = 0;
+
+    // -- lancers en cours : arc parabolique vers leur étage de la pile
+    for (let i = drops.length - 1; i >= 0; i--) {
+      const d = drops[i]; d.t += dtms;
+      if (d.t >= DROP_MS) {
+        drops.splice(i, 1);
+        pile.push({ slot: d.slot, dx: d.dx, rot: d.rot, at: t });   // at : départ du squash d'impact
+        if (nr) burst(nr.cx + d.dx, slotBottom(nr, d.slot), 8, 60);
+      }
+    }
+
+    // -- réapparition : traîne déposée et plus un œuf en jeu -> nouvelle fournée
+    if (nestOn && !eggs.length && !trail.length && !drops.length) {
+      if (!respawnAt) respawnAt = t + 900;
+      else if (t >= respawnAt) { respawnAt = 0; spawnEggs(); }
+    } else respawnAt = 0;
+
+    // -- confettis : gravité + fade
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i]; p.t += dtms;
+      if (p.t >= p.life) { parts.splice(i, 1); continue; }
+      p.vy += 620 * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    }
+  }
+
+  function gameDrawUnder(t) {   // SOUS l'oiseau : les œufs posés dans la page
+    if (!GAME || !eggSpr || !nestSpr) return;
+    for (const e of eggs) {
+      const ex = e.x - scrollX, ey = e.y - scrollY;
+      if (ex < -EGG_W || ex > W + EGG_W || ey < -EGG_H || ey > H + EGG_H) continue;
+      let dy2 = 0;
+      if (t >= e.hopAt) {
+        const ht = t - e.hopAt;
+        if (ht < 320) dy2 = -Math.sin((ht / 320) * Math.PI) * 5;
+        else e.hopAt = t + 2500 + Math.random() * 4500;
+      }
+      drawEggB(ex, ey + EGG_H / 2 + dy2, 0, 1);
+    }
+  }
+
+  function gameDrawOver(t) {    // SUR l'oiseau : pile, nid (il est assis dedans), lancers, traîne, confettis
+    if (!GAME || !eggSpr || !nestSpr) return;
+    const nr = nestOn ? nestRect() : null;
+    // Pile DEVANT l'oiseau (la tour d'œufs lui pousse sous le bec, il dépasse
+    // derrière), mais SOUS le rebord du nid (les bas d'œufs restent dedans).
+    // Elle monte étage par étage — et peut crever l'écran, c'est le but.
+    if (nr) for (const s of pile) {
+      const b = slotBottom(nr, s.slot);
+      if (b < -20 || b - EGG_H > H + 20) continue;
+      const a = t - s.at, sq = a < 150 ? 0.68 + 0.32 * (a / 150) : 1;  // squash d'impact, 150 ms
+      drawEggB(nr.cx + s.dx, b, s.rot, sq);
+    }
+    if (nr) ctx.drawImage(nestSpr, nr.cx - NEST_W / 2, nr.gy - NEST_H / 2, NEST_W, NEST_H);
+    if (nr) for (const d of drops) {
+      const p2 = Math.min(1, d.t / DROP_MS), e2 = p2 * p2 * (3 - 2 * p2);   // smoothstep
+      const fromB = d.sy + EGG_H / 2, toB = slotBottom(nr, d.slot);
+      drawEggB(d.sx + (nr.cx + d.dx - d.sx) * e2,
+               fromB + (toB - fromB) * e2 - Math.sin(Math.PI * p2) * DROP_ARC,
+               d.rot * p2, 1);
+    }
+    for (let i = 0; i < trail.length; i++) {   // bob déphasé par maillon : la file ondule
+      const w = Math.sin(t / 150 + i * 0.85);
+      drawEggB(trail[i].x, trail[i].y + EGG_H / 2 + w * 2.5, w * 0.09, 1);
+    }
+    for (const p of parts) {
+      ctx.globalAlpha = 1 - p.t / p.life;
+      ctx.fillStyle = p.col;
+      ctx.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s);
+    }
+    ctx.globalAlpha = 1;
+  }
+
   function smoothDamp(cur, tgt, vel, dt, smooth, maxspd) {
     const omega = 2 / smooth, x = omega * dt, exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
     let change = cur - tgt; const maxCh = maxspd * smooth;
@@ -291,7 +609,7 @@ export function initBird(userOptions = {}) {
     return best;
   }
   const seg = () => perches.find(p => p.id === groundId);
-  function toAir() { state = 'air'; mode = 'fly'; by = groundY - flyCentToFeet; vx = vy = 0; }
+  function toAir() { state = 'air'; mode = 'fly'; by = groundY - flyCentToFeet; vx = vy = 0; cheerPos = -1; }
   function adv(fps, len) { ft += dtms; if (ft > 1000 / fps) { fi = (fi + 1) % len; ft = 0; } }
 
   function tick(t) {
@@ -302,6 +620,22 @@ export function initBird(userOptions = {}) {
     if (atBottom) {
       const fp = document.querySelector('#footer-perch');
       if (fp) { const r = fp.getBoundingClientRect(); tx = (r.left + r.right) / 2; ty = r.top; }
+    }
+    // jeu : un œuf visible à portée du curseur AIMANTE l'oiseau (même astuce
+    // que le footer ci-dessus : on récrit tx/ty). Sans ça, les perchoirs
+    // gagnent toujours l'atterrissage et l'oiseau se pose À CÔTÉ de l'œuf
+    // sans jamais entrer dans le rayon de ramassage. Tant que l'aimant est
+    // actif, l'atterrissage est suspendu : il fonce sur l'œuf, le prend au
+    // passage, puis la vie normale reprend.
+    eggAim = false;
+    if (!atBottom && GAME && eggSpr) {
+      const cx0 = tx, cy0 = ty; let bd = 120;   // distances mesurées depuis le vrai curseur
+      for (const e of eggs) {
+        const ex = e.x - scrollX, ey = e.y - scrollY;
+        if (ex < 0 || ex > W || ey < 0 || ey > H) continue;
+        const d = Math.hypot(ex - cx0, ey - cy0);
+        if (d < bd) { bd = d; tx = ex; ty = ey; eggAim = true; }
+      }
     }
     const dx = tx - bx, prevby = by;
 
@@ -332,7 +666,7 @@ export function initBird(userOptions = {}) {
         }
       }
     } else if (state === 'air') {
-      const g = groundForCursor(LAND_BAND);
+      const g = eggAim ? null : groundForCursor(LAND_BAND);  // œuf aimanté : pas d'atterrissage, il fonce
       let aimx = tx, aimy = ty;
       if (g) { aimx = Math.min(g.r - 2, Math.max(g.l + 2, tx)); aimy = g.y - flyCentToFeet; }
       const sm = g ? SMOOTH_LAND : SMOOTH, ms = g ? MAXSPD_LAND : MAXSPD;
@@ -353,10 +687,19 @@ export function initBird(userOptions = {}) {
       else if (t < holdUntil) {             // délai de départ (#266) : immobile en idle,
         groundY = s0.y;                     // le curseur n'existe pas encore pour lui
         walkVel = 0; mode = 'idle';
+      } else if (cheerPos >= 0) {           // jeu : saut de joie sur place (œuf ramassé au sol)
+        groundY = s0.y;                     // même séquence que le hop, mais sans décoller :
+        walkVel = 0;                        // détente puis amorti, et retour à la vie normale
+        mode = 'hop'; hopIdx = CHEER_SEQ[Math.min(cheerPos, CHEER_SEQ.length - 1)];
+        cheerT += dtms;
+        if (cheerT > 1000 / HOPFPS) {
+          cheerT = 0; cheerPos++;
+          if (cheerPos >= CHEER_SEQ.length) { cheerPos = -1; mode = 'idle'; fi = 0; restTimer = 0; }
+        }
       } else {
         groundY = s0.y;
         const g2 = groundForCursor(TAKEOFF_BAND);
-        if (!g2 || g2.id !== groundId) {    // la souris vise ailleurs -> saut de décollage
+        if (eggAim || !g2 || g2.id !== groundId) { // la souris vise ailleurs (ou un œuf aimante) -> saut de décollage
           state = 'takeoff'; seqPos = 0; seqTimer = 0; facing = (tx - bx) > 0 ? 1 : 0;
         } else {
           const dxg = tx - bx;
@@ -393,7 +736,9 @@ export function initBird(userOptions = {}) {
       } else fi = 0;
     }
 
+    gameUpdate(t, dt);                      // jeu : ramassage, traîne, dépôt, confettis
     ctx.clearRect(0, 0, W, H);
+    gameDrawUnder(t);                       // œufs posés + pile du nid, sous l'oiseau
     let s, px, py;
     if (mode === 'hop') {                   // ancré au sol, grille hop pleine hauteur
       s = SPR.hop[facing][hopIdx]; px = Math.round(bx - s.cx * SCALE); py = Math.round(groundY - NYH * SCALE);
@@ -402,6 +747,7 @@ export function initBird(userOptions = {}) {
       py = Math.round(state === 'air' ? by - s.cy * SCALE : groundY - s.R * SCALE); // centroïde en vol, pied au sol
     }
     ctx.drawImage(s.img, px, py, s.C * SCALE, s.R * SCALE);
+    gameDrawOver(t);                        // nid (l'oiseau est dedans), lancers, traîne, confettis
     raf = requestAnimationFrame(tick);
   }
   raf = requestAnimationFrame(tick);
