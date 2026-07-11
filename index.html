@@ -364,6 +364,14 @@
           <!-- 01 · Backlog : rangées TaskRow sous leur tête de type (glyphe
                d'état, #id mono, titre, tags légers, thermomètre, chip size). -->
           <div class="how-visual is-active">
+            <div class="ui-frame">
+              <div class="ui-frame-bar">
+                <span class="ui-frame-tabs"><span class="ui-frame-tab is-on">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab">Docs</span></span>
+                <span class="ui-frame-live">Activity</span>
+              </div>
+              <div class="ui-frame-body">
+                <div class="ui-frame-rail"><span></span><span></span><span></span></div>
+                <div class="ui-frame-piece">
             <div class="ui-pane">
               <div class="ui-pane-head"><span class="ui-pane-title">02-feature</span><span class="ui-count">2/6</span></div>
               <div class="ui-row">
@@ -391,10 +399,21 @@
                 <span class="ui-row-meta"><span class="ui-time">2d ago</span></span>
               </div>
             </div>
+                </div>
+              </div>
+            </div>
           </div>
           <!-- 02 · Activity (LiveActivityMenu) : le popup du header — verbe,
                #id, titre, heure ; l'entrée fraîche s'allume (fond --tint). -->
           <div class="how-visual">
+            <div class="ui-frame">
+              <div class="ui-frame-bar">
+                <span class="ui-frame-tabs"><span class="ui-frame-tab is-on">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab">Docs</span></span>
+                <span class="ui-frame-live is-on">Activity</span>
+              </div>
+              <div class="ui-frame-body">
+                <div class="ui-frame-rail"><span></span><span></span><span></span></div>
+                <div class="ui-frame-piece">
             <div class="ui-pop">
               <div class="ui-pop-head"><span class="ui-pop-title">Activity</span><span class="ui-dim">this session</span></div>
               <ul class="ui-log">
@@ -421,11 +440,22 @@
               </ul>
               <p class="ui-pop-foot">Session only &mdash; full history is your git log on docs/tasks/.</p>
             </div>
+                </div>
+              </div>
+            </div>
           </div>
           <!-- 03 · Le panneau de la tâche passée done (TaskPanel) : en-tête
                glyphe plein + statut, titre barré, bloc Log avec outcome /
                verification / commit, chemin YAML en pied. -->
           <div class="how-visual">
+            <div class="ui-frame">
+              <div class="ui-frame-bar">
+                <span class="ui-frame-tabs"><span class="ui-frame-tab is-on">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab">Docs</span></span>
+                <span class="ui-frame-live">Activity</span>
+              </div>
+              <div class="ui-frame-body">
+                <div class="ui-frame-rail"><span></span><span></span><span></span></div>
+                <div class="ui-frame-piece">
             <div class="ui-panel">
               <div class="ui-panel-head">
                 <svg class="ui-glyph" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--ink)"/></svg>
@@ -442,10 +472,21 @@
               </div>
               <div class="ui-panel-foot">docs/tasks/02-feature/17-dark-mode.yaml</div>
             </div>
+                </div>
+              </div>
+            </div>
           </div>
           <!-- 04 · La roadmap en colonnes (RoadmapColumns) : une colonne par
                type — tête + compteur, barre fine, cartes, repli « + N done ». -->
           <div class="how-visual">
+            <div class="ui-frame">
+              <div class="ui-frame-bar">
+                <span class="ui-frame-tabs"><span class="ui-frame-tab">Backlog</span><span class="ui-frame-tab is-on">Roadmap</span><span class="ui-frame-tab">Docs</span></span>
+                <span class="ui-frame-live">Activity</span>
+              </div>
+              <div class="ui-frame-body">
+                <div class="ui-frame-rail"><span></span><span></span><span></span></div>
+                <div class="ui-frame-piece">
             <div class="ui-board">
               <div class="ui-col">
                 <div class="ui-col-head"><span class="ui-col-title">01-bug</span><span class="ui-count">2/3</span></div>
@@ -485,10 +526,15 @@
                 </div>
               </div>
             </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Callout aligné (retour proprio #3) : dans un .container comme .how-stage,
+           donc son bord gauche tombe pile sur celui du panneau des étapes. -->
       <div class="container">
         <p class="callout reveal" data-bird-perch>Yes, it&rsquo;s a folder of YAML files. No, it&rsquo;s not a database. That&rsquo;s kind of the point.</p>
       </div>

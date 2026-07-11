@@ -666,29 +666,33 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
    prefers-reduced-motion : piste masquée même avec la gate — le script
    n'auto-avance pas, le clic reste le seul moteur. */
 
+/* align-items: stretch (retour proprio) : la colonne de droite prend
+   EXACTEMENT la hauteur du bloc des étapes à gauche — les deux boîtes sont
+   à hauteur égale. */
 .how-stage {
   margin-top: 1.5rem;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   gap: clamp(1.5rem, 4vw, 3.5rem);
-  align-items: start;
+  align-items: stretch;
   width: 100%;
 }
 
-/* La piste longe le panneau des étapes : colonne auto (2px) + le panneau. */
-.how-lane {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.875rem;
-  align-items: stretch;
-  max-width: 46rem;
-}
+/* La piste est une barre inset sur le bord GAUCHE du panneau (absolute,
+   hors flux) : le panneau des étapes commence donc PILE au bord gauche du
+   conteneur — le callout en dessous s'aligne dessus sans décalage. Même
+   vocabulaire que le filet bleu inset du callout. */
+.how-lane { position: relative; max-width: 46rem; }
 
 .how-track {
-  position: relative;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
   width: 2px;
   background: var(--rule);
   display: none;   /* no-JS : pas de barre morte */
+  z-index: 1;
 }
 html.js-howplay .how-track { display: block; }
 .how-fill {
@@ -757,29 +761,23 @@ html.js-howplay .how-step.is-active { opacity: 1; }
   max-width: 58ch;
 }
 
-/* --- Visuels : pièces isolées de l'UI réelle de l'app (.ui-*) ---
-   Panneau sur fond --page : les composants (--card + filets) s'en
-   détachent exactement comme dans le dashboard. Un visuel actif à la
-   fois avec la gate ; empilés, séparés d'un filet, sans elle. */
-.how-visuals {
-  position: relative;
-  min-width: 0;
-  background: var(--page);
-  border: 1px solid var(--rule);
-}
-.how-visual { padding: clamp(1.25rem, 2.5vw, 1.75rem); overflow-x: auto; }
-.how-visual + .how-visual { border-top: 1px solid var(--rule); }
+/* --- Visuels : pièces isolées de l'UI réelle de l'app (.ui-*), posées
+   DANS un fragment de chrome du dashboard (.ui-frame : barre d'onglets +
+   rail de sidebar estompé) pour qu'elles lisent « découpées dans le vrai
+   outil » et non comme des widgets isolés. La fenêtre bordée = .ui-frame
+   lui-même ; avec la gate, il remplit toute la hauteur (= celle des étapes,
+   via align-items: stretch). Un visuel actif à la fois ; empilés sans la
+   gate (no-JS). */
+.how-visuals { position: relative; min-width: 0; }
+.how-visual { overflow-x: auto; }
+.how-visual + .how-visual { margin-top: 1.25rem; }
 
-html.js-howplay .how-visuals {
-  display: flex;
-  flex-direction: column;
-  min-height: 23rem;
-}
-html.js-howplay .how-visual { display: none; border-top: 0; }
+html.js-howplay .how-visuals { display: flex; flex-direction: column; min-height: 23rem; }
+html.js-howplay .how-visual { display: none; }
+html.js-howplay .how-visual + .how-visual { margin-top: 0; }
 html.js-howplay .how-visual.is-active {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   flex: 1;
   animation: how-visual-in 0.4s ease;
 }
@@ -788,6 +786,68 @@ html.js-howplay .how-visual.is-active {
 @media (prefers-reduced-motion: reduce) {
   html.js-howplay .how-track { display: none; }
   html.js-howplay .how-visual.is-active { animation: none; }
+}
+
+/* --- Chrome de dashboard autour de la pièce (retour proprio #1) ------------
+   Fenêtre d'app : barre d'onglets (Backlog/Roadmap/Docs + pastille Activity)
+   + rail de sidebar estompé à gauche, la pièce au centre sur fond --page.
+   L'onglet actif porte un filet accent (structure) ; la pastille Activity
+   s'allume en accent sur le visuel 02. Accent PARCIMONIEUX, tout en vars. */
+.ui-frame {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  border: 1px solid var(--rule);
+  background: var(--card);
+}
+.ui-frame-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4375rem 0.625rem;
+  border-bottom: 1px solid var(--rule);
+}
+.ui-frame-tabs { display: flex; gap: 0.875rem; min-width: 0; }
+.ui-frame-tab { font-size: 0.75rem; color: var(--muted); padding-bottom: 2px; }
+.ui-frame-tab.is-on {
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+.ui-frame-live {
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  border-radius: 0.25rem;
+  padding: 0.0625rem 0.375rem;
+}
+.ui-frame-live.is-on { color: var(--accent); border-color: var(--accent); }
+.ui-frame-body { display: flex; flex: 1; min-height: 0; min-width: 0; }
+.ui-frame-rail {
+  flex-shrink: 0;
+  width: 2.5rem;
+  border-right: 1px solid var(--rule);
+  background: var(--page);
+  opacity: 0.6;
+  padding: 0.625rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ui-frame-rail span { display: block; height: 2px; background: var(--rule); }
+.ui-frame-rail span:first-child { background: var(--edge); }   /* item « actif » du nav, estompé */
+.ui-frame-piece {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.875rem;
+  background: var(--page);
+  overflow: hidden;
 }
 
 /* --- Vocabulaire des pièces UI — mappé de l'app vers les tokens du site :
@@ -1021,10 +1081,10 @@ html.js-howplay .how-visual.is-active {
    La piste verticale est masquée (le clic + l'auto-advance suffisent). */
 @media (max-width: 62rem) {
   .how-stage { grid-template-columns: 1fr; }
-  .how-lane { grid-template-columns: minmax(0, 1fr); max-width: none; }
+  .how-lane { max-width: none; }
   html.js-howplay .how-track { display: none; }
-  html.js-howplay .how-visuals { min-height: 19rem; }
-  .how-visual { padding: 1rem; }
+  html.js-howplay .how-visuals { min-height: 0; }
+  .ui-frame-rail { width: 1.75rem; }
   .ui-board { gap: 0.625rem; }
 }
 
