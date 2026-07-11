@@ -1,0 +1,35 @@
+# Roadmapped
+
+> Project management as flat files in your repo. Your backlog, roadmap and docs
+> live as plain YAML and markdown inside your repository — the only source of
+> truth. Driven by your AI agent through a CLI and a Claude skill. No database,
+> no SaaS, no account. MIT licensed, free.
+
+Roadmapped turns a git repository into its own project management tool. Tasks are
+YAML files under `docs/tasks/`. The roadmap — done / available / locked — is
+computed from the dependency graph on every read, never stored. The dashboard and
+the CLI read and write the same files through the same validator; on error the
+change rolls back, and task ids are never reused. Git history is the audit log.
+
+It is agent-first: a CLI (`npx roadmapped`) and a Claude skill (which also runs as
+an MCP server) let an AI agent create specs, tasks and dependencies in the correct
+schema, and record what it ships (outcome, verification, commit). A git hook
+refuses commits that aren't attached to a task. Roadmapped's own backlog is
+managed by Roadmapped — the public repository is the proof.
+
+## Key facts
+
+- Data model: flat YAML/markdown files in the user's own repo. No database, no server, no telemetry.
+- Work is classified by one of 9 fixed types — bug, feature, chore, brainstorm, design, marketing, communication, legal, business — not by stage or team.
+- Priority is a computed "temperature" (downstream blockers + age + the type's base heat + an optional manual seed), never a fixed stage order.
+- Interfaces: a React dashboard (Vite), a CLI (`npx roadmapped`), and a Claude skill that doubles as an MCP server.
+- Distribution: straight from GitHub (`github:5e1y/roadmapped`), never npm. Requirement: Node ≥ 22.18.
+- License: MIT. Author: Rémi Courtillon.
+- Privacy: data never leaves the user's machine; "delete account" is `rm -rf`.
+
+## Links
+
+- Home: https://roadmapped.dev/
+- Source: https://github.com/5e1y/roadmapped
+- Guide: https://github.com/5e1y/roadmapped/blob/main/docs/guide.md
+- Public backlog (dogfooding proof): https://github.com/5e1y/roadmapped/tree/main/docs/tasks
