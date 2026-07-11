@@ -418,10 +418,22 @@
       <div class="container">
         <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;node -v</span><span class="eyebrow-out">&nbsp;&nbsp;v22.18.0</span></p>
         <h2 class="section-title reveal" id="quickstart-title">Quickstart</h2>
-        <pre class="code-block reveal"><code>npx --yes github:5e1y/roadmapped init  <span class="code-comment"># scaffold docs/tasks/, the skill, the git guard</span>
+        <pre class="code-block reveal"><code><span class="code-comment"># inside Claude Code: the plugin, then ask the agent to set up Roadmapped</span>
+/plugin marketplace add 5e1y/roadmapped
+/plugin install roadmapped@roadmapped
+
+<span class="code-comment"># or npm</span>
+npx roadmapped init                    <span class="code-comment"># scaffold docs/tasks/, the skill, the git guard</span>
+npm install                            <span class="code-comment"># activates the hooks + MCP</span>
+
+<span class="code-comment"># or straight from GitHub, no npm registry involved</span>
+npx --yes github:5e1y/roadmapped init
+npm install
+
+<span class="code-comment"># whichever door you came in, restart the session, then:</span>
 npx roadmapped dashboard               <span class="code-comment"># dashboard on http://localhost:5173</span>
 npx roadmapped --help                  <span class="code-comment"># the CLI your agent (or you) drives</span></code></pre>
-        <p class="prose under-block reveal">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. The dashboard ships pre-built, so install pulls&nbsp;~30&nbsp;MB, not a front-end toolchain. Point your AI agent at the Claude skill (or just ask it to install Roadmapped from GitHub) and it takes it from there.</p>
+        <p class="prose under-block reveal">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. The dashboard ships pre-built, so install pulls&nbsp;~30&nbsp;MB, not a front-end toolchain. All three roads end in the same wired state, and every install updates itself from GitHub in the background &mdash; installing is the last time you think about installing. Point your AI agent at the Claude skill (or just ask it to install Roadmapped from GitHub) and it takes it from there.</p>
       </div>
     </section>
 
