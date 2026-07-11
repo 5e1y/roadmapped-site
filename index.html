@@ -199,14 +199,14 @@
               <button class="feature-toggle" type="button">
                 <span class="feature-head">
                   <span class="feature-file">02-roadmap-no-dates.yaml</span>
-                  <!-- marches : les 8 stages, toujours dans cet ordre -->
+                  <!-- escalier : la température (âge + blocages), pas un rang de stage -->
                   <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M3 20.25h4.5v-4.5H12v-4.5h4.5v-4.5H21"/></svg>
                 </span>
                 <span class="feature-name">Roadmap with no dates to lie about</span>
               </button>
             </h3>
             <div class="feature-body">
-              <p>Eight fixed stages, from idea to mature, are your milestones instead of sections you invent. <code>done</code> / <code>available</code> / <code>locked</code> states are computed from the dependency graph on every read, never stored. Nothing drifts out of sync, because there&rsquo;s no second copy.</p>
+              <p>Priority is a temperature (0&ndash;100), not a stage rank: it rises with age and with how many other tasks it blocks, so <code>next</code> always hands your agent the thing that actually matters. <code>done</code> / <code>available</code> / <code>locked</code> states are computed live from the dependency graph, never stored. Nothing drifts out of sync, because there&rsquo;s no second copy.</p>
             </div>
           </article>
           <article class="feature-card reveal">
@@ -317,7 +317,7 @@
          reste constant ; le callout garde le sien. -->
     <section class="section" id="how-it-works" aria-labelledby="how-title">
       <div class="container">
-        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;git diff docs/tasks/04-build/17-dark-mode.yaml</span><span class="eyebrow-out">&nbsp;&nbsp;+status: done</span></p>
+        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;git diff docs/tasks/02-feature/17-dark-mode.yaml</span><span class="eyebrow-out">&nbsp;&nbsp;+status: done</span></p>
         <h2 class="section-title reveal" id="how-title">How it works, start to finish</h2>
       </div>
 
@@ -327,7 +327,7 @@
             <ol class="how-steps reveal" data-bird-perch>
               <li class="how-step is-active">
                 <h3 class="how-step-title"><button class="how-step-btn" type="button"><span class="how-step-num">01</span>Feed it your mess.</button></h3>
-                <p>Point your agent at a rambling <code>roadmap.md</code>, or just tell it what needs to happen. It turns that into traceable tickets: one YAML file per task, filed in the right stage folder, dependencies wired up.</p>
+                <p>Point your agent at a rambling <code>roadmap.md</code>, or just tell it what needs to happen. It turns that into traceable tickets: one YAML file per task, filed in the right type folder, dependencies wired up.</p>
               </li>
               <li class="how-step">
                 <h3 class="how-step-title"><button class="how-step-btn" type="button"><span class="how-step-num">02</span>Your agent works the files, not a web form.</button></h3>
@@ -346,15 +346,15 @@
                  étapes (l'actif s'affiche), masqués sur mobile (4 étapes seules). -->
             <div class="how-visuals" aria-hidden="true">
               <div class="how-visual is-active">
-                <div class="how-tree" role="img" aria-label="File tree: your repo contains docs/tasks with the fixed stage folders and their task YAML files, plus a package.json so npx roadmapped can drive it all.">
+                <div class="how-tree" role="img" aria-label="File tree: your repo contains docs/tasks with the fixed type folders and their task YAML files, plus a package.json so npx roadmapped can drive it all.">
 <pre>your-repo/
 ├─ docs/
 │  ├─ tasks/
-│  │  ├─ 01-idea/
+│  │  ├─ 01-bug/
+│  │  ├─ 02-feature/
 │  │  │  ├─ _section.yaml
-│  │  │  └─ 03-auth-flow.yaml
-│  │  ├─ 04-build/
-│  │  └─ 08-mature/          <span class="tree-note">← fixed stages, always this order</span>
+│  │  │  └─ 17-dark-mode.yaml
+│  │  └─ 09-business/          <span class="tree-note">← 9 fixed types, always this order</span>
 │  └─ roadmap.md
 └─ package.json               <span class="tree-note">← npx roadmapped drives it all</span></pre>
                 </div>
@@ -367,7 +367,7 @@
 <span class="sh-out">#17 done &middot; outcome + commit recorded</span></pre>
               </div>
               <div class="how-visual">
-                <pre class="how-diff" role="img" aria-label="Git diff of a task file: status flips from in progress to done, outcome and commit written onto the file."><span class="diff-file">docs/tasks/04-build/17-dark-mode.yaml</span>
+                <pre class="how-diff" role="img" aria-label="Git diff of a task file: status flips from in progress to done, outcome and commit written onto the file."><span class="diff-file">docs/tasks/02-feature/17-dark-mode.yaml</span>
   title: Dark mode
 <span class="diff-del">- status: in_progress</span>
 <span class="diff-add">+ status: done</span>
@@ -417,7 +417,7 @@
         <pre class="code-block reveal"><code>npx --yes github:5e1y/roadmapped init  <span class="code-comment"># scaffold docs/tasks/, the skill, the git guard</span>
 npx roadmapped dashboard               <span class="code-comment"># dashboard on http://localhost:5173</span>
 npx roadmapped --help                  <span class="code-comment"># the CLI your agent (or you) drives</span></code></pre>
-        <p class="prose under-block reveal">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. Point your AI agent at the Claude skill (or just ask it to install Roadmapped from GitHub) and it takes it from there.</p>
+        <p class="prose under-block reveal">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. The dashboard ships pre-built, so install pulls&nbsp;~30&nbsp;MB, not a front-end toolchain. Point your AI agent at the Claude skill (or just ask it to install Roadmapped from GitHub) and it takes it from there.</p>
       </div>
     </section>
 
