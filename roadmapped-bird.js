@@ -157,13 +157,14 @@ export function initBird(userOptions = {}) {
   const SCALE = o.scale;
 
   // ---- réglages (repris du proto validé bird_chase.html) ---------------------
-  const SMOOTH = 1.7, MAXSPD = 430;             // vol libre : lent, damp marqué
-  const SMOOTH_LAND = 0.85, MAXSPD_LAND = 650;  // approche d'un perchoir : plus vif
+  const SPEED = 1.25;                           // #302: vitesse & animations de l'oiseau ×1.25
+  const SMOOTH = 1.7 / SPEED, MAXSPD = 430 * SPEED;             // vol libre : lent, damp marqué
+  const SMOOTH_LAND = 0.85 / SPEED, MAXSPD_LAND = 650 * SPEED;  // approche d'un perchoir : plus vif
   const LAND_BAND = 200, TAKEOFF_BAND = 290;    // rayon d'atterrissage + hystérésis
   const LANDSNAP = 16;                          // fenêtre symétrique de contact
-  const WALKMAX = 175, WALKACC = 0.12, STOPX = 5;
+  const WALKMAX = 175 * SPEED, WALKACC = 0.12, STOPX = 5;
   const REST_GAP = 3000, REST_MAXSTREAK = 3;    // repos : tirage toutes les 3 s
-  const HOPFPS = B.hop.fps, NYH = B.hop.rows;
+  const HOPFPS = B.hop.fps * SPEED, NYH = B.hop.rows;
   const TAKEOFF_SEQ = [2, 3, 4];                // accroupi -> détente -> apex
   const LAND_SEQ = [5, 6, 0];                   // contact -> amorti -> debout
   const EDGE = 4;                               // retrait des bords de perchoir
@@ -292,6 +293,9 @@ export function initBird(userOptions = {}) {
   function qualifies(el, trusted) {
     if (!visibleChain(el)) return false;                  // caché (soi ou ancêtre) -> jamais
     if (trusted) return cs(el).pointerEvents !== 'none';  // marqué à la main : de confiance
+    // #302 UX : jamais sur un texte surligné (chips <code>/<mark>, runs inline) —
+    // se percher sur un mot surligné rend le jeu illisible.
+    if (el.tagName === 'CODE' || el.tagName === 'MARK' || cs(el).display === 'inline') return false;
     return isPainted(el);                                 // fallback : doit être réellement peint
   }
 
@@ -380,10 +384,10 @@ export function initBird(userOptions = {}) {
 
   // ---- easter egg : la chasse aux œufs ----------------------------------------
   // Tout vit sur LE canvas et LA boucle tick existants : gameUpdate() juste
-  // avant le clear, gameDrawUnder() sous l'oiseau (nid + œufs posés),
-  // gameDrawOver() par-dessus (pile, lancers, traîne, confettis). Z final :
-  // nid < oiseau < œufs. Aucun listener supplémentaire : le scroll est lu
-  // directement, les rects sont recalculés chaque frame comme les perchoirs.
+  // avant le clear, gameDrawUnder() sous l'oiseau (TOUS les œufs : posés, pile,
+  // lancers, traîne), gameDrawOver() par-dessus (le nid, puis les confettis).
+  // Z final : œufs < oiseau < nid. Aucun listener supplémentaire : le scroll est
+  // lu directement, les rects sont recalculés chaque frame comme les perchoirs.
   const GAME = o.game !== false;
   const EGG_SC = (o.eggScale != null) ? o.eggScale : SCALE;   // même échelle pixel que l'oiseau (œuf 4×5 -> 12×15)
   const NEST_SC = (o.nestScale != null) ? o.nestScale : SCALE; // même échelle pixel (nid 18×6 -> 54×18)
@@ -392,6 +396,7 @@ export function initBird(userOptions = {}) {
   const TRAIL_GAP = EGG_W + 2, TRAIL_K = 11, TRAIL_SAG = 3; // chaîne : espacement, raideur, affaissement
   const DROP_EVERY = 240, DROP_MS = 480, DROP_ARC = 52;     // dépôt : cadence de la file, durée+hauteur d'un lancer
   const PILE_STEP = Math.round(EGG_H * 0.6);                // étage de pile < hauteur d'œuf : entassement cartoon
+  const EGG_DY = SCALE, NEST_DY = SCALE;                    // #302: remonte œuf posé / nid+pile pour coller au bord (pas un poil trop bas)
   const CHEER_SEQ = TAKEOFF_SEQ.concat(LAND_SEQ);           // saut de joie : détente + amorti, sans décoller
   let cheerPos = -1, cheerT = 0;
 
@@ -461,7 +466,7 @@ export function initBird(userOptions = {}) {
       for (let tr = 0; tr < 24 && !ok; tr++) {       // ponytail: 24 essais puis tant pis
         const c = cands[(Math.random() * cands.length) | 0];
         x = c.l + Math.random() * (c.r - c.l);
-        y = c.y - EGG_H / 2;                          // base de l'œuf calée sur le bord du perchoir
+        y = c.y - EGG_H / 2 - EGG_DY;                 // base de l'œuf calée pile sur le bord du perchoir
         ok = Math.hypot(x - (bx + scrollX), y - (by + scrollY)) > 120;
         for (const e of eggs) if (Math.hypot(x - e.x, y - e.y) < 90) { ok = false; break; }
       }
@@ -476,7 +481,7 @@ export function initBird(userOptions = {}) {
     if (!r.width) return null;
     return { cx: Math.round((r.left + r.right) / 2), gy: Math.round(r.top) };
   }
-  const slotBottom = (nr, n) => nr.gy + NEST_SC - n * PILE_STEP;  // bas de l'œuf de l'étage n (0 = au fond du panier)
+  const slotBottom = (nr, n) => nr.gy + NEST_SC - NEST_DY - n * PILE_STEP;  // bas de l'œuf de l'étage n (0 = au fond du panier)
   function drawEggB(cx2, bottomY, rot, sq) {  // œuf ancré par sa BASE : squash/rotation autour du point de contact
     ctx.save();
     ctx.translate(Math.round(cx2), Math.round(bottomY));
@@ -492,7 +497,9 @@ export function initBird(userOptions = {}) {
 
     // -- ramassage : UNIQUEMENT posé (il doit se poser sur le perchoir de l'œuf,
     // puis son saut de joie l'attrape). Pas d'attrape en vol.
-    const bcy = groundY - (B.idle.rows * SCALE) / 2;
+    // bcy = centre réel de l'oiseau : by en vol (sinon la traîne resterait collée
+    // au y du dernier perchoir), sol - demi-corps une fois posé.
+    const bcy = (state === 'air') ? by : groundY - (B.idle.rows * SCALE) / 2;
     if (state === 'ground') for (let i = eggs.length - 1; i >= 0; i--) {
       const e = eggs[i], ex = e.x - scrollX, ey = e.y - scrollY;
       if (ex < -40 || ex > W + 40 || ey < -40 || ey > H + 40) continue;  // hors écran : injouable
@@ -557,11 +564,10 @@ export function initBird(userOptions = {}) {
     }
   }
 
-  function gameDrawUnder(t) {   // SOUS l'oiseau : le nid (il est assis dedans) + les œufs posés
+  function gameDrawUnder(t) {   // 3e plan (SOUS l'oiseau) : TOUS les œufs — posés, pile, lancers, traîne
     if (!GAME || !eggSpr || !nestSpr) return;
     const nr = nestOn ? nestRect() : null;
-    if (nr) ctx.drawImage(nestSpr, nr.cx - NEST_W / 2, nr.gy - NEST_H / 2, NEST_W, NEST_H);  // nid DERRIÈRE l'oiseau
-    for (const e of eggs) {
+    for (const e of eggs) {                    // œufs posés dans la page
       const ex = e.x - scrollX, ey = e.y - scrollY;
       if (ex < -EGG_W || ex > W + EGG_W || ey < -EGG_H || ey > H + EGG_H) continue;
       let dy2 = 0;
@@ -572,31 +578,30 @@ export function initBird(userOptions = {}) {
       }
       drawEggB(ex, ey + EGG_H / 2 + dy2, 0, 1);
     }
-  }
-
-  function gameDrawOver(t) {    // SUR l'oiseau : pile, nid (il est assis dedans), lancers, traîne, confettis
-    if (!GAME || !eggSpr || !nestSpr) return;
-    const nr = nestOn ? nestRect() : null;
-    // Pile DEVANT l'oiseau (z: nid < oiseau < œufs) : la tour lui pousse sous le
-    // bec, il dépasse derrière. Elle monte étage par étage — et peut crever
-    // l'écran, c'est le but.
+    // pile dans le nid (derrière l'oiseau) — monte étage par étage, peut crever l'écran
     if (nr) for (const s of pile) {
       const b = slotBottom(nr, s.slot);
       if (b < -20 || b - EGG_H > H + 20) continue;
       const a = t - s.at, sq = a < 150 ? 0.68 + 0.32 * (a / 150) : 1;  // squash d'impact, 150 ms
       drawEggB(nr.cx + s.dx, b, s.rot, sq);
     }
-    if (nr) for (const d of drops) {
+    if (nr) for (const d of drops) {           // lancers en arc vers leur étage
       const p2 = Math.min(1, d.t / DROP_MS), e2 = p2 * p2 * (3 - 2 * p2);   // smoothstep
       const fromB = d.sy + EGG_H / 2, toB = slotBottom(nr, d.slot);
       drawEggB(d.sx + (nr.cx + d.dx - d.sx) * e2,
                fromB + (toB - fromB) * e2 - Math.sin(Math.PI * p2) * DROP_ARC,
                d.rot * p2, 1);
     }
-    for (let i = 0; i < trail.length; i++) {   // bob déphasé par maillon : la file ondule
+    for (let i = 0; i < trail.length; i++) {   // traîne Yoshi, bob déphasé par maillon
       const w = Math.sin(t / 150 + i * 0.85);
       drawEggB(trail[i].x, trail[i].y + EGG_H / 2 + w * 2.5, w * 0.09, 1);
     }
+  }
+
+  function gameDrawOver(t) {    // 1er plan (SUR l'oiseau) : le nid (l'oiseau est niché DERRIÈRE son rebord) puis les confettis
+    if (!GAME || !eggSpr || !nestSpr) return;
+    const nr = nestOn ? nestRect() : null;
+    if (nr) ctx.drawImage(nestSpr, nr.cx - NEST_W / 2, nr.gy - NEST_H / 2 - NEST_DY, NEST_W, NEST_H);  // z: œufs < oiseau < nid
     for (const p of parts) {
       ctx.globalAlpha = 1 - p.t / p.life;
       ctx.fillStyle = p.col;
@@ -625,7 +630,7 @@ export function initBird(userOptions = {}) {
   }
   const seg = () => perches.find(p => p.id === groundId);
   function toAir() { state = 'air'; mode = 'fly'; by = groundY - flyCentToFeet; vx = vy = 0; cheerPos = -1; }
-  function adv(fps, len) { ft += dtms; if (ft > 1000 / fps) { fi = (fi + 1) % len; ft = 0; } }
+  function adv(fps, len) { ft += dtms; if (ft > 1000 / (fps * SPEED)) { fi = (fi + 1) % len; ft = 0; } }
 
   function tick(t) {
     dtms = Math.min(40, t - last || 16); const dt = dtms / 1000; last = t;
@@ -743,13 +748,13 @@ export function initBird(userOptions = {}) {
     } else if (mode === 'idle' || mode === 'peck') { // un cycle, puis figé sur la pose
       if (restPlaying) {
         ft += dtms;
-        if (ft > 1000 / B[mode].fps) { fi++; ft = 0; if (fi >= B[mode].frames.length) { fi = 0; restPlaying = false; } }
+        if (ft > 1000 / (B[mode].fps * SPEED)) { fi++; ft = 0; if (fi >= B[mode].frames.length) { fi = 0; restPlaying = false; } }
       } else fi = 0;
     }
 
     gameUpdate(t, dt);                      // jeu : ramassage, traîne, dépôt, confettis
     ctx.clearRect(0, 0, W, H);
-    gameDrawUnder(t);                       // œufs posés + pile du nid, sous l'oiseau
+    gameDrawUnder(t);                       // 3e plan : tous les œufs (posés, pile, lancers, traîne)
     let s, px, py;
     if (mode === 'hop') {                   // ancré au sol, grille hop pleine hauteur
       s = SPR.hop[facing][hopIdx]; px = Math.round(bx - s.cx * SCALE); py = Math.round(groundY - NYH * SCALE);
@@ -758,7 +763,7 @@ export function initBird(userOptions = {}) {
       py = Math.round(state === 'air' ? by - s.cy * SCALE : groundY - s.R * SCALE); // centroïde en vol, pied au sol
     }
     ctx.drawImage(s.img, px, py, s.C * SCALE, s.R * SCALE);
-    gameDrawOver(t);                        // nid (l'oiseau est dedans), lancers, traîne, confettis
+    gameDrawOver(t);                        // 1er plan : le nid (l'oiseau niché derrière) + confettis
     raf = requestAnimationFrame(tick);
   }
   raf = requestAnimationFrame(tick);
