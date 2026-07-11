@@ -413,26 +413,89 @@
       </div>
     </section>
 
-    <!-- ============ Quickstart ============ -->
+    <!-- ============ Quickstart (#300) ============
+         Trois routes d'installation, séparées en blocs distincts dans un
+         panneau unique (même vocabulaire que .feature-grid / .how-steps :
+         gaps de 1px sur fond --rule). Chaque commande = une rangée .cmd-row
+         avec SON bouton .btn-copy (le listener délégué existant copie
+         data-copy-text, rien de nouveau côté JS). Le bloc « After install »
+         porte le filet bleu inset du callout : les trois routes convergent là. -->
     <section class="section" id="quickstart" aria-labelledby="quickstart-title">
       <div class="container">
         <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;node -v</span><span class="eyebrow-out">&nbsp;&nbsp;v22.18.0</span></p>
         <h2 class="section-title reveal" id="quickstart-title">Quickstart</h2>
-        <pre class="code-block reveal"><code><span class="code-comment"># inside Claude Code: the plugin, then ask the agent to set up Roadmapped</span>
-/plugin marketplace add 5e1y/roadmapped
-/plugin install roadmapped@roadmapped
+        <div class="install-stack reveal">
 
-<span class="code-comment"># or npm</span>
-npx roadmapped init                    <span class="code-comment"># scaffold docs/tasks/, the skill, the git guard</span>
-npm install                            <span class="code-comment"># activates the hooks + MCP</span>
+          <section class="install-method" aria-labelledby="install-plugin-label">
+            <div class="install-head">
+              <h3 class="install-label" id="install-plugin-label">Claude Code plugin</h3>
+              <p class="install-note">Inside a Claude Code session; the agent handles the setup.</p>
+            </div>
+            <div class="cmd-row">
+              <code class="cmd-text">/plugin marketplace add 5e1y/roadmapped</code>
+              <button class="btn-copy" type="button" data-copy-text="/plugin marketplace add 5e1y/roadmapped" aria-label="Copy command: /plugin marketplace add 5e1y/roadmapped">Copy</button>
+            </div>
+            <div class="cmd-row">
+              <code class="cmd-text">/plugin install roadmapped@roadmapped</code>
+              <button class="btn-copy" type="button" data-copy-text="/plugin install roadmapped@roadmapped" aria-label="Copy command: /plugin install roadmapped@roadmapped">Copy</button>
+            </div>
+          </section>
 
-<span class="code-comment"># or straight from GitHub, no npm registry involved</span>
-npx --yes github:5e1y/roadmapped init
-npm install
+          <section class="install-method" aria-labelledby="install-npm-label">
+            <div class="install-head">
+              <h3 class="install-label" id="install-npm-label"><span class="install-or">or</span>npm</h3>
+            </div>
+            <div class="cmd-row">
+              <span class="cmd-ps1" aria-hidden="true">$</span>
+              <code class="cmd-text">npx roadmapped init</code>
+              <span class="code-comment"># scaffold docs/tasks/, the skill, the git guard</span>
+              <button class="btn-copy" type="button" data-copy-text="npx roadmapped init" aria-label="Copy command: npx roadmapped init">Copy</button>
+            </div>
+            <div class="cmd-row">
+              <span class="cmd-ps1" aria-hidden="true">$</span>
+              <code class="cmd-text">npm install</code>
+              <span class="code-comment"># activates the hooks + MCP</span>
+              <button class="btn-copy" type="button" data-copy-text="npm install" aria-label="Copy command: npm install">Copy</button>
+            </div>
+          </section>
 
-<span class="code-comment"># whichever door you came in, restart the session, then:</span>
-npx roadmapped dashboard               <span class="code-comment"># dashboard on http://localhost:5173</span>
-npx roadmapped --help                  <span class="code-comment"># the CLI your agent (or you) drives</span></code></pre>
+          <section class="install-method" aria-labelledby="install-github-label">
+            <div class="install-head">
+              <h3 class="install-label" id="install-github-label"><span class="install-or">or</span>Straight from GitHub</h3>
+              <p class="install-note">No npm registry involved.</p>
+            </div>
+            <div class="cmd-row">
+              <span class="cmd-ps1" aria-hidden="true">$</span>
+              <code class="cmd-text">npx --yes github:5e1y/roadmapped init</code>
+              <button class="btn-copy" type="button" data-copy-text="npx --yes github:5e1y/roadmapped init" aria-label="Copy command: npx --yes github:5e1y/roadmapped init">Copy</button>
+            </div>
+            <div class="cmd-row">
+              <span class="cmd-ps1" aria-hidden="true">$</span>
+              <code class="cmd-text">npm install</code>
+              <button class="btn-copy" type="button" data-copy-text="npm install" aria-label="Copy command: npm install">Copy</button>
+            </div>
+          </section>
+
+          <section class="install-method install-then" aria-labelledby="install-then-label">
+            <div class="install-head">
+              <h3 class="install-label" id="install-then-label">After install</h3>
+              <p class="install-note">Whichever door you came in: restart the session, then</p>
+            </div>
+            <div class="cmd-row">
+              <span class="cmd-ps1" aria-hidden="true">$</span>
+              <code class="cmd-text">npx roadmapped dashboard</code>
+              <span class="code-comment"># dashboard on http://localhost:5173</span>
+              <button class="btn-copy" type="button" data-copy-text="npx roadmapped dashboard" aria-label="Copy command: npx roadmapped dashboard">Copy</button>
+            </div>
+            <div class="cmd-row">
+              <span class="cmd-ps1" aria-hidden="true">$</span>
+              <code class="cmd-text">npx roadmapped --help</code>
+              <span class="code-comment"># the CLI your agent (or you) drives</span>
+              <button class="btn-copy" type="button" data-copy-text="npx roadmapped --help" aria-label="Copy command: npx roadmapped --help">Copy</button>
+            </div>
+          </section>
+
+        </div>
         <p class="prose under-block reveal">Needs Node&nbsp;&ge;&nbsp;22.18 and a <code>package.json</code> in the repo. The dashboard ships pre-built, so install pulls&nbsp;~30&nbsp;MB, not a front-end toolchain. All three roads end in the same wired state, and every install updates itself from GitHub in the background &mdash; installing is the last time you think about installing. Point your AI agent at the Claude skill (or just ask it to install Roadmapped from GitHub) and it takes it from there.</p>
       </div>
     </section>
