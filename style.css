@@ -17,11 +17,13 @@
      de la trame teintés bleu, halo diffus derrière le hero, lignes de la
      grille de colonnes, numéros d'étape du stepper. PARCIMONIE. L'orange
      #EA6200 reste la propriété exclusive de l'oiseau.
-   - How it works (#280, remanié #283) : section pinnée + stepper au scroll,
-     pilotée par html.js-stepper (posé par JS si écran assez grand ET pas de
-     prefers-reduced-motion). Sans la classe : les 4 étapes s'empilent,
-     lisibles, aucune piste géante vide. Depuis #283 : plus d'aperçus
-     latéraux, les 4 étapes seules dans un panneau peint, titres cliquables.
+   - How it works (#280 → #283 → refonte auto-advance) : plus de pin-scroll —
+     section de hauteur normale, 4 étapes + piste verticale dont le segment
+     accent se remplit (~5,5 s par étape) puis avance, en boucle ; ralenti au
+     survol, clic pour sauter. Gate html.js-howplay (posée par le script) ;
+     sans elle / en reduced-motion : tout empilé ou piste masquée, clic seul.
+     Visuels = pièces isolées de l'UI réelle de l'app (.ui-*), stylées aux
+     variables du site.
    - Passe v4 (#283/#284/#286/#287) : reveals généralisés + stagger (#284),
      wordmark en deux lignes bord à bord en mobile (#286), accordéon des
      feature-cards en mobile (#287).
@@ -645,29 +647,25 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 /* Ceinture-bretelles : hidden doit gagner quoi qu'il arrive. */
 .feature-body[hidden] { display: none; }
 
-/* ---------- How it works : stepper pinné au scroll (#280, remanié #283) ----
-   Les 4 aperçus latéraux ont disparu (#283) : ne restent que les 4 étapes
-   (numéro + titre + texte), dans un panneau peint — .how-steps, fond --card
-   + bordure. C'est LUI qui porte le [data-bird-perch] de la zone (l'ex
-   .how-visuals a emporté le sien en partant) ; le callout garde le sien.
+/* ---------- How it works : auto-advance minuté (refonte, ex-stepper) ------
+   Plus de pin-scroll : section de hauteur normale. Deux colonnes — les 4
+   étapes à gauche (chaque rangée .how-step est un perchoir de l'oiseau),
+   les visuels à droite. Le long des étapes, une piste verticale
+   (.how-track, 2px sur --rule) : le segment accent (.how-fill, positionné
+   par le script how-play sur la rangée active) se remplit sur la durée de
+   l'étape (~5,5 s) puis la suivante s'active, en boucle. Survol de la
+   colonne des étapes : progression au ralenti (x0.25). Clic : saut direct,
+   barre remise à zéro.
 
-   Deux régimes, commutés par html.js-stepper (posé par le script stepper
-   uniquement si viewport assez grand ET pas de prefers-reduced-motion) :
+   Gate html.js-howplay (posée par le script) :
+   - SANS elle (no-JS) : étapes empilées à pleine opacité, les 4 visuels
+     empilés séparés d'un filet, piste masquée — tout est lisible.
+   - AVEC elle : un seul visuel affiché (l'actif), étapes inactives
+     estompées (opacity .5 — jamais ≤ .05 : le test de visibilité de
+     l'oiseau tolère la pénombre), piste visible.
+   prefers-reduced-motion : piste masquée même avec la gate — le script
+   n'auto-avance pas, le clic reste le seul moteur. */
 
-   - SANS la classe (fallback no-JS / reduced-motion / petit écran) :
-     .how-scroll et .how-pin sont des blocs ordinaires, les 4 étapes
-     s'empilent à pleine opacité dans le panneau, séparées d'un filet.
-     Rien n'est épinglé, rien n'est vide, is-active est ignoré.
-
-   - AVEC la classe : .how-scroll devient une piste de 400vh, .how-pin se
-     fige (sticky, 100vh) et le script active l'étape du quart de piste
-     courant. Étapes inactives estompées (opacity .45 — jamais ≤ .05 : le
-     test de visibilité de l'oiseau tolère la pénombre), étape active à
-     pleine opacité + filet bleu inset (même vocabulaire que le callout).
-     Chaque titre est un bouton (.how-step-btn) : cliquer saute au quart
-     de piste correspondant (script stepper). */
-
-/* Desktop : 2 colonnes — les 4 étapes à gauche, les aperçus à droite (#290). */
 .how-stage {
   margin-top: 1.5rem;
   display: grid;
@@ -677,20 +675,54 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   width: 100%;
 }
 
+/* La piste longe le panneau des étapes : colonne auto (2px) + le panneau. */
+.how-lane {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.875rem;
+  align-items: stretch;
+  max-width: 46rem;
+}
+
+.how-track {
+  position: relative;
+  width: 2px;
+  background: var(--rule);
+  display: none;   /* no-JS : pas de barre morte */
+}
+html.js-howplay .how-track { display: block; }
+.how-fill {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: 0;
+  height: 0;
+  background: var(--accent);
+}
+
 .how-steps {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-width: 46rem;
+  min-width: 0;
   background: var(--card);
   border: 1px solid var(--rule);
 }
 
-.how-step { padding: 1.25rem clamp(1.25rem, 2.5vw, 1.75rem); cursor: pointer; }
+.how-step { padding: 1.25rem clamp(1.25rem, 2.5vw, 1.75rem); }
 .how-step + .how-step { border-top: 1px solid var(--rule); }
 
+html.js-howplay .how-step {
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+html.js-howplay .how-step:hover { opacity: 0.8; }
+html.js-howplay .how-step.is-active { opacity: 1; }
+
 /* Le titre entier (numéro + intitulé) est le bouton de navigation. Reset
-   complet : au repos il ressemble trait pour trait à l'ancien titre. */
+   complet : au repos il ressemble trait pour trait à un titre ordinaire.
+   Le focus visible vient du :focus-visible global (outline accent). */
 .how-step-btn {
   display: block;
   width: 100%;
@@ -725,106 +757,275 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   max-width: 58ch;
 }
 
-/* --- Aperçus (#290) : panneau peint à droite, un visuel actif à la fois --- */
+/* --- Visuels : pièces isolées de l'UI réelle de l'app (.ui-*) ---
+   Panneau sur fond --page : les composants (--card + filets) s'en
+   détachent exactement comme dans le dashboard. Un visuel actif à la
+   fois avec la gate ; empilés, séparés d'un filet, sans elle. */
 .how-visuals {
   position: relative;
   min-width: 0;
-  background: var(--card);
+  background: var(--page);
   border: 1px solid var(--rule);
 }
 .how-visual { padding: clamp(1.25rem, 2.5vw, 1.75rem); overflow-x: auto; }
 .how-visual + .how-visual { border-top: 1px solid var(--rule); }
 
-.how-tree { overflow-x: auto; }
-.how-tree pre,
-.how-shell,
-.how-diff {
+html.js-howplay .how-visuals {
+  display: flex;
+  flex-direction: column;
+  min-height: 23rem;
+}
+html.js-howplay .how-visual { display: none; border-top: 0; }
+html.js-howplay .how-visual.is-active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  animation: how-visual-in 0.4s ease;
+}
+@keyframes how-visual-in { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html.js-howplay .how-track { display: none; }
+  html.js-howplay .how-visual.is-active { animation: none; }
+}
+
+/* --- Vocabulaire des pièces UI — mappé de l'app vers les tokens du site :
+   neutral-900→--ink, neutral-500→--muted, neutral-600/700→--soft,
+   white→--card, neutral-50→--page/--hover, neutral-200→--rule,
+   neutral-300→--edge, accent→--accent, accent-tint→--tint. --- */
+
+.ui-glyph, .ui-icon { flex-shrink: 0; }
+.ui-glyph--live { color: var(--accent); }
+.ui-icon { color: var(--muted); }
+.ui-id {
+  flex-shrink: 0;
   font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+.ui-count { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+.ui-dim { font-size: 0.6875rem; color: var(--muted); }
+.ui-time {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.ui-tag { flex-shrink: 0; font-size: 0.6875rem; color: var(--muted); }
+.ui-temp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+.ui-temp svg { flex-shrink: 0; }
+.ui-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  border: 1px solid var(--rule);
+  background: var(--page);
+  padding: 0 0.375rem;
+  font-size: 0.6875rem;
+  line-height: 1.1rem;
+  color: var(--muted);
+}
+.ui-chip--strong {
+  border-color: var(--edge);
+  background: var(--hover);
+  color: var(--soft);
+  font-weight: 500;
+}
+.ui-chip--mono { font-family: var(--mono); }
+
+/* 01 · Backlog (TaskRow) : rangées sous leur tête de type. */
+.ui-pane { border: 1px solid var(--rule); background: var(--card); }
+.ui-pane-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+.ui-pane-title { font-size: 0.8125rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.ui-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
   font-size: 0.8125rem;
-  line-height: 1.85;
   color: var(--ink);
 }
-.tree-note { color: var(--muted); }
-.sh-ps1 { color: var(--accent); }
-.sh-out { color: var(--muted); }
-.diff-file { color: var(--muted); }
-.diff-del  { color: var(--muted); }
-.diff-add  { color: var(--accent); }
-
-.how-board {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
-}
-.board-col {
+.ui-row + .ui-row { border-top: 1px solid var(--rule); }
+.ui-row-title {
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ui-row.is-done .ui-row-title { color: var(--muted); text-decoration: line-through; }
+.ui-row-meta {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+.ui-row-meta .ui-time { margin-left: 0; }
+
+/* 02 · Activity (LiveActivityMenu) : le popup du header. */
+.ui-pop {
+  width: 100%;
+  max-width: 21rem;
+  margin-inline: auto;
+  border: 1px solid var(--rule);
+  background: var(--card);
+}
+.ui-pop-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+.ui-pop-title { font-size: 0.75rem; font-weight: 600; color: var(--ink); }
+.ui-log { list-style: none; margin: 0; padding: 0; }
+.ui-log li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4375rem 0.75rem;
+  font-size: 0.75rem;
+}
+.ui-log li + li { border-top: 1px solid var(--rule); }
+.ui-log .is-fresh { background: var(--tint); }
+.ui-verb { flex-shrink: 0; font-weight: 500; color: var(--soft); }
+.ui-log-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--soft);
+}
+.ui-pop-foot {
+  margin: 0;
+  border-top: 1px solid var(--rule);
+  padding: 0.4375rem 0.75rem;
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+
+/* 03 · Panneau d'une tâche done (TaskPanel) : en-tête, titre barré, bloc Log. */
+.ui-panel {
+  width: 100%;
+  max-width: 26rem;
+  margin-inline: auto;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  padding: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.ui-panel-head { display: flex; align-items: center; gap: 0.375rem; }
+.ui-status { font-size: 0.75rem; color: var(--soft); }
+.ui-panel-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.ui-logbox {
+  border: 1px solid var(--rule);
   background: var(--page);
-  padding: 0.75rem;
+  padding: 0.625rem 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-height: 11rem;
 }
-.board-head {
+.ui-logbox-cap { font-size: 0.6875rem; font-weight: 500; color: var(--muted); }
+.ui-dates { font-size: 0.75rem; color: var(--muted); }
+.ui-field { display: flex; flex-direction: column; gap: 0.125rem; }
+.ui-field-label { font-size: 0.6875rem; color: var(--muted); }
+.ui-field-val { font-size: 0.75rem; line-height: 1.45; color: var(--ink); }
+.ui-field-val--mono { font-family: var(--mono); }
+.ui-panel-foot {
+  border-top: 1px solid var(--rule);
+  padding-top: 0.5rem;
   font-family: var(--mono);
   font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 0.125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.board-card {
-  display: block;
-  height: 1.5rem;
+
+/* 04 · Roadmap en colonnes (RoadmapColumns) : têtes, barres fines, cartes. */
+.ui-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.ui-col { min-width: 0; display: flex; flex-direction: column; gap: 0.375rem; }
+.ui-col-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.ui-col-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.ui-bar {
+  height: 4px;
+  border-radius: 999px;   /* fidèle à l'app (rounded-full), seule entorse au zéro-radius */
+  background: var(--rule);
+  overflow: hidden;
+}
+.ui-bar i { display: block; height: 100%; background: var(--accent); }
+.ui-cards { display: flex; flex-direction: column; margin-top: 0.25rem; }
+.ui-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  border: 1px solid var(--rule);
   background: var(--card);
-  border: 1px solid var(--edge);
+  padding: 0.5rem 0.625rem;
+  font-size: 0.75rem;
+  color: var(--ink);
 }
-.board-card.is-live { box-shadow: inset 2px 0 0 var(--accent); }
-.board-card.is-done { opacity: 0.55; }
+.ui-card + .ui-card { margin-top: -1px; }
+.ui-card .ui-glyph { margin-top: 0.1875rem; }
+.ui-card-body { min-width: 0; display: flex; flex-direction: column; gap: 0.125rem; }
+.ui-card-title { color: var(--ink); }
+.ui-avail { font-size: 0.6875rem; font-weight: 500; color: var(--soft); }
+.ui-card--more { color: var(--muted); font-size: 0.6875rem; }
 
-/* --- Régime pinné --- */
-
-html.js-stepper .how-scroll { height: 400vh; }
-
-html.js-stepper .how-pin {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-}
-
-html.js-stepper .how-stage { margin-top: 0; width: 100%; }
-
-html.js-stepper .how-step {
-  opacity: 0.45;
-  transition: opacity 0.3s ease, box-shadow 0.3s ease;
-}
-html.js-stepper .how-step:hover { opacity: 0.75; }
-html.js-stepper .how-step.is-active {
-  opacity: 1;
-  box-shadow: inset 2px 0 0 var(--accent);
-}
-
-html.js-stepper .how-visuals { height: min(58vh, 26rem); overflow: hidden; }
-html.js-stepper .how-visual { display: none; border-top: 0; }
-html.js-stepper .how-visual.is-active {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: auto;
-  animation: how-visual-in 0.4s ease;
-}
-html.js-stepper .how-visual.is-active > * { margin-block: auto; }
-@keyframes how-visual-in { from { opacity: 0; } }
-
-/* Mobile / tablette (sous le seuil du stepper pinné) : on retire les aperçus,
-   les 4 étapes seules en une colonne (#290 — retour Rémi : aperçus desktop only). */
+/* Mobile / tablette : une colonne — étapes d'abord, visuel dessous.
+   La piste verticale est masquée (le clic + l'auto-advance suffisent). */
 @media (max-width: 62rem) {
   .how-stage { grid-template-columns: 1fr; }
-  .how-visuals { display: none; }
+  .how-lane { grid-template-columns: minmax(0, 1fr); max-width: none; }
+  html.js-howplay .how-track { display: none; }
+  html.js-howplay .how-visuals { min-height: 19rem; }
+  .how-visual { padding: 1rem; }
+  .ui-board { gap: 0.625rem; }
 }
 
 .callout {
@@ -927,7 +1128,7 @@ html.js-stepper .how-visual.is-active > * { margin-block: auto; }
 }
 .cmd-row + .cmd-row { margin-top: 0.5rem; }
 
-/* Même vocabulaire que .eyebrow-ps1 / .sh-ps1 : le $ est bleu, et il est
+/* Même vocabulaire que .eyebrow-ps1 : le $ est bleu, et il est
    décoratif (aria-hidden) — data-copy-text porte la commande nue. */
 .cmd-ps1 { flex: none; color: var(--accent); }
 
