@@ -447,10 +447,20 @@ export function initBird(userOptions = {}) {
       });
     }
   }
-  function spawnEggs() {   // EGG_N œufs posés SUR des surfaces perchables (base sur le bord haut),
+  // position VIVE d'un œuf posé : lue du rect COURANT de son perchoir, donc elle
+  // suit scroll + resize + reflow sans coordonnée figée. {ex,ey} = centre écran,
+  // ey déjà remonté de EGG_DY ; null si le perchoir a disparu / n'est plus posable.
+  function eggPos(e) {
+    const r = e.el.getBoundingClientRect();
+    if (!r.width) return null;
+    const l = Math.max(0, r.left) + EDGE, rr = Math.min(W, r.right) - EDGE;
+    if (rr - l < 1) return null;
+    return { ex: l + e.fx * (rr - l), ey: Math.round(r.top) - EGG_H / 2 - EGG_DY };
+  }
+  function spawnEggs() {   // EGG_N œufs ancrés à un perchoir (el + fraction fx le long du bord)
     if (!fpEl) fpEl = document.querySelector('#footer-perch');   // pour que l'oiseau se pose puis saute
     queryPerchEls();
-    const cands = [];                                // bords de perchoirs, en coordonnées DOCUMENT
+    const cands = [];
     for (const p of perchEls) {
       if (p.el === fpEl) continue;                   // le R du footer est réservé au nid
       const r = p.el.getBoundingClientRect();
@@ -458,20 +468,20 @@ export function initBird(userOptions = {}) {
       if (r.width >= W * 0.985 && r.height >= H * 0.9) continue;  // wrapper de page
       const l = Math.max(0, r.left) + EDGE, rr = Math.min(W, r.right) - EDGE;
       if (rr - l < EGG_W + 8) continue;
-      cands.push({ l: l + scrollX, r: rr + scrollX, y: r.top + scrollY });
+      cands.push(p.el);
     }
     if (!cands.length) return;                       // aucun perchoir dispo -> pas d'œuf cette fournée
     for (let i = 0; i < EGG_N; i++) {
-      let x = 0, y = 0, ok = false;
+      let cand = null, fx = 0, ex = 0, ey = 0, ok = false;
       for (let tr = 0; tr < 24 && !ok; tr++) {       // ponytail: 24 essais puis tant pis
-        const c = cands[(Math.random() * cands.length) | 0];
-        x = c.l + Math.random() * (c.r - c.l);
-        y = c.y - EGG_H / 2 - EGG_DY;                 // base de l'œuf calée pile sur le bord du perchoir
-        ok = Math.hypot(x - (bx + scrollX), y - (by + scrollY)) > 120;
-        for (const e of eggs) if (Math.hypot(x - e.x, y - e.y) < 90) { ok = false; break; }
+        cand = cands[(Math.random() * cands.length) | 0]; fx = Math.random();
+        const pos = eggPos({ el: cand, fx }); if (!pos) continue;
+        ex = pos.ex; ey = pos.ey;
+        ok = Math.hypot(ex - bx, ey - by) > 120;     // pas collé à l'oiseau
+        for (const e of eggs) { const q = eggPos(e); if (q && Math.hypot(ex - q.ex, ey - q.ey) < 90) { ok = false; break; } }
       }
       // hopAt : petit sursaut périodique — l'œuf a l'air vivant, donc ramassable
-      eggs.push({ x, y, hopAt: performance.now() + 1500 + Math.random() * 4500 });
+      if (cand) eggs.push({ el: cand, fx, hopAt: performance.now() + 1500 + Math.random() * 4500 });
     }
   }
   function nestRect() {   // ancrage du nid : posé sur le R du footer (rect live -> suit le scroll)
@@ -501,7 +511,8 @@ export function initBird(userOptions = {}) {
     // au y du dernier perchoir), sol - demi-corps une fois posé.
     const bcy = (state === 'air') ? by : groundY - (B.idle.rows * SCALE) / 2;
     if (state === 'ground') for (let i = eggs.length - 1; i >= 0; i--) {
-      const e = eggs[i], ex = e.x - scrollX, ey = e.y - scrollY;
+      const pos = eggPos(eggs[i]); if (!pos) continue;
+      const ex = pos.ex, ey = pos.ey;
       if (ex < -40 || ex > W + 40 || ey < -40 || ey > H + 40) continue;  // hors écran : injouable
       if (Math.hypot(ex - bx, ey - bcy) > EGG_R) continue;
       eggs.splice(i, 1);
@@ -567,8 +578,9 @@ export function initBird(userOptions = {}) {
   function gameDrawUnder(t) {   // 3e plan (SOUS l'oiseau) : TOUS les œufs — posés, pile, lancers, traîne
     if (!GAME || !eggSpr || !nestSpr) return;
     const nr = nestOn ? nestRect() : null;
-    for (const e of eggs) {                    // œufs posés dans la page
-      const ex = e.x - scrollX, ey = e.y - scrollY;
+    for (const e of eggs) {                    // œufs posés dans la page (ancrés à leur perchoir)
+      const pos = eggPos(e); if (!pos) continue;
+      const ex = pos.ex, ey = pos.ey;
       if (ex < -EGG_W || ex > W + EGG_W || ey < -EGG_H || ey > H + EGG_H) continue;
       let dy2 = 0;
       if (t >= e.hopAt) {
@@ -647,7 +659,8 @@ export function initBird(userOptions = {}) {
     if (!atBottom && GAME && eggSpr) {
       const cx0 = tx, cy0 = ty; let bd = 120;   // distances mesurées depuis le vrai curseur
       for (const e of eggs) {
-        const ex = e.x - scrollX, ey = e.y - scrollY;
+        const pos = eggPos(e); if (!pos) continue;
+        const ex = pos.ex, ey = pos.ey;
         if (ex < 0 || ex > W || ey < 0 || ey > H) continue;
         const d = Math.hypot(ex - cx0, ey - cy0);
         if (d < bd) { bd = d; tx = ex; ty = ey; }
