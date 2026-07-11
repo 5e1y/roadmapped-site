@@ -908,9 +908,12 @@
        bouton-titre bulle jusqu'au <li>, un seul déclenchement) : on y
        saute, barre remise à zéro. aria-current="step" suit l'étape active.
        La boucle rAF ne tourne que section visible (IntersectionObserver)
-       ET hors prefers-reduced-motion (media query écoutée en live) — en
-       reduced motion, la piste est masquée (CSS) et le clic reste le seul
-       moteur. Sans JS : pas de classe js-howplay, le CSS empile tout. -->
+       ET écran ≥ 62rem (media query `wide`) ET hors prefers-reduced-motion
+       (`calm`) — les deux MQ sont écoutées en live (reapply) : au passage
+       sous 62rem ou en reduced motion, la boucle s'arrête proprement et
+       l'état est remis à zéro. Sur mobile, les exemples sont masqués (CSS)
+       et la section = titre + les 4 étapes en texte, pleine opacité.
+       Sans JS : pas de classe js-howplay, le CSS empile tout. -->
   <script>
     (function () {
       var stage = document.querySelector('#how-it-works .how-stage');
@@ -926,7 +929,9 @@
       var STEP_MS = 5500;   // durée d'une étape à pleine vitesse
       var SLOW = 0.25;      // facteur de ralentissement au survol des étapes
       var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var wide = window.matchMedia('(min-width: 62rem)');   // desktop only : le mobile n'a pas d'exemples à faire défiler
       var current = 0, elapsed = 0, slowed = false, visible = false, raf = 0, last = 0;
+      function engineOn() { return wide.matches && !calm.matches; }
 
       // Le segment accent couvre la rangée active et grandit avec elapsed.
       function paint() {
@@ -955,12 +960,18 @@
         raf = requestAnimationFrame(loop);
       }
       function start() {
-        if (raf || calm.matches || !visible) return;
+        if (raf || !engineOn() || !visible) return;
         last = performance.now();
         raf = requestAnimationFrame(loop);
       }
       function stop() {
         if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      }
+      // (Dés)activation au franchissement d'un breakpoint / reduced-motion :
+      // moteur off => boucle arrêtée + état remis à zéro (étape 0, barre vide).
+      function reapply() {
+        if (engineOn()) start();
+        else { stop(); setStep(0); }
       }
 
       // Toute la rangée est cliquable (le bouton du titre reste le contrôle clavier).
@@ -982,10 +993,9 @@
         visible = true;
         start();
       }
-      if (calm.addEventListener) {
-        calm.addEventListener('change', function () {
-          if (calm.matches) stop(); else start();
-        });
+      if (wide.addEventListener) {
+        wide.addEventListener('change', reapply);
+        calm.addEventListener('change', reapply);
       }
       addEventListener('resize', paint);
       setStep(0);

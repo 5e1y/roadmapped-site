@@ -716,13 +716,19 @@ html.js-howplay .how-track { display: block; }
 .how-step { padding: 1.25rem clamp(1.25rem, 2.5vw, 1.75rem); }
 .how-step + .how-step { border-top: 1px solid var(--rule); }
 
-html.js-howplay .how-step {
-  opacity: 0.5;
-  transition: opacity 0.3s ease;
-  cursor: pointer;
+/* L'estompage « étape inactive » n'a de sens QUE quand le carrousel tourne :
+   desktop (≥62rem) ET motion autorisé — exactement la condition du moteur JS
+   (engineOn). Hors de là (mobile OU reduced-motion), aucune règle ne s'applique
+   ici : les 4 étapes restent à pleine opacité et se lisent comme une liste. */
+@media (min-width: 62rem) and (prefers-reduced-motion: no-preference) {
+  html.js-howplay .how-step {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+  }
+  html.js-howplay .how-step:hover { opacity: 0.8; }
+  html.js-howplay .how-step.is-active { opacity: 1; }
 }
-html.js-howplay .how-step:hover { opacity: 0.8; }
-html.js-howplay .how-step.is-active { opacity: 1; }
 
 /* Le titre entier (numéro + intitulé) est le bouton de navigation. Reset
    complet : au repos il ressemble trait pour trait à un titre ordinaire.
@@ -1080,12 +1086,13 @@ html.js-howplay .how-visual.is-active {
 /* Mobile / tablette : une colonne — étapes d'abord, visuel dessous.
    La piste verticale est masquée (le clic + l'auto-advance suffisent). */
 @media (max-width: 62rem) {
+  /* Mobile : la section = titre + les 4 étapes en texte. Pas d'exemples
+     (auto-advance coupé côté JS), pas de piste, pas de gouttière vide. */
   .how-stage { grid-template-columns: 1fr; }
   .how-lane { max-width: none; }
   html.js-howplay .how-track { display: none; }
-  html.js-howplay .how-visuals { min-height: 0; }
-  .ui-frame-rail { width: 1.75rem; }
-  .ui-board { gap: 0.625rem; }
+  .how-visuals,
+  html.js-howplay .how-visuals { display: none; }
 }
 
 .callout {
