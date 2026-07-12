@@ -549,6 +549,48 @@
       </div>
     </section>
 
+    <!-- ============ Knowledge base (powered by Graphify) ============
+         Nouvelle section : le graphe vivant du repo dans l'onglet Docs.
+         Vocabulaire existant uniquement (eyebrow, prose, pair-grid/pair-card,
+         under-block, link-arrow) — zéro CSS nouveau, theme-aware par les
+         variables. Crédit Graphify explicite : le graphe est produit par un
+         projet open source distinct (MIT), Roadmapped ne fait que le lire. -->
+    <section class="section" id="knowledge-base" aria-labelledby="kb-title">
+      <div class="container">
+        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;npx roadmapped kb search "auth"</span><span class="eyebrow-out">&nbsp;&nbsp;4 nodes &middot; 2 tickets</span></p>
+        <h2 class="section-title reveal" id="kb-title">A knowledge base you never fill in</h2>
+        <p class="prose reveal">In the Docs tab, a toggle flips <strong>Documents</strong> into
+          <strong>Knowledge base</strong>: a live graph of your repo &mdash; code, docs, and the
+          tickets connected to them. Nobody curates it. Nobody forgets to update it. It&rsquo;s
+          derived from what&rsquo;s already there.</p>
+        <div class="pair-grid under-block">
+          <article class="pair-card reveal" data-bird-perch aria-labelledby="kb-you-title">
+            <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;cat docs/tasks/02-feature/17-dark-mode.yaml</span><br><span class="eyebrow-out">refs: [src/theme.ts, docs/design.md]</span></p>
+            <h3 class="section-title pair-title" id="kb-you-title">Tickets that know their territory</h3>
+            <p>Every ticket shows &ldquo;Connected in the knowledge base&rdquo;: the code and docs it
+              touches, derived entirely from its <code>refs</code>. Zero extra fields, zero tagging
+              ceremony. If your backlog is honest, the map is too.</p>
+          </article>
+          <article class="pair-card reveal" data-bird-perch aria-labelledby="kb-agent-title">
+            <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;npx roadmapped kb neighborhood 17</span><br><span class="eyebrow-out">src/theme.ts &middot; src/state/&hellip; &middot; docs/design.md</span></p>
+            <h3 class="section-title pair-title" id="kb-agent-title">Agents stop grepping blind</h3>
+            <p>Your agent queries the same graph &mdash; <code>kb_neighborhood</code>,
+              <code>kb_search</code>, <code>kb_node</code> as MCP tools, <code>npx roadmapped kb</code>
+              on the CLI &mdash; and lands on the right files before it starts exploring. One call
+              instead of a cold grep across the repo.</p>
+          </article>
+        </div>
+        <p class="prose under-block reveal">The graph itself is produced by
+          <a class="link-arrow" href="https://graphify.net/">Graphify</a> &mdash; a separate
+          open-source project (MIT, <a class="link-arrow" href="https://github.com/Graphify-Labs/graphify">Graphify-Labs/graphify</a>),
+          not ours. Roadmapped reads <code>graphify-out/graph.json</code> and renders it; they do
+          the clever part. Generating one is <code>pip install graphifyy</code> then
+          <code>/graphify .</code> in your agent &mdash; Python&nbsp;&ge;&nbsp;3.10, for that layer
+          only; Roadmapped stays Node. No graph yet? The view tells you exactly that, and how to
+          fix it.</p>
+      </div>
+    </section>
+
     <!-- ============ Quickstart (#300) ============
          Trois routes d'installation, séparées en blocs distincts dans un
          panneau unique (même vocabulaire que .feature-grid / .how-steps :
