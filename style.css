@@ -1214,6 +1214,103 @@ html.js-howplay .how-visual.is-active {
 
 .under-block { margin-top: 1.25rem; }
 
+/* ---------- Knowledge base / Graphify (#314) ----------
+   L'extrait réel du graphe, dans un fragment de chrome du dashboard (le
+   .ui-frame du How it works, onglet Docs actif, mini-toggle Documents /
+   Knowledge base). Le SVG est peuplé par le script kb-graph : couleurs et
+   états (survol, estompage) vivent ICI, en classes sur les <g>/<line>,
+   donc tout suit les variables du thème. Doctrine bleu respectée : l'accent
+   marque les nœuds « docs » du spec, le voisinage survolé (un état) et le
+   toggle actif — le code reste monochrome. */
+
+.kb-demo { margin: 1.75rem 0 0; max-width: 56rem; }
+
+/* Mini-toggle Documents / Knowledge base, à la place de la pastille
+   Activity : même gabarit que .ui-frame-live, deux segments. */
+.kb-switch {
+  display: inline-flex;
+  flex-shrink: 0;
+  border: 1px solid var(--rule);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+.kb-switch span { padding: 0.0625rem 0.4375rem; }
+.kb-switch span + span { border-left: 1px solid var(--rule); }
+.kb-switch .is-on { color: var(--ink); font-weight: 600; background: var(--hover); }
+
+.kb-canvas { background: var(--page); }
+.kb-canvas svg { display: block; width: 100%; height: auto; }
+
+/* Barre d'état sous le graphe : le nœud survolé (label — fichier · arêtes). */
+.kb-readout {
+  margin: 0;
+  border-top: 1px solid var(--rule);
+  padding: 0.4375rem 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kb-caption {
+  margin: 1rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--soft);
+  max-width: 68ch;
+}
+
+/* --- Éléments du graphe (créés par le script kb-graph) --- */
+
+.kbg-nojs {
+  font-family: var(--mono);
+  font-size: 12px;
+  fill: var(--muted);
+}
+
+.kbg-edge {
+  stroke: var(--edge);
+  stroke-width: 1;
+  opacity: 0.55;
+  transition: opacity 0.2s ease, stroke 0.2s ease;
+}
+.kbg-edge--contains { stroke: var(--rule); }
+.kbg-edge--doc { stroke: var(--accent); stroke-dasharray: 3 3; opacity: 0.65; }
+
+.kbg-node { transition: opacity 0.2s ease; }
+.kbg-node circle { fill: var(--soft); }
+.kbg-node--file circle { fill: var(--ink); }
+.kbg-node--doc circle { fill: var(--accent); }
+.kbg-node .kbg-hit { fill: transparent; }
+.kbg-node text {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  fill: var(--muted);
+  paint-order: stroke;
+  stroke: var(--page);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+/* Survol : le voisinage s'allume, le reste s'estompe (jamais sous .1 :
+   la pénombre reste lisible, et le retour est instantané). */
+#kb-svg.is-focus .kbg-node:not(.is-hot) { opacity: 0.15; }
+#kb-svg.is-focus .kbg-edge:not(.is-hot) { opacity: 0.1; }
+#kb-svg .kbg-edge.is-hot { stroke: var(--accent); opacity: 0.85; }
+.kbg-node.is-src circle:not(.kbg-hit) { stroke: var(--accent); stroke-width: 1.5; }
+.kbg-node.is-hot text { fill: var(--soft); }
+
+/* Téléphone : la barre d'onglets est à l'étroit — le segment inactif du
+   toggle disparaît, il ne reste que « Knowledge base ». */
+@media (max-width: 30rem) {
+  .kb-switch span:first-child { display: none; }
+  .kb-switch span + span { border-left: 0; }
+}
+
 /* ---------- Privacy / Open source pair ---------- */
 
 .pair-grid {

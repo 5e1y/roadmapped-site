@@ -307,6 +307,77 @@
       </div>
     </section>
 
+    <!-- ============ Knowledge base (powered by Graphify) (#314) ============
+         La section dédiée : le graphe vivant du repo dans l'onglet Docs, avec
+         un extrait RÉEL de graphify-out/graph.json rendu en SVG — 42 nœuds /
+         94 arêtes, le voisinage de la feature Knowledge base elle-même (méta
+         assumé : le graphe qui montre le code qui dessine le graphe).
+         Positions force-directed PRÉ-CALCULÉES au build (aucune lib, aucun
+         fetch) ; le script kb-graph en bas de page ne fait que le rendu, une
+         dérive ambiante légère (coupée hors viewport / en reduced-motion) et
+         le survol qui met le voisinage en évidence. Vocabulaire existant
+         (eyebrow, prose, ui-frame, pair-grid, under-block, link-arrow) +
+         classes kb-*/kbg-* dans style.css, tout en variables : theme-aware.
+         Crédit Graphify explicite : projet open source distinct (MIT),
+         Roadmapped ne fait que lire sa sortie. -->
+    <section class="section" id="knowledge-base" aria-labelledby="kb-title">
+      <div class="container">
+        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;npx roadmapped kb neighborhood 17</span><span class="eyebrow-out">&nbsp;&nbsp;6 code &middot; 2 docs &middot; 1 ticket</span></p>
+        <h2 class="section-title reveal" id="kb-title">A knowledge base you never fill in</h2>
+        <p class="prose reveal">In the Docs tab, a toggle flips <strong>Documents</strong> into
+          <strong>Knowledge base</strong>: a graph of your repo &mdash; files, functions, docs,
+          and the edges between them, with your tickets wired in on top. Nobody curates it.
+          Nobody forgets to update it. It&rsquo;s derived from what&rsquo;s already in the repo,
+          and it moves when the repo moves.</p>
+
+        <figure class="kb-demo under-block reveal">
+          <div class="ui-frame kb-frame" data-bird-perch>
+            <div class="ui-frame-bar">
+              <span class="ui-frame-tabs"><span class="ui-frame-tab">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab is-on">Docs</span></span>
+              <span class="kb-switch" aria-hidden="true"><span>Documents</span><span class="is-on">Knowledge base</span></span>
+            </div>
+            <div class="kb-canvas">
+              <svg id="kb-svg" viewBox="0 0 720 430" preserveAspectRatio="xMidYMid meet" role="img" aria-label="An excerpt of this repo's real knowledge graph: 42 nodes around the knowledge-base feature itself. Code files like kb.ts, KbGraph.tsx and kbLink.ts, their functions, and the spec document that describes them, connected by import, call and reference edges.">
+                <text class="kbg-nojs" x="360" y="219" text-anchor="middle">42 nodes are waiting for JavaScript.</text>
+              </svg>
+            </div>
+            <p class="kb-readout"><span id="kb-readout-text">42 nodes &middot; 94 edges &mdash; a real excerpt of this repo&rsquo;s graph</span></p>
+          </div>
+          <figcaption class="kb-caption">Not an illustration: these are 42 of the 869 nodes in
+            this repo&rsquo;s own <code>graph.json</code> &mdash; the knowledge-base feature and
+            its neighborhood. The grey constellation is the code that ships it; the blue one is
+            the spec that demanded it. Hover a node to trace its edges. Yes, we used the graph
+            to build the page about the graph.</figcaption>
+        </figure>
+
+        <div class="pair-grid under-block">
+          <article class="pair-card reveal" data-bird-perch aria-labelledby="kb-you-title">
+            <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;cat docs/tasks/02-feature/17-dark-mode.yaml</span><br><span class="eyebrow-out">refs: [src/theme.ts, docs/design.md]</span></p>
+            <h3 class="section-title pair-title" id="kb-you-title">Tickets that know their territory</h3>
+            <p>Every ticket shows &ldquo;Connected in the knowledge base&rdquo;: the code and docs it
+              touches, derived entirely from its <code>refs</code>. Zero extra fields, zero tagging
+              ceremony. If your backlog is honest, the map is too.</p>
+          </article>
+          <article class="pair-card reveal" data-bird-perch aria-labelledby="kb-agent-title">
+            <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;npx roadmapped kb search "theme"</span><br><span class="eyebrow-out">4 nodes &middot; 2 tickets</span></p>
+            <h3 class="section-title pair-title" id="kb-agent-title">Agents stop grepping blind</h3>
+            <p>Your agent queries the same graph &mdash; <code>kb_neighborhood</code>,
+              <code>kb_search</code>, <code>kb_node</code> as MCP tools, <code>npx roadmapped kb</code>
+              on the CLI &mdash; and lands on the right files before it starts exploring. One call
+              instead of a cold grep across the repo.</p>
+          </article>
+        </div>
+        <p class="prose under-block reveal">The graph itself is produced by
+          <a class="link-arrow" href="https://graphify.net/">Graphify</a> &mdash; a separate
+          open-source project (MIT, <a class="link-arrow" href="https://github.com/Graphify-Labs/graphify">Graphify-Labs/graphify</a>),
+          not ours. Roadmapped reads <code>graphify-out/graph.json</code> and renders it; they do
+          the clever part. Generating one is <code>pip install graphifyy</code> then
+          <code>/graphify .</code> in your agent &mdash; Python&nbsp;&ge;&nbsp;3.10, for that layer
+          only; Roadmapped stays Node. No graph yet? The view tells you exactly that, and how to
+          fix it.</p>
+      </div>
+    </section>
+
     <!-- ============ How it works (#280 → #283 → refonte auto-advance) ============
          Plus de pin-scroll : section de hauteur normale qui joue toute seule.
          À gauche des 4 étapes, une piste verticale (.how-track) dont le
@@ -546,48 +617,6 @@
         <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;git log --oneline docs/tasks/</span></p>
         <h2 class="section-title reveal" id="built-title">Built by using itself</h2>
         <p class="prose reveal">Roadmapped&rsquo;s own backlog is managed by Roadmapped, mostly by a Claude agent that records every task it ships. Nothing gets archived: a done task just stays <code>done</code>, right where it was, with its <code>outcome</code>, <code>verification</code> and <code>commit</code> written onto the file. The done backlog and the commit history are the changelog. If you want to know whether the workflow holds up, don&rsquo;t take our word for it: read the backlog.</p>
-      </div>
-    </section>
-
-    <!-- ============ Knowledge base (powered by Graphify) ============
-         Nouvelle section : le graphe vivant du repo dans l'onglet Docs.
-         Vocabulaire existant uniquement (eyebrow, prose, pair-grid/pair-card,
-         under-block, link-arrow) — zéro CSS nouveau, theme-aware par les
-         variables. Crédit Graphify explicite : le graphe est produit par un
-         projet open source distinct (MIT), Roadmapped ne fait que le lire. -->
-    <section class="section" id="knowledge-base" aria-labelledby="kb-title">
-      <div class="container">
-        <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;npx roadmapped kb search "auth"</span><span class="eyebrow-out">&nbsp;&nbsp;4 nodes &middot; 2 tickets</span></p>
-        <h2 class="section-title reveal" id="kb-title">A knowledge base you never fill in</h2>
-        <p class="prose reveal">In the Docs tab, a toggle flips <strong>Documents</strong> into
-          <strong>Knowledge base</strong>: a live graph of your repo &mdash; code, docs, and the
-          tickets connected to them. Nobody curates it. Nobody forgets to update it. It&rsquo;s
-          derived from what&rsquo;s already there.</p>
-        <div class="pair-grid under-block">
-          <article class="pair-card reveal" data-bird-perch aria-labelledby="kb-you-title">
-            <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;cat docs/tasks/02-feature/17-dark-mode.yaml</span><br><span class="eyebrow-out">refs: [src/theme.ts, docs/design.md]</span></p>
-            <h3 class="section-title pair-title" id="kb-you-title">Tickets that know their territory</h3>
-            <p>Every ticket shows &ldquo;Connected in the knowledge base&rdquo;: the code and docs it
-              touches, derived entirely from its <code>refs</code>. Zero extra fields, zero tagging
-              ceremony. If your backlog is honest, the map is too.</p>
-          </article>
-          <article class="pair-card reveal" data-bird-perch aria-labelledby="kb-agent-title">
-            <p class="eyebrow"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;npx roadmapped kb neighborhood 17</span><br><span class="eyebrow-out">src/theme.ts &middot; src/state/&hellip; &middot; docs/design.md</span></p>
-            <h3 class="section-title pair-title" id="kb-agent-title">Agents stop grepping blind</h3>
-            <p>Your agent queries the same graph &mdash; <code>kb_neighborhood</code>,
-              <code>kb_search</code>, <code>kb_node</code> as MCP tools, <code>npx roadmapped kb</code>
-              on the CLI &mdash; and lands on the right files before it starts exploring. One call
-              instead of a cold grep across the repo.</p>
-          </article>
-        </div>
-        <p class="prose under-block reveal">The graph itself is produced by
-          <a class="link-arrow" href="https://graphify.net/">Graphify</a> &mdash; a separate
-          open-source project (MIT, <a class="link-arrow" href="https://github.com/Graphify-Labs/graphify">Graphify-Labs/graphify</a>),
-          not ours. Roadmapped reads <code>graphify-out/graph.json</code> and renders it; they do
-          the clever part. Generating one is <code>pip install graphifyy</code> then
-          <code>/graphify .</code> in your agent &mdash; Python&nbsp;&ge;&nbsp;3.10, for that layer
-          only; Roadmapped stays Node. No graph yet? The view tells you exactly that, and how to
-          fix it.</p>
       </div>
     </section>
 
@@ -1102,6 +1131,160 @@
       });
       if (mq.addEventListener) mq.addEventListener('change', paint);
       paint();
+    })();
+  </script>
+
+  <!-- Knowledge base (#314) : rend l'extrait RÉEL de graphify-out/graph.json
+       (42 nœuds / 94 arêtes — le voisinage de la feature Knowledge base) dans
+       le <svg> #kb-svg. Les positions sont force-directed PRÉ-CALCULÉES au
+       build et inlinées ci-dessous : aucun fetch, aucune lib, zéro layout au
+       chargement. Le script ne fait que trois choses :
+       1. construire les <line>/<g><circle><text> (couleurs par classes CSS,
+          donc par variables : theme-aware gratuit) ;
+       2. une dérive ambiante de ±2px par nœud (rAF) pour l'effet « vivant » —
+          uniquement section visible (IntersectionObserver), onglet actif, et
+          hors prefers-reduced-motion (écouté en live) ;
+       3. le survol : le nœud + son voisinage s'allument, le reste s'estompe
+          (classes is-hot/is-focus, styles dans style.css), et la barre
+          .kb-readout affiche label — fichier · nb d'arêtes.
+       Format des nœuds : [label, fichier, doc?, fichier-niveau?, degré, x, y,
+       mode-étiquette (0 dessus / 1 dessous / 2 droite / 3 gauche)].
+       Arêtes : [source, cible, classe (0 contains / 1 import-call / 2 doc)]. -->
+  <script>
+    (function () {
+      var svg = document.getElementById('kb-svg');
+      if (!svg) return;
+      var DATA = {"n":[["kb.ts","src/server/kb.ts",0,1,12,208.9,311.0,0],["KbGraph.tsx","src/components/KbGraph.tsx",0,1,13,159.6,213.9,0],["kbLink.ts","src/lib/kbLink.ts",0,1,11,293.3,282.0,0],["kbLayout.ts","src/lib/kbLayout.ts",0,1,2,56.0,207.0,0],["KbContext.tsx","src/state/KbContext.tsx",0,1,8,321.1,296.8,0],["KbView.tsx","src/components/KbView.tsx",0,1,7,277.4,219.0,0],["KbNodePanel.tsx","src/components/KbNodePanel.tsx",0,1,8,347.4,352.4,3],["kbFilter.ts","src/lib/kbFilter.ts",0,1,8,201.9,227.1,1],["kbSource.ts","src/components/kbSource.ts",0,1,5,279.1,368.6,3],["refExtract.ts","src/lib/refExtract.ts",0,1,2,332.1,155.6,0],["Intégration profonde de Graphify (Knowledge base)","docs/specs/graphify-kb.md",1,1,4,622.3,88.2,0],["KbGraph : rendu SVG maison (pas dagre, pas iframe)","docs/specs/graphify-kb.md",1,0,1,627.6,138.7,0],["Liage tickets⇄graphe dérivé de refs (kbLink)","docs/specs/graphify-kb.md",1,0,1,622.8,48.2,0],["Décision : committer graph.json","docs/specs/graphify-kb.md",1,0,1,664.0,103.2,0],["Python détecté + graphifyy en env isolé","docs/specs/graphify-kb.md",1,0,2,564.9,61.1,0],["Étape ensureGraphify dans roadmapped init","docs/specs/graphify-kb.md",1,0,1,525.8,36.0,0],["App.tsx","src/App.tsx",0,1,6,399.4,320.7,0],["api.ts","src/server/api.ts",0,1,2,101.9,365.6,0],["TaskPanel.tsx","src/components/TaskPanel.tsx",0,1,11,316.1,334.1,0],["DocsView.tsx","src/components/DocsView.tsx",0,1,3,400.7,220.2,0],["useZoomPan.ts","src/components/useZoomPan.ts",0,1,2,83.0,129.4,0],["tasks.ts","src/lib/tasks.ts",0,1,2,383.0,280.3,0],["KbGraph()","src/components/KbGraph.tsx",0,0,6,151.9,175.4,0],["KbView()","src/components/KbView.tsx",0,0,3,365.0,217.6,0],["KbNodePanel()","src/components/KbNodePanel.tsx",0,0,5,385.4,361.0,0],["useKb()","src/state/KbContext.tsx",0,0,7,349.2,301.9,0],["KbProvider()","src/state/KbContext.tsx",0,0,2,435.8,315.5,0],["normalizeGraph()","src/server/kb.ts",0,0,2,154.8,373.5,0],["readKbGraph()","src/server/kb.ts",0,0,3,131.6,354.5,0],["KbNode","src/server/kb.ts",0,0,6,239.7,294.4,0],["KbEdge","src/server/kb.ts",0,0,4,194.3,265.7,0],["KbGraph","src/server/kb.ts",0,0,4,222.5,257.3,0],["buildKbLinkIndex()","src/lib/kbLink.ts",0,0,6,351.7,328.5,0],["KbLinkIndex","src/lib/kbLink.ts",0,0,1,242.7,380.3,0],["refPath()","src/lib/kbLink.ts",0,0,3,336.2,247.9,0],["kbLayout()","src/lib/kbLayout.ts",0,0,3,93.8,198.5,0],["applyFilters()","src/lib/kbFilter.ts",0,0,3,175.3,185.8,0],["matchNodes()","src/lib/kbFilter.ts",0,0,3,175.1,156.6,0],["openKbNodeSource()","src/components/kbSource.ts",0,0,5,336.0,394.0,0],["parseRef()","src/lib/refExtract.ts",0,0,3,327.8,195.1,0],["KbConnections()","src/components/TaskPanel.tsx",0,0,4,359.2,377.4,0],["useZoomPan()","src/components/useZoomPan.ts",0,0,3,112.3,148.2,0]],"e":[[0,1,1],[0,2,1],[0,4,1],[0,7,1],[0,8,1],[0,17,1],[0,18,1],[0,27,0],[0,28,0],[0,29,0],[0,30,0],[0,31,0],[1,3,1],[1,5,1],[1,7,1],[1,20,1],[1,22,0],[1,29,1],[1,30,1],[1,31,1],[1,35,1],[1,36,1],[1,37,1],[1,41,1],[2,6,1],[2,9,1],[2,18,1],[2,21,1],[2,29,1],[2,30,1],[2,32,0],[2,33,0],[2,34,0],[2,39,1],[3,35,0],[4,5,1],[4,6,1],[4,16,1],[4,18,1],[4,25,0],[4,26,0],[4,31,1],[5,7,1],[5,19,1],[5,22,1],[5,23,0],[5,25,1],[6,8,1],[6,16,1],[6,24,0],[6,25,1],[6,32,1],[6,38,1],[7,29,1],[7,30,1],[7,31,1],[7,36,0],[7,37,0],[8,18,1],[8,29,1],[8,38,0],[9,39,0],[10,11,2],[10,12,2],[10,13,2],[10,14,2],[14,15,2],[16,18,1],[16,19,1],[16,24,1],[16,26,1],[17,28,1],[18,21,1],[18,25,1],[18,29,1],[18,32,1],[18,38,1],[18,40,0],[19,23,1],[20,41,0],[22,35,1],[22,36,1],[22,37,1],[22,41,1],[23,25,1],[24,25,1],[24,32,1],[24,38,1],[25,40,1],[27,28,1],[32,34,1],[32,40,1],[34,39,1],[38,40,1]]};
+      var NS = 'http://www.w3.org/2000/svg';
+      var readout = document.getElementById('kb-readout-text');
+      var DEFAULT_READOUT = readout ? readout.textContent : '';
+      var nojs = svg.querySelector('.kbg-nojs');
+      if (nojs) nojs.remove();
+
+      var nodes = DATA.n.map(function (n, i) {
+        return {
+          label: n[0], file: n[1], doc: !!n[2], big: !!n[3], deg: n[4],
+          x: n[5], y: n[6], mode: n[7],
+          r: n[3] ? 5 + Math.min(3.5, n[4] * 0.3) : 3.2,
+          phase: i * 1.7, dx: n[5], dy: n[6]
+        };
+      });
+      var adj = nodes.map(function () { return []; });
+
+      var edgeLayer = document.createElementNS(NS, 'g');
+      var edges = DATA.e.map(function (e) {
+        var l = document.createElementNS(NS, 'line');
+        l.setAttribute('class', 'kbg-edge' +
+          (e[2] === 0 ? ' kbg-edge--contains' : e[2] === 2 ? ' kbg-edge--doc' : ''));
+        edgeLayer.appendChild(l);
+        adj[e[0]].push(e[1]); adj[e[1]].push(e[0]);
+        return { a: e[0], b: e[1], el: l };
+      });
+      svg.appendChild(edgeLayer);
+
+      var nodeLayer = document.createElementNS(NS, 'g');
+      nodes.forEach(function (n, i) {
+        var g = document.createElementNS(NS, 'g');
+        g.setAttribute('class', 'kbg-node' +
+          (n.doc ? ' kbg-node--doc' : '') + (n.big ? ' kbg-node--file' : ''));
+        g.setAttribute('data-i', i);
+        // Zone de survol confortable, invisible, sous le disque.
+        var hit = document.createElementNS(NS, 'circle');
+        hit.setAttribute('class', 'kbg-hit');
+        hit.setAttribute('r', Math.max(n.r + 6, 11));
+        g.appendChild(hit);
+        var c = document.createElementNS(NS, 'circle');
+        c.setAttribute('r', n.r);
+        g.appendChild(c);
+        if (n.big) {
+          // Étiquette : les nœuds-fichiers seulement ; les concepts du spec
+          // affichent leur fichier (le label complet vit dans le readout).
+          var t = document.createElementNS(NS, 'text');
+          t.textContent = n.doc ? n.file.split('/').pop() : n.label;
+          if (n.mode === 2) { t.setAttribute('x', n.r + 5); t.setAttribute('y', 3); t.setAttribute('text-anchor', 'start'); }
+          else if (n.mode === 3) { t.setAttribute('x', -(n.r + 5)); t.setAttribute('y', 3); t.setAttribute('text-anchor', 'end'); }
+          else if (n.mode === 1) { t.setAttribute('y', n.r + 13); t.setAttribute('text-anchor', 'middle'); }
+          else { t.setAttribute('y', -(n.r + 6)); t.setAttribute('text-anchor', 'middle'); }
+          g.appendChild(t);
+        }
+        nodeLayer.appendChild(g);
+        n.el = g;
+      });
+      svg.appendChild(nodeLayer);
+
+      // --- Peinture : positions + dérive ambiante (±2px, par nœud). ---
+      var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+      function paint(t) {
+        var amp = (t && !calm.matches) ? 2 : 0;
+        nodes.forEach(function (n) {
+          n.dx = n.x + amp * Math.sin(t * 0.00042 + n.phase);
+          n.dy = n.y + amp * Math.cos(t * 0.00051 + n.phase * 1.31);
+          n.el.setAttribute('transform', 'translate(' + n.dx.toFixed(1) + ' ' + n.dy.toFixed(1) + ')');
+        });
+        edges.forEach(function (e) {
+          e.el.setAttribute('x1', nodes[e.a].dx.toFixed(1));
+          e.el.setAttribute('y1', nodes[e.a].dy.toFixed(1));
+          e.el.setAttribute('x2', nodes[e.b].dx.toFixed(1));
+          e.el.setAttribute('y2', nodes[e.b].dy.toFixed(1));
+        });
+      }
+      paint(0);
+
+      var visible = false, raf = 0;
+      function loop(t) { paint(t); raf = requestAnimationFrame(loop); }
+      function start() { if (!raf && visible && !calm.matches && !document.hidden) raf = requestAnimationFrame(loop); }
+      function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+      if (typeof IntersectionObserver === 'function') {
+        new IntersectionObserver(function (entries) {
+          visible = entries[0].isIntersecting;
+          if (visible) start(); else stop();
+        }, { rootMargin: '0px' }).observe(svg);
+      } else {
+        visible = true; start();
+      }
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) stop(); else start();
+      });
+      if (calm.addEventListener) calm.addEventListener('change', function () {
+        if (calm.matches) { stop(); paint(0); } else start();
+      });
+
+      // --- Survol : voisinage en évidence + readout. ---
+      function nodeOf(target) {
+        while (target && target !== svg) {
+          if (target.classList && target.classList.contains('kbg-node')) return target;
+          target = target.parentNode;
+        }
+        return null;
+      }
+      function focusNode(i) {
+        svg.classList.add('is-focus');
+        nodes.forEach(function (n, k) {
+          n.el.classList.toggle('is-hot', k === i || adj[i].indexOf(k) !== -1);
+          n.el.classList.toggle('is-src', k === i);
+        });
+        edges.forEach(function (e) {
+          e.el.classList.toggle('is-hot', e.a === i || e.b === i);
+        });
+        if (readout) readout.textContent =
+          nodes[i].label + ' — ' + nodes[i].file + ' · ' +
+          nodes[i].deg + (nodes[i].deg === 1 ? ' edge' : ' edges') + ' here';
+      }
+      function blurNode() {
+        svg.classList.remove('is-focus');
+        nodes.forEach(function (n) { n.el.classList.remove('is-hot', 'is-src'); });
+        edges.forEach(function (e) { e.el.classList.remove('is-hot'); });
+        if (readout) readout.textContent = DEFAULT_READOUT;
+      }
+      svg.addEventListener('pointerover', function (e) {
+        var g = nodeOf(e.target);
+        if (g) focusNode(+g.getAttribute('data-i'));
+      });
+      svg.addEventListener('pointerout', function (e) {
+        var g = nodeOf(e.target);
+        if (g && !nodeOf(e.relatedTarget)) blurNode();
+      });
+      svg.addEventListener('pointerleave', blurNode);
     })();
   </script>
 
