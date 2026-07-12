@@ -1223,7 +1223,10 @@ html.js-howplay .how-visual.is-active {
    marque les nœuds « docs » du spec, le voisinage survolé (un état) et le
    toggle actif — le code reste monochrome. */
 
-.kb-demo { margin: 1.75rem 0 0; max-width: 56rem; }
+/* Pleine largeur de section (#314, retour Rémi) : la figure s'aligne sur la
+   .pair-grid des cartes en dessous (pas de max-width propre = largeur du
+   .container), et respire davantage au-dessus/en-dessous. */
+.kb-demo { margin: 2.75rem 0; max-width: none; }
 
 /* Mini-toggle Documents / Knowledge base, à la place de la pastille
    Activity : même gabarit que .ui-frame-live, deux segments. */
