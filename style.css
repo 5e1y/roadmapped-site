@@ -1507,3 +1507,15 @@ html.js-reveal .reveal.reveal-in {
 }
 .btn-copy:hover { background: var(--hover); }
 .btn-copy:disabled { color: var(--muted); cursor: default; }
+
+/* Graphify official mark (white-on-transparent PNG used as a mask → follows theme). */
+.graphify-mark {
+  display: inline-block;
+  width: 0.95em;
+  height: 1.12em;
+  margin-right: 0.3em;
+  vertical-align: -0.18em;
+  background-color: currentColor;
+  -webkit-mask: url("graphify-logo.png") center / contain no-repeat;
+  mask: url("graphify-logo.png") center / contain no-repeat;
+}
