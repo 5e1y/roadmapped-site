@@ -255,7 +255,7 @@
               </button>
             </h3>
             <div class="feature-body">
-              <p>The dashboard updates itself the moment your agent writes: file-watch plus SSE, no refresh. The in-progress task pulses; a timestamped activity panel shows what changed and when.</p>
+              <p>The dashboard updates itself the moment your agent writes: file-watch plus SSE, no refresh. The in-progress task pulses; the Activity tab keeps a live feed of every change and when &mdash; its own view in the rail, with an unread dot for the times your agent kept shipping while you looked away.</p>
             </div>
           </article>
           <article class="feature-card reveal">
@@ -303,6 +303,36 @@
               <p>The Docs view renders the markdown already in your <code>docs/</code> folder (specs, notes, the guide). No copy, no export. A scratch notepad lives beside it for the thoughts that aren&rsquo;t tasks yet. Same repo, same window as the backlog.</p>
             </div>
           </article>
+          <article class="feature-card feature-card--wide reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">09-the-overview.yaml</span>
+                  <!-- bento : la vue tableau de bord, pas une liste -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><rect x="3.75" y="3.75" width="7" height="7"/><rect x="13.25" y="3.75" width="7" height="4.5"/><rect x="3.75" y="13.75" width="7" height="6.5"/><rect x="13.25" y="11.25" width="7" height="9"/></svg>
+                </span>
+                <span class="feature-name">The tab that opens on the whole picture</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>The first view isn&rsquo;t a list, it&rsquo;s a dashboard: a radar of open tickets by type, a created-vs-closed chart per day, your hottest, oldest and newest tickets on a toggle, and a tag histogram. Same files, computed on read, nothing stored &mdash; the big-picture view the top of this page keeps promising.</p>
+            </div>
+          </article>
+          <article class="feature-card feature-card--wide reveal">
+            <h3 class="feature-title">
+              <button class="feature-toggle" type="button">
+                <span class="feature-head">
+                  <span class="feature-file">10-themes.yaml</span>
+                  <!-- disque mi-plein : clair/sombre, plus les palettes nommées -->
+                  <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><circle cx="12" cy="12" r="8.25"/><path d="M12 3.75a8.25 8.25 0 0 1 0 16.5z" fill="currentColor" stroke="none"/></svg>
+                </span>
+                <span class="feature-name">Themes, not just a dark mode</span>
+              </button>
+            </h3>
+            <div class="feature-body">
+              <p>Light or dark is the easy part. The whole app also repaints as Roadmapped, GitHub, Cursor or Claude &mdash; colour and corner radius, switched from Settings. Two toggles that mind their own business: light/dark on one axis, the palette on the other. Flip it in the live demo above; we didn&rsquo;t mention it until now.</p>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -324,17 +354,15 @@
       <div class="container">
         <p class="eyebrow reveal"><span class="eyebrow-cmd"><span class="eyebrow-ps1">$</span>&nbsp;npx roadmapped kb neighborhood 17</span><span class="eyebrow-out">&nbsp;&nbsp;6 code &middot; 2 docs &middot; 1 ticket</span></p>
         <h2 class="section-title reveal" id="kb-title">A knowledge base you never fill in</h2>
-        <p class="prose reveal">In the Docs tab, a toggle flips <strong>Documents</strong> into
-          <strong>Knowledge base</strong>: a graph of your repo &mdash; files, functions, docs,
-          and the edges between them, with your tickets wired in on top. Nobody curates it.
-          Nobody forgets to update it. It&rsquo;s derived from what&rsquo;s already in the repo,
-          and it moves when the repo moves.</p>
+        <p class="prose reveal">The rail has a <strong>Graph</strong> tab of its own: a graph of
+          your repo &mdash; files, functions, docs, and the edges between them, with your tickets
+          wired in on top. Nobody curates it. Nobody forgets to update it. It&rsquo;s derived from
+          what&rsquo;s already in the repo, and it moves when the repo moves.</p>
 
         <figure class="kb-demo under-block reveal">
           <div class="ui-frame kb-frame" data-bird-perch>
             <div class="ui-frame-bar">
-              <span class="ui-frame-tabs"><span class="ui-frame-tab">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab is-on">Docs</span></span>
-              <span class="kb-switch" aria-hidden="true"><span>Documents</span><span class="is-on">Knowledge base</span></span>
+              <span class="ui-frame-tabs"><span class="ui-frame-tab">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab">Docs</span><span class="ui-frame-tab is-on">Graph</span></span>
             </div>
             <div class="kb-canvas">
               <svg id="kb-svg" viewBox="0 0 720 430" preserveAspectRatio="xMidYMid meet" role="img" aria-label="An excerpt of this repo's real knowledge graph: 42 nodes around the knowledge-base feature itself. Code files like kb.ts, KbGraph.tsx and kbLink.ts, their functions, and the spec document that describes them, connected by import, call and reference edges.">
@@ -343,7 +371,7 @@
             </div>
             <p class="kb-readout"><span id="kb-readout-text">42 nodes &middot; 94 edges &mdash; a real excerpt of this repo&rsquo;s graph</span></p>
           </div>
-          <figcaption class="kb-caption">Not an illustration: these are 42 of the 869 nodes in
+          <figcaption class="kb-caption">Not an illustration: these are 42 of the 2,800-plus nodes in
             this repo&rsquo;s own <code>graph.json</code> &mdash; the knowledge-base feature and
             its neighborhood. The grey constellation is the code that ships it; the blue one is
             the spec that demanded it. Hover a node to trace its edges. Yes, we used the graph

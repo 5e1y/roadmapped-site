@@ -1,7 +1,9 @@
 /* ==========================================================================
    Roadmapped — roadmapped.dev
    Same visual world as the app: monochrome + one blue, tri-layer
-   page/card/rule, zero-radius surfaces, system fonts. No dependencies.
+   page/card/rule, system fonts. No dependencies.
+   (Surfaces stay sharp here as a site choice; the app softened to 8px in
+   0.3.x — the shared language is the palette and the tri-layer, not the radius.)
 
    DA (#262–#268, passe v3 #277–#280) :
    - Première partie full-bleed (#277) : hero + démo s'étendent bord à bord ;
@@ -48,9 +50,6 @@
   --edge:   #d4d4d4;
   --panel-shadow: -10px 0 24px rgba(0, 0, 0, 0.06);
   --code-bg: #efefef;
-  --btn-bg:    #171717;
-  --btn-ink:   #ffffff;
-  --btn-hover: #404040;
 
   /* Toggle thème : quelle icône montrer (la destination, pas l'état). */
   --icon-sun:  none;
@@ -83,15 +82,12 @@
     --ink:    #ededed;
     --soft:   #b9b9b9;
     --muted:  #a3a3a3;
-    --accent: #60a5fa;
-    --tint:   #17233c;
+    --accent: #3b82f6;
+    --tint:   #1c2636;
     --hover:  #202020;
     --edge:   #3a3a3a;
     --panel-shadow: -10px 0 24px rgba(0, 0, 0, 0.45);
     --code-bg: #262626;
-    --btn-bg:    #ededed;
-    --btn-ink:   #0a0a0a;
-    --btn-hover: #d4d4d4;
 
     --icon-sun:  block;
     --icon-moon: none;
@@ -113,15 +109,12 @@
   --ink:    #ededed;
   --soft:   #b9b9b9;
   --muted:  #a3a3a3;
-  --accent: #60a5fa;
-  --tint:   #17233c;
+  --accent: #3b82f6;
+  --tint:   #1c2636;
   --hover:  #202020;
   --edge:   #3a3a3a;
   --panel-shadow: -10px 0 24px rgba(0, 0, 0, 0.45);
   --code-bg: #262626;
-  --btn-bg:    #ededed;
-  --btn-ink:   #0a0a0a;
-  --btn-hover: #d4d4d4;
 
   --icon-sun:  block;
   --icon-moon: none;
@@ -402,17 +395,20 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   padding: 0.875rem 1.25rem;
 }
 
+/* Le bouton plein suit l'app : Action = bleu (#395, « buttons go black → blue »),
+   hover = brightness-95 sur le même accent, pas un gris. Texte = couleur carte
+   (blanc sur bleu clair, encre-carte sur bleu sombre), comme bg-action text-foreground. */
 .btn-primary {
-  background: var(--btn-bg);
-  color: var(--btn-ink);
+  background: var(--accent);
+  color: var(--card);
 }
 .btn-primary:hover {
-  background: var(--btn-hover);
+  filter: brightness(0.95);
   text-decoration: none;
 }
 .btn-primary code {
-  background: color-mix(in srgb, var(--btn-ink) 14%, transparent);
-  color: var(--btn-ink);
+  background: color-mix(in srgb, var(--card) 22%, transparent);
+  color: var(--card);
   padding: 0.2em 0.45em;
   border-radius: 3px;
 }
@@ -508,8 +504,9 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   flex: 1;
   min-height: 0;
   border: 0;
-  /* The app is light-only for now; its own background, not the site's. */
-  background: #fafafa;
+  /* Placeholder pendant le lazy-load : suit clair/sombre comme l'app (dark mode
+     + palettes nommées depuis 0.3.0), plus de flash blanc dans une page sombre. */
+  background: var(--page);
 }
 
 /* --- Terminal --- */
@@ -583,6 +580,11 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   border: 1px solid var(--rule);
   margin-top: 2rem;
 }
+/* Overview + Themes (#435) closent la grille : en desktop (4 col) elles
+   s'étalent chacune sur 2 colonnes pour remplir la dernière rangée — sinon
+   10 cartes laissent 2 cellules --rule vides. En ≤2 col la grille tombe juste,
+   le span est neutralisé (media query 76rem plus bas). */
+.feature-card--wide { grid-column: span 2; }
 
 .feature-card {
   background: var(--card);
@@ -1385,6 +1387,7 @@ html.js-reveal .reveal.reveal-in {
 /* Grille features : 4 → 2 → 1 colonnes. */
 @media (max-width: 76rem) {
   .feature-grid { grid-template-columns: 1fr 1fr; }
+  .feature-card--wide { grid-column: auto; }   /* 10 cartes tombent juste en 2 (et 1) col */
 }
 
 /* The two windows stack below ~1000px: terminal first, then the app.

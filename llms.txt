@@ -23,7 +23,8 @@ managed by Roadmapped — the public repository is the proof.
 - Work is classified by one of 9 fixed types — bug, feature, chore, brainstorm, design, marketing, communication, legal, business — not by stage or team.
 - Priority is a computed "temperature" (downstream blockers + age + the type's base heat + an optional manual seed), never a fixed stage order.
 - Interfaces: a React dashboard (Vite), a CLI (`npx roadmapped`), and a Claude skill that doubles as an MCP server.
-- Distribution: straight from GitHub (`github:5e1y/roadmapped`), never npm. Requirement: Node ≥ 22.18.
+- Knowledge base: `roadmapped init` builds a Graphify code/docs graph by default (`--no-kb` to skip), committed at `graphify-out/graph.json`; the agent queries it via MCP (`kb_neighborhood`, `kb_search`, `kb_node`) instead of grepping cold.
+- Distribution: three doors, same wired state — npm (`npx roadmapped init`), the Claude Code plugin (`5e1y/roadmapped`), or straight from GitHub (`github:5e1y/roadmapped`). Auto-published to npm on every version bump; every install then keeps itself current from GitHub HEAD. Requirement: Node ≥ 22.18 and a package.json.
 - License: MIT. Author: Rémi Courtillon.
 - Privacy: data never leaves the user's machine; "delete account" is `rm -rf`.
 
