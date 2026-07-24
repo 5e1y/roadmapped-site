@@ -337,17 +337,13 @@
       </div>
     </section>
 
-    <!-- ============ Knowledge base (powered by Graphify) (#314) ============
-         La section dédiée : le graphe vivant du repo dans l'onglet Docs, avec
-         un extrait RÉEL de graphify-out/graph.json rendu en SVG — 42 nœuds /
-         94 arêtes, le voisinage de la feature Knowledge base elle-même (méta
-         assumé : le graphe qui montre le code qui dessine le graphe).
-         Positions force-directed PRÉ-CALCULÉES au build (aucune lib, aucun
-         fetch) ; le script kb-graph en bas de page ne fait que le rendu, une
-         dérive ambiante légère (coupée hors viewport / en reduced-motion) et
-         le survol qui met le voisinage en évidence. Vocabulaire existant
-         (eyebrow, prose, ui-frame, pair-grid, under-block, link-arrow) +
-         classes kb-*/kbg-* dans style.css, tout en variables : theme-aware.
+    <!-- ============ Knowledge base (powered by Graphify) (#314, #436) ============
+         La section dédiée. Le graphe n'est plus un SVG fait-main : c'est le VRAI
+         Graph view de l'app en iframe (démo/?piece=graph), servi par un extrait
+         RÉEL de graphify-out/graph.json (src/demo/graph.ts, ~82 nœuds, le
+         voisinage de la feature Knowledge base — méta assumé). Toolbar, recherche,
+         filtres, layout force-directed : tout vient de l'app, rien à maintenir ici.
+         Theme-aware via le même ?theme= que les autres iframes démo.
          Crédit Graphify explicite : projet open source distinct (MIT),
          Roadmapped ne fait que lire sa sortie. -->
     <section class="section" id="knowledge-base" aria-labelledby="kb-title">
@@ -360,22 +356,18 @@
           what&rsquo;s already in the repo, and it moves when the repo moves.</p>
 
         <figure class="kb-demo under-block reveal">
-          <div class="ui-frame kb-frame" data-bird-perch>
-            <div class="ui-frame-bar">
-              <span class="ui-frame-tabs"><span class="ui-frame-tab">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab">Docs</span><span class="ui-frame-tab is-on">Graph</span></span>
+          <div class="window window-app kb-frame" data-bird-perch>
+            <div class="window-bar">
+              <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="window-name window-name-mono">localhost:5173 &middot; Roadmapped &middot; Graph</span>
             </div>
-            <div class="kb-canvas">
-              <svg id="kb-svg" viewBox="0 0 720 430" preserveAspectRatio="xMidYMid meet" role="img" aria-label="An excerpt of this repo's real knowledge graph: 42 nodes around the knowledge-base feature itself. Code files like kb.ts, KbGraph.tsx and kbLink.ts, their functions, and the spec document that describes them, connected by import, call and reference edges.">
-                <text class="kbg-nojs" x="360" y="219" text-anchor="middle">42 nodes are waiting for JavaScript.</text>
-              </svg>
-            </div>
-            <p class="kb-readout"><span id="kb-readout-text">42 nodes &middot; 94 edges &mdash; a real excerpt of this repo&rsquo;s graph</span></p>
+            <iframe class="graph-app-frame demo-frame" src="demo/?piece=graph" title="The real Roadmapped Graph view: an interactive knowledge graph of this repo" loading="lazy"></iframe>
           </div>
-          <figcaption class="kb-caption">Not an illustration: these are 42 of the 2,800-plus nodes in
-            this repo&rsquo;s own <code>graph.json</code> &mdash; the knowledge-base feature and
-            its neighborhood. The grey constellation is the code that ships it; the blue one is
-            the spec that demanded it. Hover a node to trace its edges. Yes, we used the graph
-            to build the page about the graph.</figcaption>
+          <figcaption class="kb-caption">Not a screenshot: that&rsquo;s the app&rsquo;s real Graph
+            view, running the same force-directed layout on a real excerpt of this repo&rsquo;s own
+            <code>graph.json</code> &mdash; the knowledge-base feature and its neighborhood. Search
+            it, filter by community, drag a node. Yes, we used the graph to build the page about
+            the graph.</figcaption>
         </figure>
 
         <div class="pair-grid under-block">
@@ -459,175 +451,16 @@
         <!-- Pièces isolées de l'UI de l'app — mêmes morceaux que l'iframe de
              la démo, mais découpés. Fond --page : les composants (--card)
              s'en détachent comme dans l'app. -->
-        <div class="how-visuals reveal" aria-hidden="true">
-          <!-- 01 · Backlog : rangées TaskRow sous leur tête de type (glyphe
-               d'état, #id mono, titre, tags légers, thermomètre, chip size). -->
-          <div class="how-visual is-active">
-            <div class="ui-frame">
-              <div class="ui-frame-bar">
-                <span class="ui-frame-tabs"><span class="ui-frame-tab is-on">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab">Docs</span></span>
-                <span class="ui-frame-live">Activity</span>
-              </div>
-              <div class="ui-frame-body">
-                <div class="ui-frame-rail"><span></span><span></span><span></span></div>
-                <div class="ui-frame-piece">
-            <div class="ui-pane">
-              <div class="ui-pane-head"><span class="ui-pane-title">02-feature</span><span class="ui-count">2/6</span></div>
-              <div class="ui-row">
-                <svg class="ui-glyph ui-glyph--live" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.75" fill="none" stroke="currentColor" stroke-width="1"/><path d="M5 1.25 A3.75 3.75 0 0 0 5 8.75 Z" fill="currentColor"/></svg>
-                <span class="ui-id">#17</span>
-                <span class="ui-row-title">Dark mode</span>
-                <span class="ui-row-meta"><span class="ui-tag">#ui</span><span class="ui-temp"><svg width="8" height="12" viewBox="0 0 10 14"><rect x="3.9" y="1.2" width="2.2" height="9" rx="1.1" fill="var(--rule)"/><rect x="3.9" y="4.5" width="2.2" height="6.5" rx="1.1" fill="var(--soft)"/><circle cx="5" cy="11" r="2.5" fill="var(--soft)"/></svg>41,3&deg;</span><span class="ui-chip ui-chip--mono ui-chip--strong">M</span></span>
-              </div>
-              <div class="ui-row">
-                <svg class="ui-glyph" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.75" fill="none" stroke="var(--muted)" stroke-width="1"/></svg>
-                <span class="ui-id">#21</span>
-                <span class="ui-row-title">Split billing into plans</span>
-                <span class="ui-row-meta"><span class="ui-tag">#api</span><span class="ui-temp"><svg width="8" height="12" viewBox="0 0 10 14"><rect x="3.9" y="1.2" width="2.2" height="9" rx="1.1" fill="var(--rule)"/><rect x="3.9" y="5.6" width="2.2" height="5.4" rx="1.1" fill="var(--soft)"/><circle cx="5" cy="11" r="2.5" fill="var(--soft)"/></svg>34,6&deg;</span><span class="ui-chip ui-chip--mono ui-chip--strong">L</span></span>
-              </div>
-              <div class="ui-row">
-                <svg class="ui-glyph" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.75" fill="none" stroke="var(--muted)" stroke-width="1"/></svg>
-                <span class="ui-id">#22</span>
-                <span class="ui-row-title">Onboarding email copy</span>
-                <span class="ui-row-meta"><span class="ui-tag">#copy</span><span class="ui-temp"><svg width="8" height="12" viewBox="0 0 10 14"><rect x="3.9" y="1.2" width="2.2" height="9" rx="1.1" fill="var(--rule)"/><rect x="3.9" y="6.4" width="2.2" height="4.6" rx="1.1" fill="var(--soft)"/><circle cx="5" cy="11" r="2.5" fill="var(--soft)"/></svg>28,9&deg;</span><span class="ui-chip ui-chip--mono ui-chip--strong">S</span></span>
-              </div>
-              <div class="ui-row is-done">
-                <svg class="ui-glyph" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--ink)"/></svg>
-                <span class="ui-id">#12</span>
-                <span class="ui-row-title">Set up CI</span>
-                <span class="ui-row-meta"><span class="ui-time">2d ago</span></span>
-              </div>
+        <div class="how-visuals reveal">
+          <!-- Plus de wireframes (#436) : l'iframe embarque la VRAIE app, une vue
+               isolee par etape (sans rail ni header), commutee par postMessage au
+               fil de l'auto-advance. Meme bundle que la demo du hero. -->
+          <div class="window window-app how-frame" data-bird-perch>
+            <div class="window-bar">
+              <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="window-name window-name-mono">localhost:5173 &middot; Roadmapped</span>
             </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- 02 · Activity (LiveActivityMenu) : le popup du header — verbe,
-               #id, titre, heure ; l'entrée fraîche s'allume (fond --tint). -->
-          <div class="how-visual">
-            <div class="ui-frame">
-              <div class="ui-frame-bar">
-                <span class="ui-frame-tabs"><span class="ui-frame-tab is-on">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab">Docs</span></span>
-                <span class="ui-frame-live is-on">Activity</span>
-              </div>
-              <div class="ui-frame-body">
-                <div class="ui-frame-rail"><span></span><span></span><span></span></div>
-                <div class="ui-frame-piece">
-            <div class="ui-pop">
-              <div class="ui-pop-head"><span class="ui-pop-title">Activity</span><span class="ui-dim">this session</span></div>
-              <ul class="ui-log">
-                <li class="is-fresh">
-                  <svg class="ui-icon" width="10" height="10" viewBox="0 0 10 10"><path d="M1.5 5.5 L4 8 L8.5 2.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
-                  <span class="ui-verb">finished</span><span class="ui-id">#17</span>
-                  <span class="ui-log-title">Dark mode</span><span class="ui-time">14:26</span>
-                </li>
-                <li>
-                  <svg class="ui-icon" width="10" height="10" viewBox="0 0 10 10"><path d="M6.2 1.6 L8.4 3.8 L3.6 8.6 L1.2 8.8 L1.4 6.4 Z" fill="none" stroke="currentColor" stroke-width="1"/></svg>
-                  <span class="ui-verb">edited</span><span class="ui-id">#17</span>
-                  <span class="ui-log-title">Dark mode</span><span class="ui-time">14:11</span>
-                </li>
-                <li>
-                  <svg class="ui-icon" width="10" height="10" viewBox="0 0 10 10"><path d="M2.5 1.5 L8 5 L2.5 8.5 Z" fill="currentColor"/></svg>
-                  <span class="ui-verb">started</span><span class="ui-id">#17</span>
-                  <span class="ui-log-title">Dark mode</span><span class="ui-time">14:03</span>
-                </li>
-                <li>
-                  <svg class="ui-icon" width="10" height="10" viewBox="0 0 10 10"><path d="M5 1 V9 M1 5 H9" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
-                  <span class="ui-verb">created</span><span class="ui-id">#21</span>
-                  <span class="ui-log-title">Split billing into plans</span><span class="ui-time">14:02</span>
-                </li>
-              </ul>
-              <p class="ui-pop-foot">Session only &mdash; full history is your git log on docs/tasks/.</p>
-            </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- 03 · Le panneau de la tâche passée done (TaskPanel) : en-tête
-               glyphe plein + statut, titre barré, bloc Log avec outcome /
-               verification / commit, chemin YAML en pied. -->
-          <div class="how-visual">
-            <div class="ui-frame">
-              <div class="ui-frame-bar">
-                <span class="ui-frame-tabs"><span class="ui-frame-tab is-on">Backlog</span><span class="ui-frame-tab">Roadmap</span><span class="ui-frame-tab">Docs</span></span>
-                <span class="ui-frame-live">Activity</span>
-              </div>
-              <div class="ui-frame-body">
-                <div class="ui-frame-rail"><span></span><span></span><span></span></div>
-                <div class="ui-frame-piece">
-            <div class="ui-panel">
-              <div class="ui-panel-head">
-                <svg class="ui-glyph" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--ink)"/></svg>
-                <span class="ui-id">#17</span>
-                <span class="ui-status">done</span>
-              </div>
-              <div class="ui-panel-title">Dark mode</div>
-              <div class="ui-logbox">
-                <div class="ui-logbox-cap">Log</div>
-                <div class="ui-dates">created 3d ago &middot; completed 26m ago</div>
-                <div class="ui-field"><span class="ui-field-label">outcome</span><span class="ui-field-val">Theme toggle + persisted choice, dark tokens on every view.</span></div>
-                <div class="ui-field"><span class="ui-field-label">verification</span><span class="ui-field-val">npm run build &middot; toggled both themes on the live dashboard.</span></div>
-                <div class="ui-field"><span class="ui-field-label">commit</span><span class="ui-field-val ui-field-val--mono">4f2a91c</span></div>
-              </div>
-              <div class="ui-panel-foot">docs/tasks/02-feature/17-dark-mode.yaml</div>
-            </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- 04 · La roadmap en colonnes (RoadmapColumns) : une colonne par
-               type — tête + compteur, barre fine, cartes, repli « + N done ». -->
-          <div class="how-visual">
-            <div class="ui-frame">
-              <div class="ui-frame-bar">
-                <span class="ui-frame-tabs"><span class="ui-frame-tab">Backlog</span><span class="ui-frame-tab is-on">Roadmap</span><span class="ui-frame-tab">Docs</span></span>
-                <span class="ui-frame-live">Activity</span>
-              </div>
-              <div class="ui-frame-body">
-                <div class="ui-frame-rail"><span></span><span></span><span></span></div>
-                <div class="ui-frame-piece">
-            <div class="ui-board">
-              <div class="ui-col">
-                <div class="ui-col-head"><span class="ui-col-title">01-bug</span><span class="ui-count">2/3</span></div>
-                <div class="ui-bar"><i style="width:66%"></i></div>
-                <div class="ui-cards">
-                  <div class="ui-card">
-                    <svg class="ui-glyph" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.75" fill="none" stroke="var(--muted)" stroke-width="1"/></svg>
-                    <span class="ui-card-body"><span class="ui-id">#23</span> <span class="ui-card-title">Flaky sync on save</span><span class="ui-avail">Available</span></span>
-                  </div>
-                  <div class="ui-card ui-card--more">+ 2 done</div>
-                </div>
-              </div>
-              <div class="ui-col">
-                <div class="ui-col-head"><span class="ui-col-title">02-feature</span><span class="ui-count">2/6</span></div>
-                <div class="ui-bar"><i style="width:33%"></i></div>
-                <div class="ui-cards">
-                  <div class="ui-card">
-                    <svg class="ui-glyph ui-glyph--live" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.75" fill="none" stroke="currentColor" stroke-width="1"/><path d="M5 1.25 A3.75 3.75 0 0 0 5 8.75 Z" fill="currentColor"/></svg>
-                    <span class="ui-card-body"><span class="ui-id">#17</span> <span class="ui-card-title">Dark mode</span></span>
-                  </div>
-                  <div class="ui-card">
-                    <svg class="ui-glyph" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.75" fill="none" stroke="var(--muted)" stroke-width="1"/></svg>
-                    <span class="ui-card-body"><span class="ui-id">#21</span> <span class="ui-card-title">Split billing into plans</span></span>
-                  </div>
-                  <div class="ui-card ui-card--more">+ 2 done</div>
-                </div>
-              </div>
-              <div class="ui-col">
-                <div class="ui-col-head"><span class="ui-col-title">04-ux</span><span class="ui-count">1/2</span></div>
-                <div class="ui-bar"><i style="width:50%"></i></div>
-                <div class="ui-cards">
-                  <div class="ui-card">
-                    <svg class="ui-glyph" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.75" fill="none" stroke="var(--muted)" stroke-width="1"/></svg>
-                    <span class="ui-card-body"><span class="ui-id">#19</span> <span class="ui-card-title">Empty states</span></span>
-                  </div>
-                  <div class="ui-card ui-card--more">+ 1 done</div>
-                </div>
-              </div>
-            </div>
-                </div>
-              </div>
-            </div>
+            <iframe class="how-app-frame demo-frame" data-piece-frame src="demo/?piece=backlog" title="The real Roadmapped dashboard, one view per step" loading="lazy"></iframe>
           </div>
         </div>
       </div>
@@ -928,20 +761,24 @@
         return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light');
       }
 
-      // #282 — la démo (iframe même origine) suit le thème du site : chargée
-      // d'emblée avec ?theme= (pas de flash), puis mise à jour en live au toggle.
-      var demo = document.querySelector('.app-frame');
-      function syncDemo() {
-        if (!demo) return;
-        try {
-          var d = demo.contentDocument;
-          if (d && d.documentElement) d.documentElement.setAttribute('data-theme', current());
-        } catch (e) { /* pas encore chargée : le ?theme initial fait le job */ }
+      // #282/#436 — les iframes démo (même origine) suivent le thème du site :
+      // chargées d'emblée avec ?theme= (pas de flash) puis mises à jour en live au
+      // toggle. TOUTES les .demo-frame : hero (démo complète), how-it-works (pièce
+      // commutée) et graphe. On préserve le ?piece= déjà présent dans le src.
+      var demoFrames = document.querySelectorAll('iframe.demo-frame');
+      function syncDemos() {
+        demoFrames.forEach(function (f) {
+          try {
+            var d = f.contentDocument;
+            if (d && d.documentElement) d.documentElement.setAttribute('data-theme', current());
+          } catch (e) { /* pas encore chargée : le ?theme initial fait le job */ }
+        });
       }
-      if (demo) {
-        demo.src = 'demo/?theme=' + current();
-        demo.addEventListener('load', syncDemo);
-      }
+      demoFrames.forEach(function (f) {
+        var base = f.getAttribute('src');
+        f.src = base + (base.indexOf('?') >= 0 ? '&' : '?') + 'theme=' + current();
+        f.addEventListener('load', syncDemos);
+      });
       function label() {
         if (btn) {
           btn.setAttribute('aria-label',
@@ -963,7 +800,7 @@
           try { localStorage.setItem('theme', next); } catch (e) {}
           paintMeta();
           label();
-          syncDemo();
+          syncDemos();
         });
       }
       if (mq.addEventListener) mq.addEventListener('change', label);
@@ -1020,7 +857,16 @@
       var list = stage.querySelector('.how-steps');
       var fill = stage.querySelector('.how-fill');
       var steps = Array.prototype.slice.call(stage.querySelectorAll('.how-step'));
-      var visuals = Array.prototype.slice.call(stage.querySelectorAll('.how-visual'));
+      // #436 : plus de wireframes — une seule iframe (la vraie app) commutée par
+      // postMessage, une VUE réelle isolée par étape. Même origine (roadmapped.dev).
+      var frame = stage.querySelector('[data-piece-frame]');
+      var PIECES = ['backlog', 'activity', 'taskpanel', 'overview'];
+      function postPiece(i) {
+        if (frame && frame.contentWindow) frame.contentWindow.postMessage({ roadmappedPiece: PIECES[i] }, '*');
+      }
+      // Au chargement de l'iframe, resynchroniser sur l'étape courante (l'auto-advance
+      // a pu tourner avant que le bundle démo ne soit prêt).
+      if (frame) frame.addEventListener('load', function () { postPiece(current); });
       var n = steps.length;
       if (!n || !list || !fill) return;
       document.documentElement.classList.add('js-howplay');
@@ -1042,7 +888,7 @@
       function setStep(i) {
         current = i; elapsed = 0;
         steps.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
-        visuals.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
+        postPiece(i);
         steps.forEach(function (el, k) {
           var b = el.querySelector('.how-step-btn');
           if (!b) return;
@@ -1159,160 +1005,6 @@
       });
       if (mq.addEventListener) mq.addEventListener('change', paint);
       paint();
-    })();
-  </script>
-
-  <!-- Knowledge base (#314) : rend l'extrait RÉEL de graphify-out/graph.json
-       (42 nœuds / 94 arêtes — le voisinage de la feature Knowledge base) dans
-       le <svg> #kb-svg. Les positions sont force-directed PRÉ-CALCULÉES au
-       build et inlinées ci-dessous : aucun fetch, aucune lib, zéro layout au
-       chargement. Le script ne fait que trois choses :
-       1. construire les <line>/<g><circle><text> (couleurs par classes CSS,
-          donc par variables : theme-aware gratuit) ;
-       2. une dérive ambiante de ±2px par nœud (rAF) pour l'effet « vivant » —
-          uniquement section visible (IntersectionObserver), onglet actif, et
-          hors prefers-reduced-motion (écouté en live) ;
-       3. le survol : le nœud + son voisinage s'allument, le reste s'estompe
-          (classes is-hot/is-focus, styles dans style.css), et la barre
-          .kb-readout affiche label — fichier · nb d'arêtes.
-       Format des nœuds : [label, fichier, doc?, fichier-niveau?, degré, x, y,
-       mode-étiquette (0 dessus / 1 dessous / 2 droite / 3 gauche)].
-       Arêtes : [source, cible, classe (0 contains / 1 import-call / 2 doc)]. -->
-  <script>
-    (function () {
-      var svg = document.getElementById('kb-svg');
-      if (!svg) return;
-      var DATA = {"n":[["kb.ts","src/server/kb.ts",0,1,12,208.9,311.0,0],["KbGraph.tsx","src/components/KbGraph.tsx",0,1,13,159.6,213.9,0],["kbLink.ts","src/lib/kbLink.ts",0,1,11,293.3,282.0,0],["kbLayout.ts","src/lib/kbLayout.ts",0,1,2,56.0,207.0,0],["KbContext.tsx","src/state/KbContext.tsx",0,1,8,321.1,296.8,0],["KbView.tsx","src/components/KbView.tsx",0,1,7,277.4,219.0,0],["KbNodePanel.tsx","src/components/KbNodePanel.tsx",0,1,8,347.4,352.4,3],["kbFilter.ts","src/lib/kbFilter.ts",0,1,8,201.9,227.1,1],["kbSource.ts","src/components/kbSource.ts",0,1,5,279.1,368.6,3],["refExtract.ts","src/lib/refExtract.ts",0,1,2,332.1,155.6,0],["Intégration profonde de Graphify (Knowledge base)","docs/specs/graphify-kb.md",1,1,4,622.3,88.2,0],["KbGraph : rendu SVG maison (pas dagre, pas iframe)","docs/specs/graphify-kb.md",1,0,1,627.6,138.7,0],["Liage tickets⇄graphe dérivé de refs (kbLink)","docs/specs/graphify-kb.md",1,0,1,622.8,48.2,0],["Décision : committer graph.json","docs/specs/graphify-kb.md",1,0,1,664.0,103.2,0],["Python détecté + graphifyy en env isolé","docs/specs/graphify-kb.md",1,0,2,564.9,61.1,0],["Étape ensureGraphify dans roadmapped init","docs/specs/graphify-kb.md",1,0,1,525.8,36.0,0],["App.tsx","src/App.tsx",0,1,6,399.4,320.7,0],["api.ts","src/server/api.ts",0,1,2,101.9,365.6,0],["TaskPanel.tsx","src/components/TaskPanel.tsx",0,1,11,316.1,334.1,0],["DocsView.tsx","src/components/DocsView.tsx",0,1,3,400.7,220.2,0],["useZoomPan.ts","src/components/useZoomPan.ts",0,1,2,83.0,129.4,0],["tasks.ts","src/lib/tasks.ts",0,1,2,383.0,280.3,0],["KbGraph()","src/components/KbGraph.tsx",0,0,6,151.9,175.4,0],["KbView()","src/components/KbView.tsx",0,0,3,365.0,217.6,0],["KbNodePanel()","src/components/KbNodePanel.tsx",0,0,5,385.4,361.0,0],["useKb()","src/state/KbContext.tsx",0,0,7,349.2,301.9,0],["KbProvider()","src/state/KbContext.tsx",0,0,2,435.8,315.5,0],["normalizeGraph()","src/server/kb.ts",0,0,2,154.8,373.5,0],["readKbGraph()","src/server/kb.ts",0,0,3,131.6,354.5,0],["KbNode","src/server/kb.ts",0,0,6,239.7,294.4,0],["KbEdge","src/server/kb.ts",0,0,4,194.3,265.7,0],["KbGraph","src/server/kb.ts",0,0,4,222.5,257.3,0],["buildKbLinkIndex()","src/lib/kbLink.ts",0,0,6,351.7,328.5,0],["KbLinkIndex","src/lib/kbLink.ts",0,0,1,242.7,380.3,0],["refPath()","src/lib/kbLink.ts",0,0,3,336.2,247.9,0],["kbLayout()","src/lib/kbLayout.ts",0,0,3,93.8,198.5,0],["applyFilters()","src/lib/kbFilter.ts",0,0,3,175.3,185.8,0],["matchNodes()","src/lib/kbFilter.ts",0,0,3,175.1,156.6,0],["openKbNodeSource()","src/components/kbSource.ts",0,0,5,336.0,394.0,0],["parseRef()","src/lib/refExtract.ts",0,0,3,327.8,195.1,0],["KbConnections()","src/components/TaskPanel.tsx",0,0,4,359.2,377.4,0],["useZoomPan()","src/components/useZoomPan.ts",0,0,3,112.3,148.2,0]],"e":[[0,1,1],[0,2,1],[0,4,1],[0,7,1],[0,8,1],[0,17,1],[0,18,1],[0,27,0],[0,28,0],[0,29,0],[0,30,0],[0,31,0],[1,3,1],[1,5,1],[1,7,1],[1,20,1],[1,22,0],[1,29,1],[1,30,1],[1,31,1],[1,35,1],[1,36,1],[1,37,1],[1,41,1],[2,6,1],[2,9,1],[2,18,1],[2,21,1],[2,29,1],[2,30,1],[2,32,0],[2,33,0],[2,34,0],[2,39,1],[3,35,0],[4,5,1],[4,6,1],[4,16,1],[4,18,1],[4,25,0],[4,26,0],[4,31,1],[5,7,1],[5,19,1],[5,22,1],[5,23,0],[5,25,1],[6,8,1],[6,16,1],[6,24,0],[6,25,1],[6,32,1],[6,38,1],[7,29,1],[7,30,1],[7,31,1],[7,36,0],[7,37,0],[8,18,1],[8,29,1],[8,38,0],[9,39,0],[10,11,2],[10,12,2],[10,13,2],[10,14,2],[14,15,2],[16,18,1],[16,19,1],[16,24,1],[16,26,1],[17,28,1],[18,21,1],[18,25,1],[18,29,1],[18,32,1],[18,38,1],[18,40,0],[19,23,1],[20,41,0],[22,35,1],[22,36,1],[22,37,1],[22,41,1],[23,25,1],[24,25,1],[24,32,1],[24,38,1],[25,40,1],[27,28,1],[32,34,1],[32,40,1],[34,39,1],[38,40,1]]};
-      var NS = 'http://www.w3.org/2000/svg';
-      var readout = document.getElementById('kb-readout-text');
-      var DEFAULT_READOUT = readout ? readout.textContent : '';
-      var nojs = svg.querySelector('.kbg-nojs');
-      if (nojs) nojs.remove();
-
-      var nodes = DATA.n.map(function (n, i) {
-        return {
-          label: n[0], file: n[1], doc: !!n[2], big: !!n[3], deg: n[4],
-          x: n[5], y: n[6], mode: n[7],
-          r: n[3] ? 5 + Math.min(3.5, n[4] * 0.3) : 3.2,
-          phase: i * 1.7, dx: n[5], dy: n[6]
-        };
-      });
-      var adj = nodes.map(function () { return []; });
-
-      var edgeLayer = document.createElementNS(NS, 'g');
-      var edges = DATA.e.map(function (e) {
-        var l = document.createElementNS(NS, 'line');
-        l.setAttribute('class', 'kbg-edge' +
-          (e[2] === 0 ? ' kbg-edge--contains' : e[2] === 2 ? ' kbg-edge--doc' : ''));
-        edgeLayer.appendChild(l);
-        adj[e[0]].push(e[1]); adj[e[1]].push(e[0]);
-        return { a: e[0], b: e[1], el: l };
-      });
-      svg.appendChild(edgeLayer);
-
-      var nodeLayer = document.createElementNS(NS, 'g');
-      nodes.forEach(function (n, i) {
-        var g = document.createElementNS(NS, 'g');
-        g.setAttribute('class', 'kbg-node' +
-          (n.doc ? ' kbg-node--doc' : '') + (n.big ? ' kbg-node--file' : ''));
-        g.setAttribute('data-i', i);
-        // Zone de survol confortable, invisible, sous le disque.
-        var hit = document.createElementNS(NS, 'circle');
-        hit.setAttribute('class', 'kbg-hit');
-        hit.setAttribute('r', Math.max(n.r + 6, 11));
-        g.appendChild(hit);
-        var c = document.createElementNS(NS, 'circle');
-        c.setAttribute('r', n.r);
-        g.appendChild(c);
-        if (n.big) {
-          // Étiquette : les nœuds-fichiers seulement ; les concepts du spec
-          // affichent leur fichier (le label complet vit dans le readout).
-          var t = document.createElementNS(NS, 'text');
-          t.textContent = n.doc ? n.file.split('/').pop() : n.label;
-          if (n.mode === 2) { t.setAttribute('x', n.r + 5); t.setAttribute('y', 3); t.setAttribute('text-anchor', 'start'); }
-          else if (n.mode === 3) { t.setAttribute('x', -(n.r + 5)); t.setAttribute('y', 3); t.setAttribute('text-anchor', 'end'); }
-          else if (n.mode === 1) { t.setAttribute('y', n.r + 13); t.setAttribute('text-anchor', 'middle'); }
-          else { t.setAttribute('y', -(n.r + 6)); t.setAttribute('text-anchor', 'middle'); }
-          g.appendChild(t);
-        }
-        nodeLayer.appendChild(g);
-        n.el = g;
-      });
-      svg.appendChild(nodeLayer);
-
-      // --- Peinture : positions + dérive ambiante (±2px, par nœud). ---
-      var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
-      function paint(t) {
-        var amp = (t && !calm.matches) ? 2 : 0;
-        nodes.forEach(function (n) {
-          n.dx = n.x + amp * Math.sin(t * 0.00042 + n.phase);
-          n.dy = n.y + amp * Math.cos(t * 0.00051 + n.phase * 1.31);
-          n.el.setAttribute('transform', 'translate(' + n.dx.toFixed(1) + ' ' + n.dy.toFixed(1) + ')');
-        });
-        edges.forEach(function (e) {
-          e.el.setAttribute('x1', nodes[e.a].dx.toFixed(1));
-          e.el.setAttribute('y1', nodes[e.a].dy.toFixed(1));
-          e.el.setAttribute('x2', nodes[e.b].dx.toFixed(1));
-          e.el.setAttribute('y2', nodes[e.b].dy.toFixed(1));
-        });
-      }
-      paint(0);
-
-      var visible = false, raf = 0;
-      function loop(t) { paint(t); raf = requestAnimationFrame(loop); }
-      function start() { if (!raf && visible && !calm.matches && !document.hidden) raf = requestAnimationFrame(loop); }
-      function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
-      if (typeof IntersectionObserver === 'function') {
-        new IntersectionObserver(function (entries) {
-          visible = entries[0].isIntersecting;
-          if (visible) start(); else stop();
-        }, { rootMargin: '0px' }).observe(svg);
-      } else {
-        visible = true; start();
-      }
-      document.addEventListener('visibilitychange', function () {
-        if (document.hidden) stop(); else start();
-      });
-      if (calm.addEventListener) calm.addEventListener('change', function () {
-        if (calm.matches) { stop(); paint(0); } else start();
-      });
-
-      // --- Survol : voisinage en évidence + readout. ---
-      function nodeOf(target) {
-        while (target && target !== svg) {
-          if (target.classList && target.classList.contains('kbg-node')) return target;
-          target = target.parentNode;
-        }
-        return null;
-      }
-      function focusNode(i) {
-        svg.classList.add('is-focus');
-        nodes.forEach(function (n, k) {
-          n.el.classList.toggle('is-hot', k === i || adj[i].indexOf(k) !== -1);
-          n.el.classList.toggle('is-src', k === i);
-        });
-        edges.forEach(function (e) {
-          e.el.classList.toggle('is-hot', e.a === i || e.b === i);
-        });
-        if (readout) readout.textContent =
-          nodes[i].label + ' — ' + nodes[i].file + ' · ' +
-          nodes[i].deg + (nodes[i].deg === 1 ? ' edge' : ' edges') + ' here';
-      }
-      function blurNode() {
-        svg.classList.remove('is-focus');
-        nodes.forEach(function (n) { n.el.classList.remove('is-hot', 'is-src'); });
-        edges.forEach(function (e) { e.el.classList.remove('is-hot'); });
-        if (readout) readout.textContent = DEFAULT_READOUT;
-      }
-      svg.addEventListener('pointerover', function (e) {
-        var g = nodeOf(e.target);
-        if (g) focusNode(+g.getAttribute('data-i'));
-      });
-      svg.addEventListener('pointerout', function (e) {
-        var g = nodeOf(e.target);
-        if (g && !nodeOf(e.relatedTarget)) blurNode();
-      });
-      svg.addEventListener('pointerleave', blurNode);
     })();
   </script>
 

@@ -498,6 +498,20 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 /* The app window sets the height of the row; the terminal stretches to match. */
 .window-app { height: clamp(34rem, 78vh, 52rem); }
 
+/* Cadres démo « pièce » (#436) : mêmes fenêtres bordées que la démo hero, mais
+   hauteur propre — une seule vue réelle isolée (how-it-works, graphe), pas tout
+   le dashboard. L'iframe remplit la fenêtre ; fond var(--page) le temps du
+   lazy-load (theme-aware, pas de flash blanc en sombre). */
+.how-frame, .kb-frame { height: clamp(24rem, 46vh, 32rem); }
+.how-app-frame, .graph-app-frame {
+  display: block;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  border: 0;
+  background: var(--page);
+}
+
 .app-frame {
   display: block;
   width: 100%;
@@ -769,321 +783,16 @@ html.js-howplay .how-track { display: block; }
   max-width: 58ch;
 }
 
-/* --- Visuels : pièces isolées de l'UI réelle de l'app (.ui-*), posées
-   DANS un fragment de chrome du dashboard (.ui-frame : barre d'onglets +
-   rail de sidebar estompé) pour qu'elles lisent « découpées dans le vrai
-   outil » et non comme des widgets isolés. La fenêtre bordée = .ui-frame
-   lui-même ; avec la gate, il remplit toute la hauteur (= celle des étapes,
-   via align-items: stretch). Un visuel actif à la fois ; empilés sans la
-   gate (no-JS). */
+/* --- Visuel : la VRAIE app en iframe (#436), une vue réelle isolée par étape
+   (pièce démo commutée par postMessage), à la place des ex-wireframes .ui-*.
+   Le cadre .how-frame vit plus haut (fenêtres démo) ; ici juste le conteneur. */
 .how-visuals { position: relative; min-width: 0; }
-.how-visual { overflow-x: auto; }
-.how-visual + .how-visual { margin-top: 1.25rem; }
-
 html.js-howplay .how-visuals { display: flex; flex-direction: column; min-height: 23rem; }
-html.js-howplay .how-visual { display: none; }
-html.js-howplay .how-visual + .how-visual { margin-top: 0; }
-html.js-howplay .how-visual.is-active {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  animation: how-visual-in 0.4s ease;
-}
-@keyframes how-visual-in { from { opacity: 0; } }
+.how-frame { flex: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   html.js-howplay .how-track { display: none; }
-  html.js-howplay .how-visual.is-active { animation: none; }
 }
-
-/* --- Chrome de dashboard autour de la pièce (retour proprio #1) ------------
-   Fenêtre d'app : barre d'onglets (Backlog/Roadmap/Docs + pastille Activity)
-   + rail de sidebar estompé à gauche, la pièce au centre sur fond --page.
-   L'onglet actif porte un filet accent (structure) ; la pastille Activity
-   s'allume en accent sur le visuel 02. Accent PARCIMONIEUX, tout en vars. */
-.ui-frame {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  border: 1px solid var(--rule);
-  background: var(--card);
-}
-.ui-frame-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.4375rem 0.625rem;
-  border-bottom: 1px solid var(--rule);
-}
-.ui-frame-tabs { display: flex; gap: 0.875rem; min-width: 0; }
-.ui-frame-tab { font-size: 0.75rem; color: var(--muted); padding-bottom: 2px; }
-.ui-frame-tab.is-on {
-  color: var(--ink);
-  font-weight: 600;
-  box-shadow: inset 0 -2px 0 var(--accent);
-}
-.ui-frame-live {
-  flex-shrink: 0;
-  font-size: 0.6875rem;
-  color: var(--muted);
-  border: 1px solid var(--rule);
-  border-radius: 0.25rem;
-  padding: 0.0625rem 0.375rem;
-}
-.ui-frame-live.is-on { color: var(--accent); border-color: var(--accent); }
-.ui-frame-body { display: flex; flex: 1; min-height: 0; min-width: 0; }
-.ui-frame-rail {
-  flex-shrink: 0;
-  width: 2.5rem;
-  border-right: 1px solid var(--rule);
-  background: var(--page);
-  opacity: 0.6;
-  padding: 0.625rem 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.ui-frame-rail span { display: block; height: 2px; background: var(--rule); }
-.ui-frame-rail span:first-child { background: var(--edge); }   /* item « actif » du nav, estompé */
-.ui-frame-piece {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0.875rem;
-  background: var(--page);
-  overflow: hidden;
-}
-
-/* --- Vocabulaire des pièces UI — mappé de l'app vers les tokens du site :
-   neutral-900→--ink, neutral-500→--muted, neutral-600/700→--soft,
-   white→--card, neutral-50→--page/--hover, neutral-200→--rule,
-   neutral-300→--edge, accent→--accent, accent-tint→--tint. --- */
-
-.ui-glyph, .ui-icon { flex-shrink: 0; }
-.ui-glyph--live { color: var(--accent); }
-.ui-icon { color: var(--muted); }
-.ui-id {
-  flex-shrink: 0;
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--muted);
-}
-.ui-count { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
-.ui-dim { font-size: 0.6875rem; color: var(--muted); }
-.ui-time {
-  margin-left: auto;
-  flex-shrink: 0;
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--muted);
-}
-.ui-tag { flex-shrink: 0; font-size: 0.6875rem; color: var(--muted); }
-.ui-temp {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex-shrink: 0;
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--muted);
-}
-.ui-temp svg { flex-shrink: 0; }
-.ui-chip {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  border: 1px solid var(--rule);
-  background: var(--page);
-  padding: 0 0.375rem;
-  font-size: 0.6875rem;
-  line-height: 1.1rem;
-  color: var(--muted);
-}
-.ui-chip--strong {
-  border-color: var(--edge);
-  background: var(--hover);
-  color: var(--soft);
-  font-weight: 500;
-}
-.ui-chip--mono { font-family: var(--mono); }
-
-/* 01 · Backlog (TaskRow) : rangées sous leur tête de type. */
-.ui-pane { border: 1px solid var(--rule); background: var(--card); }
-.ui-pane-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--rule);
-}
-.ui-pane-title { font-size: 0.8125rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
-.ui-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 0.75rem;
-  font-size: 0.8125rem;
-  color: var(--ink);
-}
-.ui-row + .ui-row { border-top: 1px solid var(--rule); }
-.ui-row-title {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.ui-row.is-done .ui-row-title { color: var(--muted); text-decoration: line-through; }
-.ui-row-meta {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  flex-shrink: 0;
-}
-.ui-row-meta .ui-time { margin-left: 0; }
-
-/* 02 · Activity (LiveActivityMenu) : le popup du header. */
-.ui-pop {
-  width: 100%;
-  max-width: 21rem;
-  margin-inline: auto;
-  border: 1px solid var(--rule);
-  background: var(--card);
-}
-.ui-pop-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--rule);
-}
-.ui-pop-title { font-size: 0.75rem; font-weight: 600; color: var(--ink); }
-.ui-log { list-style: none; margin: 0; padding: 0; }
-.ui-log li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4375rem 0.75rem;
-  font-size: 0.75rem;
-}
-.ui-log li + li { border-top: 1px solid var(--rule); }
-.ui-log .is-fresh { background: var(--tint); }
-.ui-verb { flex-shrink: 0; font-weight: 500; color: var(--soft); }
-.ui-log-title {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--soft);
-}
-.ui-pop-foot {
-  margin: 0;
-  border-top: 1px solid var(--rule);
-  padding: 0.4375rem 0.75rem;
-  font-size: 0.6875rem;
-  color: var(--muted);
-}
-
-/* 03 · Panneau d'une tâche done (TaskPanel) : en-tête, titre barré, bloc Log. */
-.ui-panel {
-  width: 100%;
-  max-width: 26rem;
-  margin-inline: auto;
-  border: 1px solid var(--rule);
-  background: var(--card);
-  padding: 0.875rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-}
-.ui-panel-head { display: flex; align-items: center; gap: 0.375rem; }
-.ui-status { font-size: 0.75rem; color: var(--soft); }
-.ui-panel-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--muted);
-  text-decoration: line-through;
-}
-.ui-logbox {
-  border: 1px solid var(--rule);
-  background: var(--page);
-  padding: 0.625rem 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.ui-logbox-cap { font-size: 0.6875rem; font-weight: 500; color: var(--muted); }
-.ui-dates { font-size: 0.75rem; color: var(--muted); }
-.ui-field { display: flex; flex-direction: column; gap: 0.125rem; }
-.ui-field-label { font-size: 0.6875rem; color: var(--muted); }
-.ui-field-val { font-size: 0.75rem; line-height: 1.45; color: var(--ink); }
-.ui-field-val--mono { font-family: var(--mono); }
-.ui-panel-foot {
-  border-top: 1px solid var(--rule);
-  padding-top: 0.5rem;
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 04 · Roadmap en colonnes (RoadmapColumns) : têtes, barres fines, cartes. */
-.ui-board {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
-.ui-col { min-width: 0; display: flex; flex-direction: column; gap: 0.375rem; }
-.ui-col-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-.ui-col-title {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-.ui-bar {
-  height: 4px;
-  border-radius: 999px;   /* fidèle à l'app (rounded-full), seule entorse au zéro-radius */
-  background: var(--rule);
-  overflow: hidden;
-}
-.ui-bar i { display: block; height: 100%; background: var(--accent); }
-.ui-cards { display: flex; flex-direction: column; margin-top: 0.25rem; }
-.ui-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.375rem;
-  border: 1px solid var(--rule);
-  background: var(--card);
-  padding: 0.5rem 0.625rem;
-  font-size: 0.75rem;
-  color: var(--ink);
-}
-.ui-card + .ui-card { margin-top: -1px; }
-.ui-card .ui-glyph { margin-top: 0.1875rem; }
-.ui-card-body { min-width: 0; display: flex; flex-direction: column; gap: 0.125rem; }
-.ui-card-title { color: var(--ink); }
-.ui-avail { font-size: 0.6875rem; font-weight: 500; color: var(--soft); }
-.ui-card--more { color: var(--muted); font-size: 0.6875rem; }
 
 /* Mobile / tablette : une colonne — étapes d'abord, visuel dessous.
    La piste verticale est masquée (le clic + l'auto-advance suffisent). */
@@ -1216,104 +925,18 @@ html.js-howplay .how-visual.is-active {
 
 .under-block { margin-top: 1.25rem; }
 
-/* ---------- Knowledge base / Graphify (#314) ----------
-   L'extrait réel du graphe, dans un fragment de chrome du dashboard (le
-   .ui-frame du How it works, onglet Docs actif, mini-toggle Documents /
-   Knowledge base). Le SVG est peuplé par le script kb-graph : couleurs et
-   états (survol, estompage) vivent ICI, en classes sur les <g>/<line>,
-   donc tout suit les variables du thème. Doctrine bleu respectée : l'accent
-   marque les nœuds « docs » du spec, le voisinage survolé (un état) et le
-   toggle actif — le code reste monochrome. */
+/* ---------- Knowledge base / Graphify (#314, #436) ----------
+   La figure embarque désormais le VRAI Graph view de l'app en iframe (pièce
+   démo `graph`) : plus de SVG fait-main ici, ses états vivent dans l'app.
+   Ne restent que le cadrage pleine largeur de la figure et sa légende. */
 
-/* Pleine largeur de section (#314, retour Rémi) : la figure s'aligne sur la
-   .pair-grid des cartes en dessous (pas de max-width propre = largeur du
-   .container), et respire davantage au-dessus/en-dessous. */
 .kb-demo { margin: 2.75rem 0; max-width: none; }
-
-/* Mini-toggle Documents / Knowledge base, à la place de la pastille
-   Activity : même gabarit que .ui-frame-live, deux segments. */
-.kb-switch {
-  display: inline-flex;
-  flex-shrink: 0;
-  border: 1px solid var(--rule);
-  border-radius: 0.25rem;
-  overflow: hidden;
-  font-size: 0.6875rem;
-  color: var(--muted);
-}
-.kb-switch span { padding: 0.0625rem 0.4375rem; }
-.kb-switch span + span { border-left: 1px solid var(--rule); }
-.kb-switch .is-on { color: var(--ink); font-weight: 600; background: var(--hover); }
-
-.kb-canvas { background: var(--page); }
-.kb-canvas svg { display: block; width: 100%; height: auto; }
-
-/* Barre d'état sous le graphe : le nœud survolé (label — fichier · arêtes). */
-.kb-readout {
-  margin: 0;
-  border-top: 1px solid var(--rule);
-  padding: 0.4375rem 0.75rem;
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .kb-caption {
   margin: 1rem 0 0;
   font-size: 0.9375rem;
   color: var(--soft);
   max-width: 68ch;
-}
-
-/* --- Éléments du graphe (créés par le script kb-graph) --- */
-
-.kbg-nojs {
-  font-family: var(--mono);
-  font-size: 12px;
-  fill: var(--muted);
-}
-
-.kbg-edge {
-  stroke: var(--edge);
-  stroke-width: 1;
-  opacity: 0.55;
-  transition: opacity 0.2s ease, stroke 0.2s ease;
-}
-.kbg-edge--contains { stroke: var(--rule); }
-.kbg-edge--doc { stroke: var(--accent); stroke-dasharray: 3 3; opacity: 0.65; }
-
-.kbg-node { transition: opacity 0.2s ease; }
-.kbg-node circle { fill: var(--soft); }
-.kbg-node--file circle { fill: var(--ink); }
-.kbg-node--doc circle { fill: var(--accent); }
-.kbg-node .kbg-hit { fill: transparent; }
-.kbg-node text {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  fill: var(--muted);
-  paint-order: stroke;
-  stroke: var(--page);
-  stroke-width: 3px;
-  stroke-linejoin: round;
-  pointer-events: none;
-}
-
-/* Survol : le voisinage s'allume, le reste s'estompe (jamais sous .1 :
-   la pénombre reste lisible, et le retour est instantané). */
-#kb-svg.is-focus .kbg-node:not(.is-hot) { opacity: 0.15; }
-#kb-svg.is-focus .kbg-edge:not(.is-hot) { opacity: 0.1; }
-#kb-svg .kbg-edge.is-hot { stroke: var(--accent); opacity: 0.85; }
-.kbg-node.is-src circle:not(.kbg-hit) { stroke: var(--accent); stroke-width: 1.5; }
-.kbg-node.is-hot text { fill: var(--soft); }
-
-/* Téléphone : la barre d'onglets est à l'étroit — le segment inactif du
-   toggle disparaît, il ne reste que « Knowledge base ». */
-@media (max-width: 30rem) {
-  .kb-switch span:first-child { display: none; }
-  .kb-switch span + span { border-left: 0; }
 }
 
 /* ---------- Privacy / Open source pair ---------- */
